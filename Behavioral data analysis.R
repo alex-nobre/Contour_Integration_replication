@@ -373,49 +373,94 @@ by(questionnaire.ERPs[,25:30], questionnaire.ERPs$group,
 questionnaire.ratings1 <- questionnaire.ses1[,c(2,7,13)]
 questionnaire.ratings2 <- questionnaire.ses2[,c(2,7,13)]
 ggpairs(questionnaire.ratings1, mapping = aes(color=Recall))
+# subsets
+aware <- subset(questionnaire.ERPs, group.original == 'aware')
+unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
 # Test correlations between measures
 cor.test(questionnaire.ERPs$`5.4`, questionnaire.ERPs$`4.4`, method = "pearson")
 
 # 2. Correlations: psychophysical x awareness measures
-# 2.1. Confidence ratings
+# 2.1. d' x Confidence ratings
 cor.test(questionnaire.ERPs$ses.dprime_1, questionnaire.ERPs$`4.4`, 
          method = "pearson")
 cor.test(questionnaire.ERPs$RT_1, questionnaire.ERPs$`4.4`, 
          method = "pearson")
-# 2.1. Frequency ratings
+# 2.2. d' x Frequency ratings
 cor.test(questionnaire.ERPs$ses.dprime_1, questionnaire.ERPs$`5.4`, 
          method = "pearson")
 cor.test(questionnaire.ERPs$RT_1, questionnaire.ERPs$`5.4`, 
          method = "pearson")
-
-aware <- subset(questionnaire.ERPs, group.original == 'aware')
-unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
+# 2.3. RT x confidence ratings by group
 cor.test(aware$RT_1, aware$`4.4`)
 cor.test(unaware$RT_1, unaware$`4.4`)
 cor.test(aware$RT_2, aware$`4.4`)
 cor.test(unaware$RT_2, unaware$`4.4`)
 
-cor.test(aware$RT_1, aware$occ_diff_1)
-cor.test(aware$RT_1, aware$left_diff_1)
-cor.test(aware$RT_1, aware$right_diff_1)
-cor.test(unaware$RT_1, unaware$occ_diff_1)
-cor.test(unaware$RT_1, unaware$left_diff_1)
-cor.test(unaware$RT_1, unaware$right_diff_1)
-cor.test(aware$RT_2, aware$occ_diff_2)
-cor.test(aware$RT_2, aware$left_diff_2)
-cor.test(aware$RT_2, aware$right_diff_2)
-cor.test(unaware$RT_2, unaware$occ_diff_2)
-cor.test(unaware$RT_2, unaware$left_diff_2)
-cor.test(unaware$RT_2, unaware$right_diff_2)
-
 # 3. Correlations: ERPs x awareness measures
 # 3.1. ERP Differences x confidence ratings
+# 3.1.1. Both groups
+# 3.1.1.1. Session 1
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ratings1$`4.4`, 
          method = "pearson")
 cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ratings1$`4.4`, 
          method = "pearson")
 cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ratings1$`4.4`, 
-         method = "spearman")
+         method = "pearson")
+# 3.1.1.2. session 2
+cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ratings1$`4.4`, 
+         method = "pearson")
+cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ratings1$`4.4`, 
+         method = "pearson")
+cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ratings1$`4.4`, 
+         method = "pearson")
+# 3.1.2. By group
+# 3.1.2.1. Session 1
+cor.test(aware$`4.4`, aware$occ_diff_1)
+cor.test(aware$`4.4`, aware$left_diff_1)
+cor.test(aware$`4.4`, aware$right_diff_1)
+cor.test(unaware$`4.4`, unaware$occ_diff_1)
+cor.test(unaware$`4.4`, unaware$left_diff_1)
+cor.test(unaware$`4.4`, unaware$right_diff_1)
+# 3.1.2.1. Session 2
+cor.test(aware$`4.4`, aware$occ_diff_2)
+cor.test(aware$`4.4`, aware$left_diff_2)
+cor.test(aware$`4.4`, aware$right_diff_2)
+cor.test(unaware$`4.4`, unaware$occ_diff_2)
+cor.test(unaware$`4.4`, unaware$left_diff_2)
+cor.test(unaware$`4.4`, unaware$right_diff_2)
+
+# 3.1. ERP Differences x frequency ratings
+# 3.1.1. Both groups
+# 3.1.1.1. Session 1
+cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ratings1$`5.4`, 
+         method = "pearson")
+cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ratings1$`5.4`, 
+         method = "pearson")
+cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ratings1$`5.4`, 
+         method = "pearson")
+# 3.1.1.2. session 2
+cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ratings1$`5.4`, 
+         method = "pearson")
+cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ratings1$`5.4`, 
+         method = "pearson")
+cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ratings1$`5.4`, 
+         method = "pearson")
+# 3.2.2. By group
+# 3.2.2.1. Session 1
+cor.test(aware$`5.4`, aware$occ_diff_1)
+cor.test(aware$`5.4`, aware$left_diff_1)
+cor.test(aware$`5.4`, aware$right_diff_1)
+cor.test(unaware$`5.4`, unaware$occ_diff_1)
+cor.test(unaware$`5.4`, unaware$left_diff_1)
+cor.test(unaware$`5.4`, unaware$right_diff_1)
+# 3.2.2.1. Session 2
+cor.test(aware$`5.4`, aware$occ_diff_2)
+cor.test(aware$`5.4`, aware$left_diff_2)
+cor.test(aware$`5.4`, aware$right_diff_2)
+cor.test(unaware$`5.4`, unaware$occ_diff_2)
+cor.test(unaware$`5.4`, unaware$left_diff_2)
+cor.test(unaware$`5.4`, unaware$right_diff_2)
+
 # 3.2. ERP Differences x combined awareness index
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$aware.index, 
          method = "pearson")
@@ -423,44 +468,80 @@ cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$aware.index,
          method = "pearson")
 cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$aware.index, 
          method = "pearson")
-# 3.3. ERP Differences x reaction time
-# 3.3.1. Session 1
+
+# 4. Correlations: ERP differences x behavioral measures
+# 4.1. Correlations: ERP Differences x reaction time
+# 4.1.1. Both groups
+# 4.1.1.1 Session 1
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT_1, 
          method = "pearson")
 cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT_1, 
          method = "pearson")
 cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT_1, 
          method = "pearson")
-# 3.3.2. Session 2
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT_1, 
+# 4.1.1.2 Session 2
+cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$RT_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT_1, 
+cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$RT_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT_1, 
+cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$RT_2, 
          method = "pearson")
-# 3.3.3. Average
+# 4.1.1.3 Average
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT_1_2, 
          method = "pearson")
 cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT_1_2, 
          method = "pearson")
 cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT_1_2, 
          method = "pearson")
-# 3.4. ERP Differences x d'
-# 3.4.1. Session 1
+# 4.1.2. By group
+# 4.1.2.1. Session 1
+cor.test(aware$RT_1, aware$occ_diff_1)
+cor.test(aware$RT_1, aware$left_diff_1)
+cor.test(aware$RT_1, aware$right_diff_1)
+cor.test(unaware$RT_1, unaware$occ_diff_1)
+cor.test(unaware$RT_1, unaware$left_diff_1)
+cor.test(unaware$RT_1, unaware$right_diff_1)
+# 4.1.2.1. Session 2
+cor.test(aware$RT_2, aware$occ_diff_2)
+cor.test(aware$RT_2, aware$left_diff_2)
+cor.test(aware$RT_2, aware$right_diff_2)
+cor.test(unaware$RT_2, unaware$occ_diff_2)
+cor.test(unaware$RT_2, unaware$left_diff_2)
+cor.test(unaware$RT_2, unaware$right_diff_2)
+
+# 4.2. ERP Differences x d'
+# 4.2.1. Both groups
+# 4.2.1.1. Session 1
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
 cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
 cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
-# 3.4.2. Session 2
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$ses.dprime_1, 
+# 4.2.1.2. Session 2
+cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$ses.dprime_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$ses.dprime_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$ses.dprime_2, 
          method = "pearson")
-# 3.5. ERP Differences x % correct
+# 4.2.2. By group
+# 4.1.2.1. Session 1
+cor.test(aware$ses.dprime_1, aware$occ_diff_1)
+cor.test(aware$ses.dprime_1, aware$left_diff_1)
+cor.test(aware$ses.dprime_1, aware$right_diff_1)
+cor.test(unaware$ses.dprime_1, unaware$occ_diff_1)
+cor.test(unaware$ses.dprime_1, unaware$left_diff_1)
+cor.test(unaware$ses.dprime_1, unaware$right_diff_1)
+# 4.1.2.1. Session 2
+cor.test(aware$ses.dprime_2, aware$occ_diff_2)
+cor.test(aware$ses.dprime_2, aware$left_diff_2)
+cor.test(aware$ses.dprime_2, aware$right_diff_2)
+cor.test(unaware$ses.dprime_2, unaware$occ_diff_2)
+cor.test(unaware$ses.dprime_2, unaware$left_diff_2)
+cor.test(unaware$ses.dprime_2, unaware$right_diff_2)
+
+# 4.3. ERP Differences x % correct
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
 cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1, 
