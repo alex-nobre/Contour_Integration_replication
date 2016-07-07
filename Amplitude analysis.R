@@ -5,6 +5,7 @@ library(gridExtra)
 library(outliers)
 library(lattice)
 library(car)
+library(effsize)
 
 #--------------------------------Prepare data-----------------------------------
 # 1. Subsets
@@ -168,7 +169,59 @@ nd1_config <- update(nd1_baseline, .~. + configuration)
 anova(nd1_baseline, nd1_config)
 summary(nd1_lme)
 
-# 8.1 Nd1
+# 8.1. C1
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
+C1_baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration/session, 
+                    data = rep_data_long2, method = "ML") #baseline
+C1_config <- update(C1_baseline, .~. + configuration)
+C1_session <- update(C1_config, .~. + session)
+C1_group <- update(C1_session, .~. + group)
+C1_config_session <- update(C1_group, .~. + configuration:session)
+C1_session_group <- update(C1_config_session, .~. + session:group)
+C1_config_group <- update(C1_session_group, .~. + configuration:group)
+C1_lme <- update(C1_config_group, .~. + configuration:session:group)
+anova(C1_baseline, C1_config, C1_session, C1_group, C1_config_session,
+      C1_session_group, C1_config_group, C1_lme)
+
+# 8.2. P1
+contrasts(ROImap_data_long$configuration) <- c(-1, 1) # set contrasts for config
+contrasts(ROImap_data_long$session) <- c(-1, 1) # set contrasts for session
+contrasts(ROImap_data_long$group) <- c(-1, 1) # set contrasts for group
+P1_baseline <- lme(P1 ~ 1, random = ~1|subject/configuration/session, 
+                                 data = ROImap_data_long, method = "ML") #baseline
+P1_config <- update(P1_baseline, .~. + configuration)
+P1_session <- update(P1_config, .~. + session)
+P1_group <- update(P1_session, .~. + group)
+P1_config_session <- update(P1_group, .~. + configuration:session)
+P1_session_group <- update(P1_config_session, .~. + session:group)
+P1_config_group <- update(P1_session_group, .~. + configuration:group)
+P1_lme <- update(P1_config_group, .~. + configuration:session:group)
+anova(P1_baseline, P1_config, P1_session, P1_group, 
+      P1_config_session, P1_session_group, P1_config_group, 
+      P1_lme)
+summary(P1_lme)
+
+# 8.3. N1
+contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
+contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
+N1_baseline <- lme(N1_occ ~ 1, random = ~1|subject/configuration/session, 
+                           data = ROImap_data_long, method = "ML") #baseline
+N1_config <- update(N1_baseline, .~. + configuration)
+N1_session <- update(N1_config, .~. + session)
+N1_group <- update(N1_session, .~. + group)
+N1_config_session <- update(N1_group, .~. + configuration:session)
+N1_session_group <- update(N1_config_session, .~. + session:group)
+N1_config_group <- update(N1_session_group, .~. + configuration:group)
+N1_lme <- update(N1_config_group, .~. + configuration:session:group)
+anova(N1_baseline, N1_config, N1_session, N1_group, 
+      N1_config_session, N1_session_group, N1_config_group, 
+      N1_lme)
+summary(N1_lme)
+
+# 8.4. Nd1 (P2)
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
@@ -183,9 +236,10 @@ nd1_config_group <- update(nd1_session_group, .~. + configuration:group)
 nd1_lme <- update(nd1_config_group, .~. + configuration:session:group)
 anova(nd1_baseline, nd1_config, nd1_session, nd1_group, nd1_config_session,
       nd1_session_group, nd1_config_group, nd1_lme)
+
 summary(nd1_lme)
 
-# 8.2 Nd2 left
+# 8.5. Nd2 (VAN) left
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
@@ -203,7 +257,7 @@ anova(nd2_left_baseline, nd2_left_config, nd2_left_session, nd2_left_group.origi
       nd2_left_lme)
 summary(nd2_left_lme)
 
-# 8.3 Nd2 right
+# 8.6. Nd2 (VAN) right
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
@@ -220,6 +274,63 @@ anova(nd2_right_baseline, nd2_right_config, nd2_right_session, nd2_right_group.o
       nd2_right_config_session, nd2_right_session_group.original, nd2_right_config_group.original, 
       nd2_right_lme)
 summary(nd2_right_lme)
+
+# 8.6. Nd2 (VAN) right-left
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
+nd2_right_baseline <- lme(right ~ 1, random = ~1|Subject/configuration/session, 
+                          data = rep_data_long2, method = "ML") #baseline
+nd2_right_config <- update(nd2_right_baseline, .~. + configuration)
+nd2_right_session <- update(nd2_right_config, .~. + session)
+nd2_right_group.original <- update(nd2_right_session, .~. + group.original)
+nd2_right_config_session <- update(nd2_right_group.original, .~. + configuration:session)
+nd2_right_session_group.original <- update(nd2_right_config_session, .~. + session:group.original)
+nd2_right_config_group.original <- update(nd2_right_session_group.original, .~. + configuration:group.original)
+nd2_right_lme <- update(nd2_right_config_group.original, .~. + configuration:session:group.original)
+anova(nd2_right_baseline, nd2_right_config, nd2_right_session, nd2_right_group.original, 
+      nd2_right_config_session, nd2_right_session_group.original, nd2_right_config_group.original, 
+      nd2_right_lme)
+summary(nd2_right_lme)
+
+# 8.7. N2
+contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
+contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
+N2_baseline <- lme(N2_occ ~ 1, random = ~1|subject/configuration/session, 
+                           data = ROImap_data_long, method = "ML") #baseline
+N2_config <- update(N2_baseline, .~. + configuration)
+N2_session <- update(N2_config, .~. + session)
+N2_group <- update(N2_session, .~. + group)
+N2_config_session <- update(N2_group, .~. + configuration:session)
+N2_session_group <- update(N2_config_session, .~. + session:group)
+N2_config_group <- update(N2_session_group, .~. + configuration:group)
+N2_lme <- update(N2_config_group, .~. + configuration:session:group)
+anova(N2_baseline, N2_config, N2_session, N2_group, 
+      N2_config_session, N2_session_group, N2_config_group, 
+      N2_lme)
+summary(N2_lme)
+
+# 8.8. LP
+contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
+contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
+LP_baseline <- lme(LP_central ~ 1, random = ~1|subject/configuration/session, 
+                               data = ROImap_data_long, method = "ML") #baseline
+LP_config <- update(LP_baseline, .~. + configuration)
+LP_session <- update(LP_config, .~. + session)
+LP_group <- update(LP_session, .~. + group)
+LP_config_session <- update(LP_group, .~. + configuration:session)
+LP_session_group <- update(LP_config_session, .~. + session:group)
+LP_config_group <- update(LP_session_group, .~. + configuration:group)
+LP_lme <- update(LP_config_group, .~. + configuration:session:group)
+anova(LP_baseline, LP_config, LP_session, LP_group, 
+      LP_config_session, LP_session_group, LP_config_group, 
+      LP_lme)
+summary(LP_lme)
+
+#---------------------------------------MANOVA------------------------------------------
+
 
 # 10. Assumption checking
 par(mfrow = c(2,2))

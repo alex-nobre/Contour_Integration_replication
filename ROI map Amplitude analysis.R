@@ -5,8 +5,6 @@ library(gridExtra)
 library(outliers)
 library(lattice)
 library(car)
-library(ez)
-library(stat.desc)
 library(effsize)
 
 
