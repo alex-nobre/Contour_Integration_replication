@@ -174,13 +174,7 @@ points(ROImap_rand_dat$subject, ROImap_rand_dat$LP_anterior.means, pch = 20, col
 abline(h=mean(ROImap_sqr_dat$LP_anterior.means), col = "red")
 abline(h=mean(ROImap_rand_dat$LP_anterior.means), col = "blue")
 
-# 4.2.Multipanel plots with lines
-xyplot(N1_occ ~ subject | group * session, groups = configuration, col = c("red", "blue"), 
-       data = ROImap_data_long, auto.key = T, type = "smooth")
-       # panel = function(...){
-       #   panel.xyplot(...)
-       #   panel.loess(lwd=1,groups = configuration,...)
-       # })
+
 
 # 5. Outlier detection and replacement
 # 5.1. Identify outliers

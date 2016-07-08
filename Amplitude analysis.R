@@ -1,6 +1,7 @@
 library(pastecs)
 library(ggplot2)
 library(nlme)
+library(lme4)
 library(gridExtra)
 library(outliers)
 library(lattice)
@@ -20,57 +21,29 @@ session_1 <- subset(rep_data_long2, session == 1)
 session_2 <- subset(rep_data_long2, session == 2)
 
 # 1.3. Log transform
-mapply(min, c(rep_data_long2$occ, rep_data_long2$left, rep_data_long2$right))
+# mapply(min, )
 
 
 #---------------------------Exploratory data analysis---------------------------
+defaults <- par() #save graphical parameters defaults
 # 2. Compute variances and means
 by(rep_data_long2[,6:8], list(rep_data_long2$configuration, 
                               rep_data_long2$session, rep_data_long2$group.original), 
    stat.desc, basic = FALSE)
 
 # 3. Normality tests
-# 3.1. Nd1
-shapiro.test(rep_data_long2$occ)
-qqnorm(rep_data_long2$occ, main = "Nd1");qqline(rep_data_long2$occ, col = 3)
-shapiro.test(sqr_config$occ)
-qqnorm(sqr_config$occ, main = "Nd1 square configuration");qqline(
-  sqr_config$occ, col = 4)
-shapiro.test(rand_config$occ)
-qqnorm(rand_config$occ, main = "Nd1 random configuration");qqline(
-  rand_config$occ, col = 2)
-# 3.2. Nd2 left
-shapiro.test(rep_data_long2$left)
-shapiro.test(sqr_config$left)
-shapiro.test(rand_config$left)
-qqnorm(sqr_config$left, main = "Nd2 left square configuration");qqline(
-  sqr_config$left, col = 4)
-qqnorm(rand_config$left, main = "Nd2 left random configuration");qqline(
-  rand_config$left, col = 2)
-# 3.3. Nd2 right
-shapiro.test(rep_data_long2$right)
-shapiro.test(sqr_config$right)
-shapiro.test(rand_config$right)
-qqnorm(sqr_config$right, main = "Nd2 right square configuration");qqline(
-  sqr_config$occ, col = 4)
-qqnorm(rand_config$right, main = "Nd2 right random configuration");qqline(
-  rand_config$occ, col = 2)
-# 3.4 Vectorized operations
+# 3.1. Function to test normality of data
+normality.test <- function(data, variable, color) {
+  print(variable)
+  print(shapiro.test(data))
+  qqnorm(data, main = variable);qqline(data, col = color)
+}
 
+# 3.2. Compute normality and plot qqplot for all dependent variables
+normal.tests <- mapply(normality.test, rep_data_long2[,6:18], colnames(rep_data_long2[,6:18]),
+                                                                       1:13)
 
-#----------------------------------Plots----------------------------------------
-# 4. Scatterplot
-# 4.1 Group occ means
-plot(1:14, rep_data2$occ.means[rep_data2$group == "aware"], ylab = "mean occ amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "Nd1 windows amplitudes")
-points(1:18, rep_data2$occ.means[rep_data2$group == "unaware"], pch = 20, col = "blue")
-abline(h=mean(rep_data2$occ.means[rep_data2$group == "aware"]), col = "red")
-abline(h=mean(rep_data2$occ.means[rep_data2$group == "unaware"]), col = "blue")
-occ_scat <- ggplot(rep_data_long2, aes(x = Subject, y = occ, colour = group)) + 
-  geom_point(aes(shape = configuration)) + 
-  geom_smooth(method = "lm", se = F) #ggplot
-# 4.2 Configuration x session means
-
+# 3.3. Plot histograms
 # 5 Histograms for normality checks
 # 5.1. Nd1
 hist(rep_data_long2$occ, prob = T)
@@ -90,8 +63,83 @@ lines(density(rep_data_long2$right), col = 4)
 #           },
 #           type="density")
 
+# 4. Plot variances and means
+# 4.1. Scatterplot
+# 4.1.1. Group C1 means
+plot(1:14, rep_data2$C1[rep_data2$group.original == "aware"], 
+     ylab = "mean C1 amplitude", xlab = "subjects", pch = 20, col = "red", 
+     main = "C1 amplitudes")
+points(1:18, rep_data2$C1[rep_data2$group.original == "unaware"], 
+       pch = 20, col = "blue")
+abline(h=mean(rep_data2$C1[rep_data2$group.original == "aware"]), 
+       col = "red")
+abline(h=mean(rep_data2$C1[rep_data2$group.original == "unaware"]), 
+       col = "blue")
 
-# 6. Boxplots for outlier detection
+# 4.1.1 P1 means x configuration
+ROImap_sqr_dat$P1.means <- rowMeans(ROImap_sqr_dat[,c(3,12)])
+ROImap_rand_dat$P1.means <- rowMeans(ROImap_rand_dat[,c(3,12)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P1.means, ylab = "mean nd2 P1 amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "P1 amplitudes", ylim =c(-5.5, 3.0))
+points(ROImap_rand_dat$subject, ROImap_rand_dat$P1.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$P1.means), col = "red")
+abline(h=mean(ROImap_rand_dat$P1.means), col = "blue")
+
+# 4.1.2 N1 means x configuration
+ROImap_sqr_dat$N1.means <- rowMeans(ROImap_sqr_dat[,c(4,13)])
+ROImap_rand_dat$N1.means <- rowMeans(ROImap_rand_dat[,c(4,13)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N1.means, ylab = "mean nd2 N1 amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "N1 amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$N1.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$N1.means), col = "red")
+abline(h=mean(ROImap_rand_dat$N1.means), col = "blue")
+
+# 4.1.3 Occ_nd1 means x configuration
+ROImap_sqr_dat$P2_right.means <- rowMeans(ROImap_sqr_dat[,c(5,14)])
+ROImap_rand_dat$P2_right.means <- rowMeans(ROImap_rand_dat[,c(5,14)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P2_right.means, ylab = "mean nd2 P2_right amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "P2_right amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$P2_right.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$P2_right.means), col = "red")
+abline(h=mean(ROImap_rand_dat$P2_right.means), col = "blue")
+
+# 4.1.4 Occ_nd2 means x configuration
+ROImap_sqr_dat$P2_anterior.means <- rowMeans(ROImap_sqr_dat[,c(6,15)])
+ROImap_rand_dat$P2_anterior.means <- rowMeans(ROImap_rand_dat[,c(6,15)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P2_anterior.means, ylab = "mean nd2 P2_anterior amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "P2_anterior amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$P2_anterior.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$P2_anterior.means), col = "red")
+abline(h=mean(ROImap_rand_dat$P2_anterior.means), col = "blue")
+
+# 4.1.5 N2 means x configuration
+ROImap_sqr_dat$N2_occ.means <- rowMeans(ROImap_sqr_dat[,c(7,16)])
+ROImap_rand_dat$N2_occ.means <- rowMeans(ROImap_rand_dat[,c(7,16)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N2_occ.means, ylab = "mean nd2 N2_occ amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "N2_occ amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$N2_occ.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$N2_occ.means), col = "red")
+abline(h=mean(ROImap_rand_dat$N2_occ.means), col = "blue")
+
+
+# 4.1.7 LP means x configuration
+ROImap_sqr_dat$LP_anterior.means <- rowMeans(ROImap_sqr_dat[,c(9,18)])
+ROImap_rand_dat$LP_anterior.means <- rowMeans(ROImap_rand_dat[,c(9,18)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$LP_anterior.means, ylab = "mean nd2 LP_anterior amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "LP_anterior amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$LP_anterior.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$LP_anterior.means), col = "red")
+abline(h=mean(ROImap_rand_dat$LP_anterior.means), col = "blue")
+
+# 4.2.Multipanel plots with lines
+xyplot(N1_occ ~ subject | group * session, groups = configuration, col = c("red", "blue"), 
+       data = ROImap_data_long, auto.key = T, type = "smooth")
+# panel = function(...){
+#   panel.xyplot(...)
+#   panel.loess(lwd=1,groups = configuration,...)
+# })
+
+# 6. Outlier detection with boxplots
 # 6.1. Nd1
 occ_box <- ggplot(rep_data_long2, aes(x = configuration, y = occ, fill = configuration)) +
   geom_boxplot() + facet_grid(session~group)
@@ -119,13 +167,28 @@ boxplot(rep_data_long2$right ~ rep_data_long2$configuration * rep_data_long2$gro
 right_out <- boxplot(rep_data_long2$right ~ rep_data_long2$configuration * rep_data_long2$group * 
                        rep_data_long2$session, plot = FALSE)$out
 rep_data_long2[rep_data_long2$right %in% right_out,]
-# 6.4. Replace outliers by the mean
-# rep_data_long2$occ <- rm.outlier(rep_data_long2$occ, fill = TRUE)
-# rep_data_long2$left <- rm.outlier(rep_data_long2$left, fill = TRUE)
-# rep_data_long2$right <- rm.outlier(rep_data_long2$right, fill = TRUE)
-
 
 # 7. Line graphs with error bars for comparison of means
+# 6.1 Nd2 P1_occ_right - session
+nd2_P1_occ_right_line_session <- ggplot(ROImap_data_long, aes(x = group.original, 
+                                                              y = P1_occ_right, 
+                                                              colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "P1 average reference", x = "session", 
+       y = "P1 amplitude", colour = "configuration")
+
+# 6.2 Nd2 N1_occ - session
+nd2_N1_occ_line_session <- ggplot(ROImap_data_long, aes(x = session, y = N1_occ, 
+                                                        colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~group.original) +
+  labs(title = "N1 average reference", x = " session", y = "N1 amplitude", 
+       colour = "configuration")
 # 7.1 Nd1 - session
 nd1_line_session <- ggplot(rep_data_long2, aes(x = group, y = occ, 
                                                colour = configuration)) + 
@@ -155,6 +218,26 @@ nd2_right_line_session <- ggplot(rep_data_long2, aes(x = group, y = right,
   facet_grid(.~session) +
   labs(title = "Right average reference", x = "group", y = "Nd2 right amplitude", 
        colour = "configuration")
+
+# 6.5. 280-360 - session
+nd2_N2_occ_line_session <- ggplot(ROImap_data_long, aes(x = session, y = N2_occ, 
+                                                        colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~group.original) +
+  labs(title = "N2 average reference", x = " session", y = "Nd2 N2 amplitude", 
+       colour = "configuration")
+
+# 6.7 Nd2 LP_central - session
+nd2_LP_central_line_session <- ggplot(ROImap_data_long, aes(x = session, y = LP_central, 
+                                                            colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~group.original) +
+  labs(title = "LP central average reference", x = " session", y = "LP 
+       amplitude", colour = "configuration")
 
 #----------------------------------Linear model---------------------------------
 # 8. Mixed model

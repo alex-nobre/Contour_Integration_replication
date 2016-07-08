@@ -1,25 +1,18 @@
-
-# # Import file names in working directory
-# sqr1_fnames <- list.files(getwd(), pattern = "1_ROI Evaluator Sqr_sqr")
-# sqr2_fnames <- list.files(getwd(), pattern = "2_ROI Evaluator Sqr_sqr")
-# rand1_fnames <- list.files(getwd(), pattern = "1_ROI Evaluator Rand_rand")
-# rand2_fnames <- list.files(getwd(), pattern = "2_ROI Evaluator Rand_rand")
-# # Concatenate all lists in a single list
-# list_fnames <- c(sqr1_fnames, sqr2_fnames, rand1_fnames, rand2_fnames)
+library(reshape)
 
 # Import file names in working directory
-sqr1_fnames <- list.files(getwd(), pattern = "1_All ROIs Sqr")
-sqr2_fnames <- list.files(getwd(), pattern = "2_All ROIs Sqr")
-rand1_fnames <- list.files(getwd(), pattern = "1_All ROIs Rand")
-rand2_fnames <- list.files(getwd(), pattern = "2_All ROIs Rand")
+sqr1_fnames <- list.files('./Data/Data_BVA', pattern = "1_All ROIs Sqr")
+sqr2_fnames <- list.files('./Data/Data_BVA', pattern = "2_All ROIs Sqr")
+rand1_fnames <- list.files('./Data/Data_BVA', pattern = "1_All ROIs Rand")
+rand2_fnames <- list.files('./Data/Data_BVA', pattern = "2_All ROIs Rand")
 # Concatenate all lists in a single list
 list_fnames <- c(sqr1_fnames, sqr2_fnames, rand1_fnames, rand2_fnames)
 
 #-------------Individual windows extraction by file----------------
 # Sqr, session 1
 sqr_ses1_means <- function(sqr1_file) {
-  sqr1_data <- read.delim(sqr1_file, sep = " ", dec = ",",
-                          header = TRUE)
+  sqr1_data <- read.delim(paste('./Data/Data_BVA/', sqr1_file, sep = ""), sep = " ", 
+                          dec = ",", header = TRUE)
   # # Remove last two columns
   # sqr1_data$Right <- NULL
   # sqr1_data$Occ.par.1 <- NULL
@@ -59,8 +52,8 @@ sqr_ses1_means <- function(sqr1_file) {
 
 # Sqr, session 2
 sqr_ses2_means <- function(sqr2_file) {
-  sqr2_data <- read.delim(sqr2_file, sep = " ", dec = ",",
-                          header = TRUE)
+  sqr2_data <- read.delim(paste('./Data/Data_BVA/', sqr2_file, sep = ""), sep = " ", 
+                          dec = ",", header = TRUE)
   # # Remove last two columns
   # sqr2_data$Right <- NULL
   # sqr2_data$Occ.par.1 <- NULL
@@ -100,8 +93,8 @@ sqr_ses2_means <- function(sqr2_file) {
 
 # Random, session 1
 rand_ses1_means <- function(rand1_file) {
-  rand1_data <- read.delim(rand1_file, sep = " ", dec = ",",
-                           header = TRUE)
+  rand1_data <- read.delim(paste('./Data/Data_BVA/', rand1_file, sep = ""), sep = " ", 
+                           dec = ",", header = TRUE)
   # # Remove last two columns
   # rand1_data$Right <- NULL
   # rand1_data$Occ.par.1 <- NULL
@@ -141,8 +134,8 @@ rand_ses1_means <- function(rand1_file) {
 
 # Random, session 2
 rand_ses2_means <- function(rand2_file) {
-  rand2_data <- read.delim(rand2_file, sep = " ", dec = ",",
-                           header = TRUE)
+  rand2_data <- read.delim(paste('./Data/Data_BVA/', rand2_file, sep = ""), sep = " ", 
+                           dec = ",", header = TRUE)
   # # Remove last two columns
   # rand2_data$Right <- NULL
   # rand2_data$Occ.par.1 <- NULL
@@ -333,7 +326,8 @@ rep_data_long2$configuration[rep_data_long2$location == 1] <- "occ"
 rep_data_long2$configuration[rep_data_long2$location == 2] <- "left"
 rep_data_long2$configuration[rep_data_long2$location == 3] <- "right"
 rep_data_long2$configuration[rep_data_long2$location == 4] <- "RL"
-#rep_data_long2[,]<- NULL
+# Remove redundant subject column
+rep_data_long2[,ncol(rep_data_long2)]<- NULL
 
 # Convert configuration, group and session to factors
 rep_data_long2$group <- factor(rep_data_long2$group)
