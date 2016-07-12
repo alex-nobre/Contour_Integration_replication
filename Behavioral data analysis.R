@@ -1,3 +1,12 @@
+library(pastecs)
+library(ggplot2)
+library(nlme)
+library(lme4)
+library(gridExtra)
+library(outliers)
+library(lattice)
+library(car)
+library(effsize)
 library(MPDiR)
 library(xlsx)
 library(polycor)
@@ -13,19 +22,65 @@ library(quickpsy)
 
 #-----------------------------------Prepare data----------------------------
 # Get list of psychopy file names
-behav_ses_1 <- list.files(getwd(), pattern = "Implicit segregation IB_.*\\_1")
-behav_ses_2 <- list.files(getwd(), pattern = "Implicit segregation IB_.*\\_2")
-behav_ses_3 <- list.files(getwd(), pattern = "Implicit segregation IB_.*\\_3")
+behav_ses_1 <- list.files('./Data/Data_Psychopy', pattern = "Implicit segregation IB_.*\\_1")
+behav_ses_2 <- list.files('./Data/Data_Psychopy', pattern = "Implicit segregation IB_.*\\_2")
+behav_ses_3 <- list.files('./Data/Data_Psychopy', pattern = "Implicit segregation IB_.*\\_3")
 
 #-------------------------Compute Psychophysical measures----------------------------
-# 1. Compute accuracy and d'
-# 1.1. Function to read files and compute proportion of hits & false alarms in both 
-# configs
+# 0. Compute accuracy
+# 1.1. Functions to read files and accuracy
+# 1.1.1. Sessions 1 & 2 (task: dim disc detection)
+# 1.1.1.1. Square and random configurations
+# Accuracy square
+compute.accuracy.sqr <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
+                          row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials.sqr <- subset(subj.data, target.presence == 1 & Configuration == 1)
+  accuracy.sqr <- as.vector(target.trials.sqr$correct)
+}
+
+# Accuracy random
+compute.accuracy.rand <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
+                          row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials.rand <- subset(subj.data, target.presence == 1 & Configuration == 0)
+  accuracy.rand <- as.vector(target.trials.rand$correct)
+}
+
+# 1.1.1.2. Both configs
+# Accuracy both conditions
+compute.accuracy <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
+                          row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials <- subset(subj.data, target.presence == 1)
+  accuracy <- as.vector(target.trials$correct)
+}
+
+# Session 3 (diamond detection)
+compute.accuracy.ses3 <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
+                          row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  diamond.trials <- subset(subj.data, Configuration == 2)
+  accuracy.ses3 <- as.vector(diamond.trials$correct)
+}
+
+# 1. Compute d'
+# 1.1. Functions to read files and accuracy and compute proportion of hits & false alarms 
+# in both configs
 # 1.1.1. Sessions 1 & 2 (task: dim disc detection)
 # 1.1.1.1. Square and random configurations
 # P(Hits) square
 compute.Ph.sqr <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   target.trials.sqr <- subset(subj.data, target.presence == 1 & Configuration == 1)
@@ -33,7 +88,8 @@ compute.Ph.sqr <- function(behav.file) {
 }
 # P(Hits) random
 compute.Ph.rand <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   target.trials.rand <- subset(subj.data, target.presence == 1 & Configuration == 0)
@@ -41,7 +97,8 @@ compute.Ph.rand <- function(behav.file) {
 }
 # P(False alarms) square
 compute.Pfa.sqr <- function(behav.file) {
-    subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+    subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                            header = TRUE, sep = "\t", skip = 12, 
                             row.names = NULL)
     colnames(subj.data)[5] <- "target.presence"
     notarget.trials.sqr <- subset(subj.data, target.presence == 0 & Configuration == 1)
@@ -49,7 +106,8 @@ compute.Pfa.sqr <- function(behav.file) {
 }
 # P(False alarms) random
 compute.Pfa.rand <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   notarget.trials.rand <- subset(subj.data, target.presence == 0 & Configuration == 0)
@@ -59,15 +117,16 @@ compute.Pfa.rand <- function(behav.file) {
 # 1.1.1.2. Both
 # P(Hits)
 compute.Ph <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   target.trials <- subset(subj.data, target.presence == 1)
   Ph <- mean(target.trials$correct)
 }
+
 # P(False alarms)
 compute.Pfa <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   notarget.trials <- subset(subj.data, target.presence == 0)
@@ -77,7 +136,7 @@ compute.Pfa <- function(behav.file) {
 # 1.1.2. Session 3 (task: diamond detection)
 # P(Hits)
 compute.Ph.ses3 <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   diamond.trials <- subset(subj.data, Configuration == 2)
@@ -85,16 +144,12 @@ compute.Ph.ses3 <- function(behav.file) {
 }
 # P(False alarms)
 compute.Pfa.ses3 <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   nodiamond.trials <- subset(subj.data, Configuration == 0 | Configuration == 1)
   Pfa <- mean(nodiamond.trials$Resp)
 }
-
-
-# Remove defective files from list
-#behav_ses_3 <- behav_ses_3[-2]
 
 # 1.2. Compute proportions of hits for each configurations
 #square
@@ -151,7 +206,8 @@ ses.dprime_3[28] <- 3.090232
 # 2.1. Functions for retrieving RT
 #square
 square.RT <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   square.trials <- subset(subj.data, Configuration == 1 & Resp == 1 & 
                             correct == 1)
@@ -159,7 +215,8 @@ square.RT <- function(behav.file) {
 }
 #random
 random.RT <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   random.trials <- subset(subj.data, Configuration == 0 & Resp == 1 & 
                             correct == 1)
@@ -167,7 +224,8 @@ random.RT <- function(behav.file) {
 }
 #both
 retrieve.RT <- function(behav.file) {
-  subj.data <- read.table(behav.file, header = TRUE, sep = "\t", skip = 12, 
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   response.trials <- subset(subj.data, Resp == 1 & 
                               correct == 1)
@@ -175,56 +233,170 @@ retrieve.RT <- function(behav.file) {
 }
 # 2.2. Compute RTs for each session
 #square
-RT.sqr_1 <- sapply(behav_ses_1, square.RT)
-RT.sqr_2 <- sapply(behav_ses_2, square.RT)
+RT.sqr_1 <- sapply(as.list(behav_ses_1), square.RT)
+RT.sqr_2 <- sapply(as.list(behav_ses_2), square.RT)
 #random
-RT.rand_1 <- sapply(behav_ses_1, random.RT)
-RT.rand_2 <- sapply(behav_ses_2, random.RT)
+RT.rand_1 <- sapply(as.list(behav_ses_1), random.RT)
+RT.rand_2 <- sapply(as.list(behav_ses_2), random.RT)
 #both
-RT_1 <- sapply(behav_ses_1, retrieve.RT)
-RT_2 <- sapply(behav_ses_2, retrieve.RT)
-RT_3 <- sapply(behav_ses_3, retrieve.RT)
+RT_1 <- sapply(as.list(behav_ses_1), retrieve.RT)
+RT_2 <- sapply(as.list(behav_ses_2), retrieve.RT)
+RT_3 <- sapply(as.list(behav_ses_3), retrieve.RT)
 
-# 3. Prepare data frame
-# Bind dprime values to data frame
+# 3. Retrieve  intensisites
+# 3.1. Function to extract intensities
+# 3.1.1. All conditions
+extract.intensities <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials <- subset(subj.data, target.presence == 1)
+  decrement <- as.vector(target.trials$Decrement)
+  intensities <- 1 - decrement
+}
+
+# 3.1.2. Square 
+extract.intensities.sqr <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials.sqr <- subset(subj.data, target.presence == 1 & Configuration == 1)
+  decrement.sqr <- as.vector(target.trials.sqr$Decrement)
+  intensities.sqr <- 1 - decrement.sqr
+}
+
+# 3.1.3. Random
+extract.intensities.rand <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+                          header = TRUE, sep = "\t", skip = 12, row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials.rand <- subset(subj.data, target.presence == 1 & Configuration == 0)
+  decrement.rand <- as.vector(target.trials.rand$Decrement)
+  intensities.rand <- 1 - decrement.rand
+}
+
+# 3.2. Extract intensities for each subject by session and configuration
+# 3.2.1. Square
+intensities.sqr.1 <- lapply(behav_ses_1, extract.intensities.sqr)
+intensities.sqr.2 <- lapply(behav_ses_2, extract.intensities.sqr)
+intensities.sqr.3 <- lapply(behav_ses_3, extract.intensities.sqr)
+# 3.2.1. Random
+intensities.rand.1 <- lapply(behav_ses_1, extract.intensities.rand)
+intensities.rand.2 <- lapply(behav_ses_2, extract.intensities.rand)
+intensities.rand.3 <- lapply(behav_ses_3, extract.intensities.rand)
+# 3.2.1. Both configurations
+intensities.rand.1 <- lapply(behav_ses_1, extract.intensities.rand)
+intensities.rand.2 <- lapply(behav_ses_2, extract.intensities.rand)
+intensities.rand.3 <- lapply(behav_ses_3, extract.intensities.rand)
+
+# 3.3. Extract  final thresholds for each session
+# 3.3.1. Square
+threshold.sqr_1 <- sapply(intensities.sqr.1, function(x) { return( x[length(x)] ) })
+threshold.sqr_2 <- sapply(intensities.sqr.2, function(x) { return( x[length(x)] ) })
+threshold.sqr_3 <- sapply(intensities.sqr.3, function(x) { return( x[length(x)] ) })
+# 3.3.1. Random
+threshold.rand_1 <- sapply(intensities.rand.1, function(x) { return( x[length(x)] ) })
+threshold.rand_2 <- sapply(intensities.rand.2, function(x) { return( x[length(x)] ) })
+threshold.rand_3 <- sapply(intensities.rand.3, function(x) { return( x[length(x)] ) })
+# 3.3.1. Both configurations
+threshold.1 <- sapply(intensities.1, function(x) { return( x[length(x)] ) })
+threshold.2 <- sapply(intensities.2, function(x) { return( x[length(x)] ) })
+threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
+
+# 4. Prepare data frame
+# 4.1. Bind dprime values to data frame
 rep_data3 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
                    ses.rand.dprime_2)
-# Bind RT values to data frame
+# 4.2. Bind RT values to data frame
 rep_data4 <- cbind(rep_data3, RT.sqr_1, RT.sqr_2, RT.rand_1, RT.rand_2)
 
-# Convert from wide to long
+# 4.3. Bind threshold values to data frame
+rep_data4 <- cbind(rep_data4, threshold.sqr_1, threshold.sqr_2, threshold.rand_1, 
+                   threshold.rand_2)
+
+# 4.4.Convert from wide to long
 # Extracts session number to column
-rep_data_long <- reshape(rep_data4, varying = c("occ.sqr_1", "occ.sqr_2",
-                                                "occ.rand_1", "occ.rand_2",
-                                                "left.sqr_1", "left.sqr_2",
-                                                "left.rand_1", "left.rand_2",
-                                                "right.sqr_1", "right.sqr_2",
-                                                "right.rand_1", "right.rand_2",
+rep_data_long <- reshape(rep_data4, varying = c("C1.sqr_1", "C1.sqr_2", "C1.rand_1",
+                                                "C1.rand_2", "P1.sqr_1", "P1.sqr_2", 
+                                                "P1.rand_1", "P1.rand_2", "N1.sqr_1", 
+                                                "N1.sqr_2", "N1.rand_1", "N1.rand_2",
+                                                "occ.sqr.nd1_1", "occ.sqr.nd2_1",
+                                                "occ.sqr.nd1_2", "occ.sqr.nd2_2",
+                                                "occ.rand.nd1_1", "occ.rand.nd2_1",
+                                                "occ.rand.nd1_2", "occ.rand.nd2_2",
+                                                "left.sqr.nd1_1", "left.sqr.nd2_1",
+                                                "left.sqr.nd1_2", "left.sqr.nd2_2",
+                                                "left.rand.nd1_1", "left.rand.nd2_1", 
+                                                "left.rand.nd1_2", "left.rand.nd2_2",
+                                                "right.sqr.nd1_1", "right.sqr.nd2_1",
+                                                "right.sqr.nd1_2", "right.sqr.nd2_2",
+                                                "right.rand.nd1_1", "right.rand.nd2_1",
+                                                "right.rand.nd1_2", "right.rand.nd2_2",
+                                                "RL.sqr.nd1_1", "RL.sqr.nd2_1", 
+                                                "RL.sqr.nd1_2", "RL.sqr.nd2_2",
+                                                "RL.rand.nd1_1", "RL.rand.nd2_1", 
+                                                "RL.rand.nd1_2", "RL.rand.nd2_2",
+                                                "N2.sqr_1", "N2.sqr_2", "N2.rand_1", 
+                                                "N2.rand_2", "LP.sqr_1", "LP.sqr_2", 
+                                                "LP.rand_1", "LP.rand_2",
                                                 "ses.sqr.dprime_1", "ses.sqr.dprime_2",
                                                 "ses.rand.dprime_1", "ses.rand.dprime_2",
                                                 "RT.sqr_1", "RT.sqr_2",
-                                                "RT.rand_1", "RT.rand_2"),  
+                                                "RT.rand_1", "RT.rand_2",
+                                                "threshold.sqr_1", "threshold.sqr_2",
+                                                "threshold.rand_1", "threshold.rand_2"),  
                          direction = "long", idvar = "Subject", sep = "_")
 # Rename session column
 names(rep_data_long)[names(rep_data_long) == "time"] <- "session"
 
 # Rename columns to separate configuration number using sep = "_"
-names(rep_data_long)[names(rep_data_long) == "occ.sqr"] <- "occ_1"
-names(rep_data_long)[names(rep_data_long) == "occ.rand"] <- "occ_2"
-names(rep_data_long)[names(rep_data_long) == "left.sqr"] <- "left_1"
-names(rep_data_long)[names(rep_data_long) == "left.rand"] <- "left_2"
-names(rep_data_long)[names(rep_data_long) == "right.sqr"] <- "right_1"
-names(rep_data_long)[names(rep_data_long) == "right.rand"] <- "right_2"
+names(rep_data_long)[names(rep_data_long) == "C1.sqr"] <- "C1_1"
+names(rep_data_long)[names(rep_data_long) == "C1.rand"] <- "C1_2"
+names(rep_data_long)[names(rep_data_long) == "P1.sqr"] <- "P1_1"
+names(rep_data_long)[names(rep_data_long) == "P1.rand"] <- "P1_2"
+names(rep_data_long)[names(rep_data_long) == "N1.sqr"] <- "N1_1"
+names(rep_data_long)[names(rep_data_long) == "N1.rand"] <- "N1_2"
+names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd1"] <- "occ.nd1_1"
+names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd2"] <- "occ.nd2_1"
+names(rep_data_long)[names(rep_data_long) == "occ.rand.nd1"] <- "occ.nd1_2"
+names(rep_data_long)[names(rep_data_long) == "occ.rand.nd2"] <- "occ.nd2_2"
+names(rep_data_long)[names(rep_data_long) == "left.sqr.nd1"] <- "left.nd1_1"
+names(rep_data_long)[names(rep_data_long) == "left.sqr.nd2"] <- "left.nd2_1"
+names(rep_data_long)[names(rep_data_long) == "left.rand.nd1"] <- "left.nd1_2"
+names(rep_data_long)[names(rep_data_long) == "left.rand.nd2"] <- "left.nd2_2"
+names(rep_data_long)[names(rep_data_long) == "right.sqr.nd1"] <- "right.nd1_1"
+names(rep_data_long)[names(rep_data_long) == "right.sqr.nd2"] <- "right.nd2_1"
+names(rep_data_long)[names(rep_data_long) == "right.rand.nd1"] <- "right.nd1_2"
+names(rep_data_long)[names(rep_data_long) == "right.rand.nd2"] <- "right.nd2_2"
+names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd1"] <- "RL.nd1_1"
+names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd2"] <- "RL.nd2_1"
+names(rep_data_long)[names(rep_data_long) == "RL.rand.nd1"] <- "RL.nd1_2"
+names(rep_data_long)[names(rep_data_long) == "RL.rand.nd2"] <- "RL.nd2_2"
+names(rep_data_long)[names(rep_data_long) == "N2.sqr"] <- "N2_1"
+names(rep_data_long)[names(rep_data_long) == "N2.rand"] <- "N2_2"
+names(rep_data_long)[names(rep_data_long) == "LP.sqr"] <- "LP_1"
+names(rep_data_long)[names(rep_data_long) == "LP.rand"] <- "LP_2"
 names(rep_data_long)[names(rep_data_long) == "ses.sqr.dprime"] <- "ses.dprime_1"
 names(rep_data_long)[names(rep_data_long) == "ses.rand.dprime"] <- "ses.dprime_2"
 names(rep_data_long)[names(rep_data_long) == "RT.sqr"] <- "RT_1"
 names(rep_data_long)[names(rep_data_long) == "RT.rand"] <- "RT_2"
+names(rep_data_long)[names(rep_data_long) == "threshold.sqr"] <- "threshold_1"
+names(rep_data_long)[names(rep_data_long) == "threshold.rand"] <- "threshold_2"
 # Extracts configuration number to column
-rep_data_long2 <- reshape(rep_data_long, varying = c("occ_1", "occ_2",
-                                                     "left_1", "left_2",
-                                                     "right_1", "right_2",
+rep_data_long2 <- reshape(rep_data_long, varying = c("C1_1", "C1_2", "P1_1", "P1_2",
+                                                     "N1_1", "N1_2", "occ.nd1_1", 
+                                                     "occ.nd2_1", "occ.nd1_2", 
+                                                     "occ.nd2_2", "left.nd1_1", 
+                                                     "left.nd2_1", "left.nd1_2", 
+                                                     "left.nd2_2", "right.nd1_1", 
+                                                     "right.nd2_1", "right.nd1_2", 
+                                                     "right.nd2_2", "RL.nd1_1", 
+                                                     "RL.nd2_1", "RL.nd1_2", 
+                                                     "RL.nd2_2", "N2_1", "N2_2",
+                                                     "LP_1", "LP_2",
                                                      "ses.dprime_1", "ses.dprime_2",
-                                                     "RT_1", "RT_2"),  
+                                                     "RT_1", "RT_2",
+                                                     "threshold_1", "threshold_2"),  
                           direction = "long", idvar = " Subject", sep = "_")
 # Rename configuration column name
 names(rep_data_long2)[names(rep_data_long2) == "time"] <- "configuration"
@@ -244,61 +416,27 @@ rep_data_long2$group.original <- factor(rep_data_long2$group.original)
 rep_data_long2$session <- factor(rep_data_long2$session)
 rep_data_long2$configuration <- factor(rep_data_long2$configuration)
 
-#--------------------------------Comparisons--------------------------------------
-# 1. Compare d' across conditions
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
-dprime_baseline <- lme(dprime ~ 1, random = ~1|Subject/configuration/session, 
-                    data = rep_data_long2, method = "ML") #baseline
-dprime_config <- update(dprime_baseline, .~. + configuration)
-dprime_session <- update(dprime_config, .~. + session)
-dprime_group <- update(dprime_session, .~. + group)
-dprime_config_session <- update(dprime_group, .~. + configuration:session)
-dprime_session_group <- update(dprime_config_session, .~. + session:group)
-dprime_config_group <- update(dprime_session_group, .~. + configuration:group)
-dprime_lme <- update(dprime_config_group, .~. + configuration:session:group)
-anova(dprime_baseline, dprime_config, dprime_session, dprime_group, 
-      dprime_config_session, dprime_session_group, dprime_config_group, 
-      dprime_lme)
-
-# 2. Compare RT across conditions
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
-RT_baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
-                       data = rep_data_long2, method = "ML") #baseline
-RT_config <- update(RT_baseline, .~. + configuration)
-RT_session <- update(RT_config, .~. + session)
-RT_group <- update(RT_session, .~. + group)
-RT_config_session <- update(RT_group, .~. + configuration:session)
-RT_session_group <- update(RT_config_session, .~. + session:group)
-RT_config_group <- update(RT_session_group, .~. + configuration:group)
-RT_lme <- update(RT_config_group, .~. + configuration:session:group)
-anova(RT_baseline, RT_config, RT_session, RT_group, 
-      RT_config_session, RT_session_group, RT_config_group, 
-      RT_lme)
-
-#---------------------------Psychometric function fitting------------------------
-
 
 #---------------------------Prepare questionnaire data---------------------------
 # 1. Import questionnaire data and rename columns
-questionnaire.ses1 <- read.xlsx("Questionnaire data ses1.xlsx", sheetName = "Questionnaire data", 
-                           header = TRUE)
-questionnaire.ses2 <- read.xlsx("Questionnaire data ses2.xlsx", sheetName = "Questionnaire data", 
-                                header = TRUE)
+questionnaire.ses1 <- read.xlsx(paste('./Data/Questionnaire_data/', "Questionnaire data ses1.xlsx", sep = ""), 
+                                sheetName = "Questionnaire data", header = TRUE)
+questionnaire.ses2 <- read.xlsx(paste('./Data/Questionnaire_data/', "Questionnaire data ses2.xlsx", sep = ""), 
+                                sheetName = "Questionnaire data", header = TRUE)
 questionnaire.ses1 <- questionnaire.ses1[-c(25,26),]
 questionnaire.ses2 <- questionnaire.ses2[-c(25,26),]
+thresholds.1 <- thresholds.1[-c(25,26)]
+thresholds.2 <- thresholds.2[-c(25,26)]
+thresholds.3 <- thresholds.3[-c(25,26)]
 questionnaire.ses1[,c(1,16,17)] <- NULL # exclude subject, group & annotations columns
 questionnaire.ses2[,c(1,16,17)] <- NULL # exclude subject, group & annotations columns
-colnames(questionnaire.ses1) <- c("Recall",	"Block", "4.1",	"4.2", "4.3",	
-                             "4.4",	"4.5",	"4.6",	"5.1",	"5.2",	"5.3",	"5.4",	
-                             "5.5",	"5.6")
-colnames(questionnaire.ses2) <- c("Recall",	"Block", "4.1",	"4.2", "4.3",	
-                                  "4.4",	"4.5",	"4.6",	"5.1",	"5.2",	"5.3",	"5.4",	
-                                  "5.5",	"5.6")
-questionnaire.ERPs <- cbind(rep_data4, questionnaire.ses1)
+colnames(questionnaire.ses1) <- c("Recall.ses1",	"Block.ses1", "4.1.ses1",	"4.2.ses1", "4.3.ses1",	
+                             "4.4.ses1",	"4.5.ses1",	"4.6.ses1",	"5.1.ses1",	"5.2.ses1",	"5.3.ses1",	
+                             "5.4.ses1",	"5.5.ses1",	"5.6.ses1")
+colnames(questionnaire.ses2) <- c("Recall.ses2",	"Block.ses2", "4.1.ses2",	"4.2.ses2", "4.3.ses2",	
+                                  "4.4.ses2",	"4.5.ses2",	"4.6.ses2",	"5.1.ses2",	"5.2.ses2",	"5.3.ses2",	
+                                  "5.4.ses2",	"5.5.ses2",	"5.6.ses2")
+questionnaire.ERPs <- cbind(rep_data4, thresholds.1, thresholds.2, questionnaire.ses1, questionnaire.ses2)
 questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)
 
 # 2. Correlational measures
@@ -333,7 +471,18 @@ aware.index.lines <- ggplot(rep_data2, aes(x = group, y = aware.index)) +
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2)
   labs(title = "Occ average reference", x = "group", y = "Nd1 occ amplitude", 
        colour = "configuration")
-
+  
+# Threshold
+threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original, 
+                                                y = threshold,
+                                                colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "Quest Threshold", x = "group", y = "Threshold", 
+     colour = "configuration") 
+  
 # Histogram - questionnaire measures
 hist(questionnaire.ERPs$`4.4`)
 hist(questionnaire.ERPs$`5.4`)
@@ -367,6 +516,62 @@ lapply(questionnaire.ERPs[,c(25:30)], sd)
 
 by(questionnaire.ERPs[,25:30], questionnaire.ERPs$group, 
    stat.desc, basic = FALSE)
+
+#--------------------------------Comparisons--------------------------------------
+# 1. Compare d' across conditions
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
+dprime_baseline <- lme(dprime ~ 1, random = ~1|Subject/configuration/session, 
+                       data = rep_data_long2, method = "ML") #baseline
+dprime_config <- update(dprime_baseline, .~. + configuration)
+dprime_session <- update(dprime_config, .~. + session)
+dprime_group <- update(dprime_session, .~. + group)
+dprime_config_session <- update(dprime_group, .~. + configuration:session)
+dprime_session_group <- update(dprime_config_session, .~. + session:group)
+dprime_config_group <- update(dprime_session_group, .~. + configuration:group)
+dprime_lme <- update(dprime_config_group, .~. + configuration:session:group)
+anova(dprime_baseline, dprime_config, dprime_session, dprime_group, 
+      dprime_config_session, dprime_session_group, dprime_config_group, 
+      dprime_lme)
+
+# 2. Compare RT across conditions
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
+RT_baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
+                   data = rep_data_long2, method = "ML") #baseline
+RT_config <- update(RT_baseline, .~. + configuration)
+RT_session <- update(RT_config, .~. + session)
+RT_group <- update(RT_session, .~. + group)
+RT_config_session <- update(RT_group, .~. + configuration:session)
+RT_session_group <- update(RT_config_session, .~. + session:group)
+RT_config_group <- update(RT_session_group, .~. + configuration:group)
+RT_lme <- update(RT_config_group, .~. + configuration:session:group)
+anova(RT_baseline, RT_config, RT_session, RT_group, 
+      RT_config_session, RT_session_group, RT_config_group, 
+      RT_lme)
+
+# 2. Compare threshold across conditions
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
+threshold_baseline <- lme(threshold ~ 1, random = ~1|Subject/configuration/session, 
+                   data = rep_data_long2, method = "ML") #baseline
+threshold_config <- update(threshold_baseline, .~. + configuration)
+threshold_session <- update(threshold_config, .~. + session)
+threshold_group <- update(threshold_session, .~. + group)
+threshold_config_session <- update(threshold_group, .~. + configuration:session)
+threshold_session_group <- update(threshold_config_session, .~. + session:group)
+threshold_config_group <- update(threshold_session_group, .~. + configuration:group)
+threshold_lme <- update(threshold_config_group, .~. + configuration:session:group)
+anova(threshold_baseline, threshold_config, threshold_session, threshold_group, 
+      threshold_config_session, threshold_session_group, threshold_config_group, 
+      threshold_lme)
+
+# 2. Compare thresholds.1 across conditions
+t.test(thresholds.1 ~ group.original, data = questionnaire.ERPs)
+t.test(thresholds.2 ~ group.original, data = questionnaire.ERPs)
 
 #------------------------------------Correlations----------------------------
 # 1. Behavioral data correlations matrix
