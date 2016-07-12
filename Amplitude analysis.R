@@ -450,7 +450,7 @@ t.test(occ ~ group, data = rep_data_long7, paired = FALSE)
 t.test(left ~ group, data = rep_data_long7, paired = FALSE)
 t.test(right ~ group, data = rep_data_long7, paired = FALSE)
 
-# hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+# O.o
 rep_data_long8 <- subset(rep_data_long2, configuration == "rand")
 rep_data_long9 <- subset(rep_data_long8, group == "aware")
 t.test(occ ~ group, data = rep_data_long7, paired = FALSE)
