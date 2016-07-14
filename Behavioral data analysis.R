@@ -351,7 +351,7 @@ square.RT <- function(behav.file) {
                           row.names = NULL)
   square.trials <- subset(subj.data, Configuration == 1 & Resp == 1 & 
                             correct == 1)
-  RT.sqr <- mean(square.trials$RT)
+  RT.sqr <- as.vector(square.trials$RT)
 }
 #random
 random.RT <- function(behav.file) {
@@ -360,7 +360,7 @@ random.RT <- function(behav.file) {
                           row.names = NULL)
   random.trials <- subset(subj.data, Configuration == 0 & Resp == 1 & 
                             correct == 1)
-  RT.rand <- mean(random.trials$RT)
+  RT.rand <- as.vector(random.trials$RT)
 }
 #both
 retrieve.RT <- function(behav.file) {
@@ -369,19 +369,23 @@ retrieve.RT <- function(behav.file) {
                           row.names = NULL)
   response.trials <- subset(subj.data, Resp == 1 & 
                               correct == 1)
-  RT <- mean(response.trials$RT)
+  RT <- as.vector(response.trials$RT)
 }
+
 # 2.2. Compute RTs for each session
 #square
-RT.sqr_1 <- sapply(as.list(behav_ses_1), square.RT)
-RT.sqr_2 <- sapply(as.list(behav_ses_2), square.RT)
+RT.sqr_1 <- lapply(as.list(behav_ses_1), square.RT)
+RT.sqr_2 <- lapply(as.list(behav_ses_2), square.RT)
 #random
-RT.rand_1 <- sapply(as.list(behav_ses_1), random.RT)
-RT.rand_2 <- sapply(as.list(behav_ses_2), random.RT)
+RT.rand_1 <- lapply(as.list(behav_ses_1), random.RT)
+RT.rand_2 <- lapply(as.list(behav_ses_2), random.RT)
 #both
-RT_1 <- sapply(as.list(behav_ses_1), retrieve.RT)
-RT_2 <- sapply(as.list(behav_ses_2), retrieve.RT)
-RT_3 <- sapply(as.list(behav_ses_3), retrieve.RT)
+RT_1 <- lapply(as.list(behav_ses_1), retrieve.RT)
+RT_2 <- lapply(as.list(behav_ses_2), retrieve.RT)
+RT_3 <- lapply(as.list(behav_ses_3), retrieve.RT)
+
+plot(x=seq_along(1:length(RT_1[[1]])), y=RT_1[[1]], pch = 16)
+boxplot(x= factor(seq_along(1:length(RT_1))), y=RT_1)
 
 # 3. Retrieve  intensisites
 # 3.1. Function to extract intensities
