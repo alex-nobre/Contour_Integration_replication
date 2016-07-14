@@ -40,8 +40,8 @@ normality.test <- function(data, variable, color) {
 }
 
 # 3.2. Compute normality and plot qqplot for all dependent variables
-normal.tests <- mapply(normality.test, rep_data_long2[,6:18], colnames(rep_data_long2[,6:18]),
-                                                                       1:13)
+normal.tests <- mapply(normality.test, rep_data_long2[,6:18], 
+                       colnames(rep_data_long2[,6:18]), 1:ncol(rep_data_long2[,6:18]))
 
 # 3.3. Plot histograms
 # 5 Histograms for normality checks
@@ -49,12 +49,14 @@ normal.tests <- mapply(normality.test, rep_data_long2[,6:18], colnames(rep_data_
 hist(rep_data_long2$occ, prob = T)
 lines(density(rep_data_long2$occ), col = 2)
 # 5.2. Nd2 left
-hist(rep_data_long2$left, prob = T)
-lines(density(rep_data_long2$left), col = 3)
-# histogram(~x,
+par(mfrow = c(1,2))
+hist(rep_data_long2$left.nd2, main = "left nd2 mean amplitude", ylim = c(0, 0.5),
+     xlab = "amplitude", col = 2, prob = T)
+lines(density(rep_data_long2$left.nd2), col = 4, lwd = 3)
 # 5.3. Nd2 right
-hist(rep_data_long2$right, prob = T)
-lines(density(rep_data_long2$right), col = 4)
+hist(rep_data_long2$right.nd2, main = "Right nd2 mean amplitude", ylim = c(0, 0.5),
+     xlab = "amplitude", col = 3, prob = T)
+lines(density(rep_data_long2$right.nd2), col = 9, lwd = 3)
 
 #           panel = function(x,...){
 #             panel.histogram(x,...)
