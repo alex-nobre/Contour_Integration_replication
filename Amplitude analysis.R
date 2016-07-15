@@ -23,7 +23,6 @@ session_2 <- subset(rep_data_long2, session == 2)
 # 1.3. Log transform
 # mapply(min, )
 
-
 #---------------------------Exploratory data analysis---------------------------
 defaults <- par() #save graphical parameters defaults
 # 2. Compute variances and means
@@ -46,7 +45,7 @@ normal.tests <- mapply(normality.test, rep_data_long2[,6:18],
 # 3.3. Plot histograms
 # 5 Histograms for normality checks
 # 5.1. Nd1
-hist(rep_data_long2$occ, prob = T)
+hist(rep_data_long2$occ.nd1, col = 3, prob = T)
 lines(density(rep_data_long2$occ), col = 2)
 # 5.2. Nd2 left
 par(mfrow = c(1,2))
@@ -57,26 +56,10 @@ lines(density(rep_data_long2$left.nd2), col = 4, lwd = 3)
 hist(rep_data_long2$right.nd2, main = "Right nd2 mean amplitude", ylim = c(0, 0.5),
      xlab = "amplitude", col = 3, prob = T)
 lines(density(rep_data_long2$right.nd2), col = 9, lwd = 3)
-
-#           panel = function(x,...){
-#             panel.histogram(x,...)
-#             panel.mathdensity(dmath = dnorm, col = "red",
-#                               args = list(mean=mean(x),sd=sd(x)))
-#           },
-#           type="density")
+par(mfrow = c(1,1))
 
 # 4. Plot variances and means
-# 4.1. Scatterplot
-# 4.1.1. Group C1 means
-plot(1:14, rep_data2$C1[rep_data2$group.original == "aware"], 
-     ylab = "mean C1 amplitude", xlab = "subjects", pch = 20, col = "red", 
-     main = "C1 amplitudes")
-points(1:18, rep_data2$C1[rep_data2$group.original == "unaware"], 
-       pch = 20, col = "blue")
-abline(h=mean(rep_data2$C1[rep_data2$group.original == "aware"]), 
-       col = "red")
-abline(h=mean(rep_data2$C1[rep_data2$group.original == "unaware"]), 
-       col = "blue")
+
 
 # 4.1.1 P1 means x configuration
 ROImap_sqr_dat$P1.means <- rowMeans(ROImap_sqr_dat[,c(3,12)])
@@ -123,7 +106,6 @@ points(ROImap_rand_dat$subject, ROImap_rand_dat$N2_occ.means, pch = 20, col = "b
 abline(h=mean(ROImap_sqr_dat$N2_occ.means), col = "red")
 abline(h=mean(ROImap_rand_dat$N2_occ.means), col = "blue")
 
-
 # 4.1.7 LP means x configuration
 ROImap_sqr_dat$LP_anterior.means <- rowMeans(ROImap_sqr_dat[,c(9,18)])
 ROImap_rand_dat$LP_anterior.means <- rowMeans(ROImap_rand_dat[,c(9,18)])
@@ -141,65 +123,7 @@ xyplot(N1_occ ~ subject | group * session, groups = configuration, col = c("red"
 #   panel.loess(lwd=1,groups = configuration,...)
 # })
 
-# 6. Outlier detection with boxplots
-# 6.1. Nd1
-occ_box <- ggplot(rep_data_long2, aes(x = configuration, y = occ, fill = configuration)) +
-  geom_boxplot() + facet_grid(session~group)
-Boxplot(occ ~ configuration * session * group, data = rep_data_long2, 
-        colour = group) #car boxplot
-bwplot(occ ~ configuration|session, groups = group, data = rep_data_long2, 
-       auto.key = T) #lattice boxplot
-boxplot(rep_data_long2$occ ~ rep_data_long2$configuration * 
-          rep_data_long2$group) #base boxplot
-occ_out <- boxplot(rep_data_long2$occ, plot = FALSE)$out
-rep_data_long2[rep_data_long2$occ %in% occ_out,]
-# 6.2. Nd2 left
-left_box <- ggplot(rep_data_long2, aes(x = configuration, y = left,
-                                       fill = configuration)) +
-  geom_boxplot() + 
-  facet_grid(session~group)
-boxplot(rep_data_long2$left ~ rep_data_long2$configuration * rep_data_long2$group * 
-          rep_data_long2$session)
-left_out <- boxplot(rep_data_long2$left ~ rep_data_long2$configuration * rep_data_long2$group * 
-                      rep_data_long2$session, plot = FALSE)$out
-rep_data_long2[rep_data_long2$left %in% left_out,]
-# 6.3. Nd2 right
-boxplot(rep_data_long2$right ~ rep_data_long2$configuration * rep_data_long2$group * 
-          rep_data_long2$session)
-right_out <- boxplot(rep_data_long2$right ~ rep_data_long2$configuration * rep_data_long2$group * 
-                       rep_data_long2$session, plot = FALSE)$out
-rep_data_long2[rep_data_long2$right %in% right_out,]
 
-# 7. Line graphs with error bars for comparison of means
-# 6.1 Nd2 P1_occ_right - session
-nd2_P1_occ_right_line_session <- ggplot(ROImap_data_long, aes(x = group.original, 
-                                                              y = P1_occ_right, 
-                                                              colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "P1 average reference", x = "session", 
-       y = "P1 amplitude", colour = "configuration")
-
-# 6.2 Nd2 N1_occ - session
-nd2_N1_occ_line_session <- ggplot(ROImap_data_long, aes(x = session, y = N1_occ, 
-                                                        colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~group.original) +
-  labs(title = "N1 average reference", x = " session", y = "N1 amplitude", 
-       colour = "configuration")
-# 7.1 Nd1 - session
-nd1_line_session <- ggplot(rep_data_long2, aes(x = group, y = occ, 
-                                               colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "Occ average reference", x = "group", y = "Nd1 occ amplitude", 
-       colour = "configuration")
 
 # 7.3 Nd2 left - session
 nd2_left_line_session <- ggplot(rep_data_long2, aes(x = group, y = left, 
@@ -255,6 +179,27 @@ anova(nd1_baseline, nd1_config)
 summary(nd1_lme)
 
 # 8.1. C1
+# Scatterplot
+plot(1:18, rep_data4[rep_data4$group.original == "aware",]$C1.sqr_1, 
+     ylab = "mean C1 amplitude", xlab = "subjects", pch = 20, col = "red", 
+     main = "C1 amplitudes")
+points(1:14, rep_data4[rep_data4$group.original == "unaware",]$C1.sqr_1, 
+       pch = 20, col = "blue")
+abline(h=mean(rep_data4[rep_data4$group.original == "aware",]$C1.sqr_1), 
+       col = "red")
+abline(h=mean(rep_data4[rep_data4$group.original == "unaware",]$C1.sqr_1), 
+       col = "blue")
+# Line plot
+C1.line <- ggplot(rep_data_long2, aes(x = group.original, y = C1, 
+                                      colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "C1 mean aplitude", x = "session", 
+       y = "C1 mean amplitude", colour = "configuration")
+
+# ANOVA
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
@@ -271,6 +216,17 @@ anova(C1_baseline, C1_config, C1_session, C1_group, C1_config_session,
       C1_session_group, C1_config_group, C1_lme)
 
 # 8.2. P1
+# Line plot
+P1.line <- ggplot(rep_data_long2, aes(x = group.original, y = P1, 
+                                        colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "P1 mean amplitude", x = "session", 
+       y = "P1 mean amplitude", colour = "configuration")
+
+# ANOVA
 contrasts(ROImap_data_long$configuration) <- c(-1, 1) # set contrasts for config
 contrasts(ROImap_data_long$session) <- c(-1, 1) # set contrasts for session
 contrasts(ROImap_data_long$group) <- c(-1, 1) # set contrasts for group
@@ -289,6 +245,16 @@ anova(P1_baseline, P1_config, P1_session, P1_group,
 summary(P1_lme)
 
 # 8.3. N1
+# Line plot
+N1.line <- ggplot(rep_data_long2, aes(x = group.original, y = N1, 
+                                      colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "N1 mean amplitude", x = " session", y = "N1 mean amplitude", 
+       colour = "configuration")
+# ANOVA
 contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
 contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
@@ -307,6 +273,16 @@ anova(N1_baseline, N1_config, N1_session, N1_group,
 summary(N1_lme)
 
 # 8.4. Nd1 (P2)
+# Line plot
+nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1, 
+                                               colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "Occ Nd1 mean amplitude", x = "group", y = "Occ Nd1 mean amplitude", 
+       colour = "configuration")
+# ANOVA
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
@@ -359,7 +335,8 @@ anova(nd2_right_baseline, nd2_right_config, nd2_right_session, nd2_right_group.o
       nd2_right_config_session, nd2_right_session_group.original, nd2_right_config_group.original, 
       nd2_right_lme)
 summary(nd2_right_lme)
-
+t.test(C1 ~ configuration, data = rep_data_long2, paired = TRUE)
+ 
 # 8.6. Nd2 (VAN) right-left
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session

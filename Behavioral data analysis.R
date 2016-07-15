@@ -1,26 +1,29 @@
-library(pastecs)
+# Data import packages
+library(xlsx)
+# Data manipulation packages
+library(outliers)
+library(reshape2)
+library(dplyr)
+# Plotting packages
+library(lattice)
 library(ggplot2)
+library(gridExtra)
+library(GGally)
+# Analysis packages
+library(polycor)
 library(nlme)
 library(gmodels)
 library(lme4)
-library(gridExtra)
-library(outliers)
-library(lattice)
+library(ggm)
+library(pastecs)
 library(car)
 library(effsize)
-library(MPDiR)
-library(xlsx)
-library(polycor)
-library(ggm)
-library(GGally)
-library(dplyr)
-library(lattice)
-library(psyphy)
-library(ggplot2)
-library(gridExtra)
-library(knitr)
+# Psychophysics packages
 library(quickpsy)
-library(timeSeries)
+library(MPDiR)
+library(psyphy)
+# Data report packages
+library(knitr)
 
 # 0. Save graphical defaults
 defaults <- par()
@@ -209,8 +212,7 @@ for (i in 1:32) {
 #                   intensities.sub21, intensities.sub22, intensities.sub23, intensities.sub24,
 #                   intensities.sub25, intensities.sub26, intensities.sub27, intensities.sub28,
 #                   intensities.sub29, intensities.sub30, intensities.sub31, intensities.sub32)
-
-testAcc <- c(accuracies.sub1, accuracies.sub2, accuracies.sub3)
+#testAcc <- c(accuracies.sub1, accuracies.sub2, accuracies.sub3)
 
 # 1. Compute d'
 # 1.1. Functions to read files and accuracy and compute proportion of hits & false alarms 
@@ -293,32 +295,60 @@ compute.Pfa.ses3 <- function(behav.file) {
 
 # 1.2. Compute proportions of hits for each configurations
 #square
-ses1.Ph.sqr <- lapply(behav_ses_1, compute.Ph.sqr)
-ses2.Ph.sqr <- lapply(behav_ses_2, compute.Ph.sqr)
+ses1.Ph.sqr <- sapply(behav_ses_1, compute.Ph.sqr)
+ses2.Ph.sqr <- sapply(behav_ses_2, compute.Ph.sqr)
 #random
-ses1.Ph.rand <- lapply(behav_ses_1, compute.Ph.rand)
-ses2.Ph.rand <- lapply(behav_ses_2, compute.Ph.rand)
+ses1.Ph.rand <- sapply(behav_ses_1, compute.Ph.rand)
+ses2.Ph.rand <- sapply(behav_ses_2, compute.Ph.rand)
 # Both
-ses1.Ph <- lapply(behav_ses_1, compute.Ph)
-ses2.Ph <- lapply(behav_ses_2, compute.Ph)
-ses3.Ph <- lapply(behav_ses_3, compute.Ph.ses3)
+ses1.Ph <- sapply(behav_ses_1, compute.Ph)
+ses2.Ph <- sapply(behav_ses_2, compute.Ph)
+ses3.Ph <- sapply(behav_ses_3, compute.Ph.ses3)
 
 # 1.3. Compute proportions of false alarms for both configurations
 #square
-ses1.Pfa.sqr <- lapply(behav_ses_1, compute.Pfa.sqr)
-ses2.Pfa.sqr <- lapply(behav_ses_2, compute.Pfa.sqr)
+ses1.Pfa.sqr <- sapply(behav_ses_1, compute.Pfa.sqr)
+ses2.Pfa.sqr <- sapply(behav_ses_2, compute.Pfa.sqr)
 #random
-ses1.Pfa.rand <- lapply(behav_ses_1, compute.Pfa.rand)
-ses2.Pfa.rand <- lapply(behav_ses_2, compute.Pfa.rand)
+ses1.Pfa.rand <- sapply(behav_ses_1, compute.Pfa.rand)
+ses2.Pfa.rand <- sapply(behav_ses_2, compute.Pfa.rand)
 # Both
-ses1.Pfa <- lapply(behav_ses_1, compute.Pfa)
-ses2.Pfa <- lapply(behav_ses_2, compute.Pfa)
-ses3.Pfa <- lapply(behav_ses_3, compute.Pfa.ses3)
+ses1.Pfa <- sapply(behav_ses_1, compute.Pfa)
+ses2.Pfa <- sapply(behav_ses_2, compute.Pfa)
+ses3.Pfa <- sapply(behav_ses_3, compute.Pfa.ses3)
 
-# 1.4. Compute proportion correct rejections, misses, correct - UPDATE WITH CONFIGS!!!!
-ses1.Pcr <- lapply(ses1.Pfa, function(x) 1-x)
-ses1.Pm <- lapply(ses1.Ph, function(y) 1-y)
+# 1.4. Compute proportion correct rejections, misses, correct
+# 1.4.1. Square
+# 1.4.1.1. Session 1
+ses1.Pcr.sqr <- sapply(ses1.Pfa.sqr, function(x) 1-x)
+ses1.Pm.sqr <- sapply(ses1.Ph.sqr, function(y) 1-y)
+ses1.Pc.sqr <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph.sqr, ses1.Pcr.sqr)
+# 1.4.1.1. Session 2
+ses2.Pcr.sqr <- sapply(ses2.Pfa.sqr, function(x) 1-x)
+ses2.Pm.sqr <- sapply(ses2.Ph.sqr, function(y) 1-y)
+ses2.Pc.sqr <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph.sqr, ses2.Pcr.sqr)
+# 1.4.2. Random
+# 1.4.2.1. Session 1
+ses1.Pcr.rand <- sapply(ses1.Pfa.rand, function(x) 1-x)
+ses1.Pm.rand <- sapply(ses1.Ph.rand, function(y) 1-y)
+ses1.Pc.rand <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph.rand, ses1.Pcr.rand)
+# 1.4.2.1. Session 2
+ses2.Pcr.rand <- sapply(ses2.Pfa.rand, function(x) 1-x)
+ses2.Pm.rand <- sapply(ses2.Ph.rand, function(y) 1-y)
+ses2.Pc.rand <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph.rand, ses2.Pcr.rand)
+# 1.4.3. Both
+# 1.4.3.1. Session 1
+ses1.Pcr <- sapply(ses1.Pfa, function(x) 1-x)
+ses1.Pm <- sapply(ses1.Ph, function(y) 1-y)
 ses1.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph, ses1.Pcr)
+# 1.4.3.2. Session 2
+ses2.Pcr <- sapply(ses2.Pfa, function(x) 1-x)
+ses2.Pm <- sapply(ses2.Ph, function(y) 1-y)
+ses2.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph, ses2.Pcr)
+# 1.4.3.3. Session 3
+ses3.Pcr <- sapply(ses3.Pfa, function(x) 1-x)
+ses3.Pm <- sapply(ses3.Ph, function(y) 1-y)
+ses3.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses3.Ph, ses3.Pcr)
 
 # 1.5. Function to compute d'
 compute.dprime <- function(hit, fa) {
@@ -384,8 +414,37 @@ RT_1 <- lapply(as.list(behav_ses_1), retrieve.RT)
 RT_2 <- lapply(as.list(behav_ses_2), retrieve.RT)
 RT_3 <- lapply(as.list(behav_ses_3), retrieve.RT)
 
-plot(x=seq_along(1:length(RT_1[[1]])), y=RT_1[[1]], pch = 16)
-boxplot(x= factor(seq_along(1:length(RT_1))), y=RT_1)
+# 2.3. Remove outliers (RTs above or below 3sds from the mean)
+# 2.3.1. Function to remove outliers
+remove.outliers <- function(vectorx) {
+  vec.mean <- mean(vectorx)
+  vec.sd <- sd(vectorx)
+  for (i in 1:length(vectorx)) {
+    if (vectorx[i] < vec.mean - 2*vec.sd  | vectorx[i] > 2*vec.sd + vec.mean) {
+      vectorx[-i]
+    }
+  }
+  return(vectorx)
+}
+# 2.3.2 Boxplots to detect outliers
+testout<- remove.outliers(RT_1[[21]])
+boxplot(RT_1[[21]], col = 3)
+# 2.3.3. Apply function to RT lists
+RT_1 <- lapply(RT_1, remove.outliers)
+RT_2 <- lapply(RT_2, remove.outliers)
+RT_3 <- lapply(RT_3, remove.outliers)
+
+# 2.4. Compute mean RTs
+# 2.4.1. Square
+RT.mean.sqr.1 <- sapply(RT.sqr_1, mean)
+RT.mean.sqr.2 <- sapply(RT.sqr_2, mean)
+# 2.4.2. Random
+RT.mean.rand.1 <- sapply(RT.rand_1, mean)
+RT.mean.rand.2 <- sapply(RT.rand_2, mean)
+# 2.4.3. Both
+RT.mean.1 <- sapply(RT_1, mean)
+RT.mean.2 <- sapply(RT_2, mean)
+RT.mean.3 <- sapply(RT_3, mean)
 
 # 3. Retrieve  intensisites
 # 3.1. Function to extract intensities
@@ -485,30 +544,43 @@ threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
 rep_data3 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
                    ses.rand.dprime_2, ses.dprime_1, ses.dprime_2)
 # 4.2. Bind RT values to data frame
-rep_data4 <- cbind(rep_data3, RT.sqr_1, RT.sqr_2, RT.rand_1, RT.rand_2, RT_1, RT_2)
+rep_data4 <- cbind(rep_data3, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.rand.1, 
+                   RT.mean.rand.2, RT.mean.1, RT.mean.2, RT.mean.3)
 
-# 4.3. Bind threshold, intensities and accuracy values to data frame
+# 4.3. Bind session threshold, proportion correct, intensities per trial and 
+# accuracy values per trial to data frame
 # 4.3.1. Thresholds
 rep_data4 <- cbind(rep_data4, threshold.sqr_1, threshold.sqr_2, threshold.rand_1, 
                    threshold.rand_2, threshold.1, threshold.2)
-# 4.3.1. Intensities
-# 4.3.1.1. Both configurations
+
+# 4.3.2. Proportion correct, hits, misses, false alarms and correct rejections
+rep_data4 <- cbind(ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
+                   ses2.Ph, ses3.Ph, ses1.Pfa.sqr, ses2.Pfa.sqr, ses1.Pfa.rand, 
+                   ses2.Pfa.rand, ses1.Pfa, ses2.Pfa, ses3.Pfa, ses1.Pm.sqr, 
+                   ses2.Pm.sqr, ses1.Pm.rand, ses2.Pm.rand, ses1.Pm, ses2.Pm,
+                   ses3.Pm, ses1.Pcr.sqr, ses2.Pcr.sqr, ses1.Pcr.rand, ses2.Pcr.rand,
+                   ses1.Pcr, ses2.Pcr, ses3.Pcr, ses1.Pc.sqr, ses2.Pc.sqr, 
+                   ses1.Pc.rand, ses2.Pc.rand, ses1.Pc, ses2.Pc, ses3.Pc)
+
+# 4.3.3. Intensities
+# 4.3.3.1. Both configurations
 rep_data4$intensities.1 <- intensities.1
 rep_data4$intensities.2 <- intensities.2
-# 4.3.1.2. Square
+# 4.3.3.2. Square
 rep_data4$intensities.sqr.1 <- intensities.sqr.1
 rep_data4$intensities.sqr.2 <- intensities.sqr.2
-# 4.3.1.3. Random
+# 4.3.3.3. Random
 rep_data4$intensities.rand.1 <- intensities.rand.1
 rep_data4$intensities.rand.2 <- intensities.rand.2
-# 4.3.2. Accuracies
-# 4.3.2.1. Both configurations
+
+# 4.3.4. Accuracies
+# 4.3.4.1. Both configurations
 rep_data4$accuracies.1 <- accuracies.1
 rep_data4$accuracies.2 <- accuracies.2
-# 4.3.2.2. Square
+# 4.3.4.2. Square
 rep_data4$accuracies.sqr.1 <- accuracies.sqr.1
 rep_data4$accuracies.sqr.2 <- accuracies.sqr.2
-# 4.3.2.3. Random
+# 4.3.4.3. Random
 rep_data4$accuracies.rand.1 <- accuracies.rand.1
 rep_data4$accuracies.rand.2 <- accuracies.rand.2
 
@@ -611,18 +683,19 @@ rep_data_long2$group.original <- factor(rep_data_long2$group.original)
 rep_data_long2$session <- factor(rep_data_long2$session)
 rep_data_long2$configuration <- factor(rep_data_long2$configuration)
 
-# Threshold
-threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original, 
-                                                 y = threshold,
-                                                 colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "Quest Threshold", x = "group", y = "Threshold", 
-       colour = "configuration") 
-
-# 2. Compare RT across conditions
+#---------------------------Psychophysical analysis-------------------------
+# 1.RT
+summary(rep_data4$RT_1)
+summary(rep_data4$RT_2)
+# 1.2. Scatterplot
+plot(rep_data4$Subject, rep_data4$RT_1, main = "RT in session 1",
+     xlab = "RT", pch = 16, col = 6)
+# 1.3. Histograms
+hist(rep_data4$RT.mean.1, main = "RT in session 1",
+     xlab = "RT", col = 7)
+hist(rep_data4$RT.mean.2, main = "RT in session 2",
+     xlab = "RT", col = 12)
+# 1.4. Compare RT across conditions
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
@@ -639,29 +712,14 @@ anova(RT_baseline, RT_config, RT_session, RT_group.original,
       RT_config_session, RT_session_group.original, RT_config_group.original, 
       RT_lme)
 
-#---------------------------Psychophysical analysis-------------------------
-# RT
-summary(rep_data4$RT_1)
-summary(rep_data4$RT_2)
-#Scatterplot
-plot(rep_data4$Subject, rep_data4$RT_1, main = "RT in session 1",
-     xlab = "RT", pch = 16, col = 6)
-# Histograms
-hist(rep_data4$RT_1, main = "RT in session 1",
-     xlab = "RT", col = 7)
-
-hist(rep_data4$RT_2, main = "RT in session 1",
-     xlab = "RT", col = 12)
-
-# Function to bind values for each subject
-nested.columns <- function(adata, avector, aname) {
-  adata$column <- avector
-}
-
-nested.data <- function(nested.list) {
-  return(lapply(nested.columns, nested.list, cbind))
-  blocksnames <- paste("block.intensities.", seq_along(0:9), sep = "")
-}
+# # Function to bind values for each subject
+# nested.columns <- function(adata, avector, aname) {
+#   adata$column <- avector
+# }
+# nested.data <- function(nested.list) {
+#   return(lapply(nested.columns, nested.list, cbind))
+#   blocksnames <- paste("block.intensities.", seq_along(0:9), sep = "")
+# }
 
 # Create data frame for intensities
 intensities.data <- data.frame()
@@ -683,7 +741,7 @@ rep_data4 <- cbind(rep_data4, intensities.data)
 rep_data4$group <- factor(rep_data4$group)
 rep_data4$group.original <- factor(rep_data4$group.original)
 
-# 1. Plot intensities
+# Intensities
 # 1.1. Function to plot intensities
 plot.intensities <- function(intlist, subject) {
   plot(seq(1:length(intlist[[subject]])), intlist[[subject]], ylim = c(-0.5, 0.5),
@@ -714,6 +772,18 @@ abline(h = mean(rep_data4[rep_data4$group.original == 'unaware', ]$threshold.1),
        col = 'red')
 
 # 3. Median split analysis of ERPs
+# Threshold
+# Line plot
+threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original, 
+                                                 y = threshold,
+                                                 colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "Quest Threshold", x = "group", y = "Threshold", 
+       colour = "configuration")
+# 3.0. Histogram 
 # 3.1. Compute medians
 low.threshold.group <- rep_data4[which(rep_data4$threshold.1 < 
                                          median(rep_data4$threshold.1)),]$Subject
@@ -869,40 +939,15 @@ cor.test(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$freq.4.ses1,
 cor.test(questionnaire.ERPs$conf.4.ses2, questionnaire.ERPs$freq.4.ses2, 
          method = "pearson")
 
-boxplot(RT_1 ~ group, questionnaire.ERPs)
 
 # 2. Compute Correlational measures
 # 2.1. Combined measure of awareness: RT x confidence ratings
 # 2.1.1. Session 1
-questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT_1 * 
+questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT.mean.1 * 
   questionnaire.ERPs$conf.4.ses1
 # 2.1.2. Session 2
-questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT_2 * 
+questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT.mean.2 * 
   questionnaire.ERPs$conf.4.ses2
-
-# 2.1.3. Scatterplot - aware index session 1
-plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$aware.index.1, 
-     col = questionnaire.ERPs$group.original, pch = 16, main = "Awareness index session 1",
-     xlab = "Subject", ylab = "Awareness index")
-legend(2, 0, legend = levels(questionnaire.ERPs$group.original), 
-       col = c("black", "red"),
-       pch = 16)
-
-# 2.1.4. Line plots with error bars - Aware index per group
-aware.index.1.lines <- ggplot(questionnaire.ERPs, aes(x = group.original, 
-                                                      y = aware.index.1)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line") + 
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2)
-labs(title = "Aware index session 1", x = "group", y = "aware index")
-
-# 2.1.5. Scatterplot - aware index session 2
-plot(questionnaire.ERPs$Subject, questionnaire.ERPs$aware.index.2, 
-     col = questionnaire.ERPs$group.original, pch = 16, 
-     main = "aware index session 1")
-legend(2,1.1, legend = levels(questionnaire.ERPs$group.original), 
-       col = c("black", "red"),
-       pch = 16)
 
 # 2.2. Combined measure of awareness: RT x threshold value
 # 2.2.1. Session 1
@@ -911,7 +956,6 @@ questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 *
 # 2.2.1. Session 2
 questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
   questionnaire.ERPs$conf.4.ses1
-
 
 # 2.2 Compute RT means across sessions
 questionnaire.ERPs$RT_1_2 <- rowMeans(questionnaire.ERPs[,19:20])
@@ -931,6 +975,42 @@ questionnaire.ERPs$left_diff_2 <- questionnaire.ERPs$left.sqr.nd2_2 -
   questionnaire.ERPs$left.rand.nd2_2
 questionnaire.ERPs$right_diff_2 <- questionnaire.ERPs$right.sqr.nd2_2 - 
   questionnaire.ERPs$right.rand.nd2_2
+
+# 2.1.3. Scatterplot - aware index session 1
+plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$aware.index.1, 
+     col = questionnaire.ERPs$group.original, pch = 16, 
+     main = "Awareness index session 1",
+     xlab = "Subject", ylab = "Awareness index")
+legend(2, 0, legend = levels(questionnaire.ERPs$group.original), 
+       col = c("black", "red"),
+       pch = 16)
+
+# 2.1.3. Scatterplot - aware index session 2
+plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$aware.index.2, 
+     col = questionnaire.ERPs$group.original, pch = 16, 
+     main = "Awareness index session 1",
+     xlab = "Subject", ylab = "Awareness index")
+legend(2, 0, legend = levels(questionnaire.ERPs$group.original), 
+       col = c("black", "red"),
+       pch = 16)
+
+# 2.1.4. Line plots with error bars - Aware index session 1 per group
+aware.index.1.lines <- ggplot(questionnaire.ERPs, aes(x = group.original, 
+                                                      y = aware.index.1)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line") + 
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2)
+labs(title = "Aware index session 1", x = "group", y = "aware index")
+
+# 2.1.4. Line plots with error bars - Aware index session 2 per group
+aware.index.2.lines <- ggplot(questionnaire.ERPs, aes(x = group.original, 
+                                                      y = aware.index.2)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line") + 
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2)
+labs(title = "Aware index session 2", x = "group", y = "aware index")
+
+
 
 # 3. Correlations: ERP differences x awareness measures
 # 3.1. ERP Differences x confidence ratings
@@ -1015,8 +1095,15 @@ ggpairs(questionnaire.ratings1, mapping = aes(color=Recall))
 # 1.2. Group subsets
 aware <- subset(questionnaire.ERPs, group.original == 'aware')
 unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
-
-
+# 1.3. Correlational measures subset
+cor_data <- questionnaire.ERPs[,c("RT_1", "threshold.1", "conf.4.ses1",
+                                  "freq.4.ses1", "aware.index.1", "ses.1.Pc",
+                                  "ses1.Ph", "ses1.Pm", "ses1.Pfa", "ses1.Pcr")]
+cor_data2 <- questionnaire.ERPs[,c("RT_2", "threshold.2", "conf.4.ses2",
+                                  "freq.4.ses2", "aware.index.2", "ses.2.Pc",
+                                  "ses2.Ph", "ses2.Pm", "ses2.Pfa", "ses2.Pcr")]
+cor(cor_data)
+cor(cor_data2)
 
 # 2. Correlations: psychophysical x awareness measures
 # 2.1. d' x Confidence ratings - session 1
@@ -1039,24 +1126,22 @@ cor.test(unaware$RT_1, unaware$conf.4.ses1)
 cor.test(aware$RT_2, aware$conf.4.ses2)
 cor.test(unaware$RT_2, unaware$conf.4.ses2)
 
-
-
 # 4. Correlations: ERP differences x psychophysical measures
 # 4.1. Correlations: ERP Differences x reaction time
 # 4.1.1. Both groups
 # 4.1.1.1 Session 1
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT_1, 
+cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT.mean.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT_1, 
+cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT.mean.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT_1, 
+cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT.mean.1, 
          method = "pearson")
 # 4.1.1.2 Session 2
-cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$RT_2, 
+cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$RT_2, 
+cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$RT_2, 
+cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
 # 4.1.1.3 Average
 cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT_1_2, 
@@ -1123,12 +1208,13 @@ cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1,
 cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
 
-# 4.3. ERP Differences x thresolds - FINISH!
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$ses.dprime_1, 
+# 4.3. ERP Differences x thresholds
+# 4.3.1. Session 1
+cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$threshold.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$threshold.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$threshold.1, 
          method = "pearson")
 
 #--------------------------------Comparisons--------------------------------------
@@ -1184,19 +1270,23 @@ anova(threshold_baseline, threshold_config, threshold_session, threshold_group.o
       threshold_lme)
 
 # 4. Thresholds.1 across conditions
-t.test(thresholds.1 ~ group.original, data = questionnaire.ERPs)
-t.test(thresholds.2 ~ group.original, data = questionnaire.ERPs)
+t.test(threshold.1 ~ group.original, data = questionnaire.ERPs)
+t.test(threshold.2 ~ group.original, data = questionnaire.ERPs)
 
 # 5. Awareness ratings between session ins unaware group
 # 5.1. Compare means in confidence ratings
-t.test(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, paired = TRUE)
+t.test(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, 
+       paired = TRUE)
 # 5.2. Compute effect sizes
-cohen.d(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, paired = TRUE)
+cohen.d(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, 
+        paired = TRUE)
 
 # 5.3. Compare means in frequency ratings
-t.test(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, paired = TRUE)
+t.test(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, 
+       paired = TRUE)
 # 5.2. Compute effect sizes
-cohen.d(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, paired = TRUE)
+cohen.d(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, 
+        paired = TRUE)
 
 # 5.1. Compare means in awareness index
 t.test(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2, 
