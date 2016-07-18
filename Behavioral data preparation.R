@@ -379,9 +379,11 @@ retrieve.RT <- function(behav.file) {
 #square
 RT.sqr_1 <- lapply(as.list(behav_ses_1), square.RT)
 RT.sqr_2 <- lapply(as.list(behav_ses_2), square.RT)
+RT.sqr_3 <- lapply(as.list(behav_ses_3), square.RT)
 #random
 RT.rand_1 <- lapply(as.list(behav_ses_1), random.RT)
 RT.rand_2 <- lapply(as.list(behav_ses_2), random.RT)
+RT.rand_3 <- lapply(as.list(behav_ses_3), random.RT)
 #both
 RT_1 <- lapply(as.list(behav_ses_1), retrieve.RT)
 RT_2 <- lapply(as.list(behav_ses_2), retrieve.RT)
@@ -411,9 +413,11 @@ RT_3 <- lapply(RT_3, remove.outliers)
 # 2.4.1. Square
 RT.mean.sqr.1 <- sapply(RT.sqr_1, mean)
 RT.mean.sqr.2 <- sapply(RT.sqr_2, mean)
+RT.mean.sqr.3 <- sapply(RT.sqr_3, mean)
 # 2.4.2. Random
 RT.mean.rand.1 <- sapply(RT.rand_1, mean)
 RT.mean.rand.2 <- sapply(RT.rand_2, mean)
+RT.mean.rand.3 <- sapply(RT.rand_3, mean)
 # 2.4.3. Both
 RT.mean.1 <- sapply(RT_1, mean)
 RT.mean.2 <- sapply(RT_2, mean)
@@ -517,8 +521,9 @@ threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
 rep_data3 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
                    ses.rand.dprime_2, ses.dprime_1, ses.dprime_2)
 # 4.2. Bind RT values to data frame
-rep_data4 <- cbind(rep_data3, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.rand.1, 
-                   RT.mean.rand.2, RT.mean.1, RT.mean.2, RT.mean.3)
+rep_data4 <- cbind(rep_data3, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.sqr.3, 
+                   RT.mean.rand.1, RT.mean.rand.2, RT.mean.rand.3, RT.mean.1, 
+                   RT.mean.2, RT.mean.3)
 
 # 4.3. Bind session threshold, proportion correct, intensities per trial and 
 # accuracy values per trial to data frame

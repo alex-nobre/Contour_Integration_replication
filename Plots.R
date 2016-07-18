@@ -4,6 +4,7 @@ sqr1_fnames <- list.files(getwd(), pattern = "1_ROI Evaluator Sqr_sqr")
 sqr2_fnames <- list.files(getwd(), pattern = "2_ROI Evaluator Sqr_sqr")
 rand1_fnames <- list.files(getwd(), pattern = "1_ROI Evaluator Rand_rand")
 rand2_fnames <- list.files(getwd(), pattern = "2_ROI Evaluator Rand_rand")
+
 # Concatenate all lists in a single list
 list_fnames <- c(sqr1_fnames, sqr2_fnames, rand1_fnames, rand2_fnames)
 

@@ -59,8 +59,6 @@ lines(density(rep_data_long2$right.nd2), col = 9, lwd = 3)
 par(mfrow = c(1,1))
 
 # 4. Plot variances and means
-
-
 # 4.1.1 P1 means x configuration
 ROImap_sqr_dat$P1.means <- rowMeans(ROImap_sqr_dat[,c(3,12)])
 ROImap_rand_dat$P1.means <- rowMeans(ROImap_rand_dat[,c(3,12)])
@@ -122,7 +120,6 @@ xyplot(N1_occ ~ subject | group * session, groups = configuration, col = c("red"
 #   panel.xyplot(...)
 #   panel.loess(lwd=1,groups = configuration,...)
 # })
-
 
 
 # 7.3 Nd2 left - session

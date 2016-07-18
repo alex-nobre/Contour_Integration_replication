@@ -38,6 +38,10 @@ unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
 summary(rep_data4$RT_1)
 summary(rep_data4$RT_2)
 
+# Means session 3
+mean(aware$RT.mean.3)
+mean(unaware$RT.mean.3)
+
 # 1.2. Plots
 # 1.2.1. Scatterplot
 plot(rep_data4$Subject, rep_data4$RT_1, main = "RT in session 1",
@@ -159,7 +163,8 @@ rep_data4$split.group <- factor(rep_data4$split.group)
 
 # 3.3. Plot median split group x awareness group
 table(rep_data4$split.group, rep_data4$group.original)
-plot(rep_data4$split.group, rep_data4$group.original, main = "Median split group x awareness",
+plot(rep_data4$split.group, rep_data4$group.original, 
+     main = "Median split group x awareness",
      xlab = "median split group", ylab = "awareness group")
 
 # 3.4. Chi-square
