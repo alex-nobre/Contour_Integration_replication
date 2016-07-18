@@ -96,7 +96,6 @@ accuracies.1 <- lapply(behav_ses_1, compute.accuracy)
 accuracies.2 <- lapply(behav_ses_2, compute.accuracy)
 accuracies.3 <- lapply(behav_ses_3, compute.accuracy)
 
-accuracies.1 <- numeric()
 
 for (i in 1:32) {
   accuracies.1[i] <- compute.accuracy(behav_ses_1[[i]])
@@ -193,132 +192,146 @@ for (i in 1:32) {
 # 1.1.1. Sessions 1 & 2 (task: dim disc detection)
 # 1.1.1.1. Square and random configurations
 # P(Hits) square
-compute.Ph.sqr <- function(behav.file) {
+extract.h.sqr <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
                           header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   target.trials.sqr <- subset(subj.data, target.presence == 1 & Configuration == 1)
-  Ph.sqr <- mean(target.trials.sqr$correct)
+  h.sqr <- as.vector(target.trials.sqr$correct)
 }
 # P(Hits) random
-compute.Ph.rand <- function(behav.file) {
+extract.h.rand <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
                           header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   target.trials.rand <- subset(subj.data, target.presence == 1 & Configuration == 0)
-  Ph.rand <- mean(target.trials.rand$correct)
+  h.rand <- as.vector(target.trials.rand$correct)
 }
 # P(False alarms) square
-compute.Pfa.sqr <- function(behav.file) {
+extract.fa.sqr <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
                           header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   notarget.trials.sqr <- subset(subj.data, target.presence == 0 & Configuration == 1)
-  Pfa.sqr <- mean(notarget.trials.sqr$Resp)
+  fa.sqr <- as.vector(notarget.trials.sqr$Resp)
 }
 # P(False alarms) random
-compute.Pfa.rand <- function(behav.file) {
+extract.fa.rand <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
                           header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   notarget.trials.rand <- subset(subj.data, target.presence == 0 & Configuration == 0)
-  Pfa.rand <- mean(notarget.trials.rand$Resp)
+  fa.rand <- as.vector(notarget.trials.rand$Resp)
 }
 
 # 1.1.1.2. Both
 # P(Hits)
-compute.Ph <- function(behav.file) {
+extract.h <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   target.trials <- subset(subj.data, target.presence == 1)
-  Ph <- mean(target.trials$correct)
+  h <- as.vector(target.trials$correct)
 }
 
 # P(False alarms)
-compute.Pfa <- function(behav.file) {
+extract.fa <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   notarget.trials <- subset(subj.data, target.presence == 0)
-  Pfa <- mean(notarget.trials$Resp)
+  fa <- as.vector(notarget.trials$Resp)
 }
 
 # 1.1.2. Session 3 (task: diamond detection)
 # P(Hits)
-compute.Ph.ses3 <- function(behav.file) {
+extract.h.ses3 <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   diamond.trials <- subset(subj.data, Configuration == 2)
-  Ph <- mean(diamond.trials$correct)
+  h <- as.vector(diamond.trials$correct)
 }
 # P(False alarms)
-compute.Pfa.ses3 <- function(behav.file) {
+extract.fa.ses3 <- function(behav.file) {
   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), header = TRUE, sep = "\t", skip = 12, 
                           row.names = NULL)
   colnames(subj.data)[5] <- "target.presence"
   nodiamond.trials <- subset(subj.data, Configuration == 0 | Configuration == 1)
-  Pfa <- mean(nodiamond.trials$Resp)
+  fa <- as.vector(nodiamond.trials$Resp)
 }
 
-# 1.2. Compute proportions of hits for each configurations
+# 1.2. Extract hits and misses for each configuration
 #square
-ses1.Ph.sqr <- sapply(behav_ses_1, compute.Ph.sqr)
-ses2.Ph.sqr <- sapply(behav_ses_2, compute.Ph.sqr)
+ses1.h.sqr <- lapply(as.list(behav_ses_1), extract.h.sqr)
+ses2.h.sqr <- lapply(as.list(behav_ses_2), extract.h.sqr)
 #random
-ses1.Ph.rand <- sapply(behav_ses_1, compute.Ph.rand)
-ses2.Ph.rand <- sapply(behav_ses_2, compute.Ph.rand)
+ses1.h.rand <- lapply(as.list(behav_ses_1), extract.h.rand)
+ses2.h.rand <- lapply(as.list(behav_ses_2), extract.h.rand)
 # Both
-ses1.Ph <- sapply(behav_ses_1, compute.Ph)
-ses2.Ph <- sapply(behav_ses_2, compute.Ph)
-ses3.Ph <- sapply(behav_ses_3, compute.Ph.ses3)
+ses1.h <- lapply(as.list(behav_ses_1), extract.h)
+ses2.h <- lapply(as.list(behav_ses_2), extract.h)
+ses3.h <- lapply(as.list(behav_ses_3), extract.h.ses3)
 
-# 1.3. Compute proportions of false alarms for both configurations
+# 1.3. Extract false alarms and correct rejections for both configurations
 #square
-ses1.Pfa.sqr <- sapply(behav_ses_1, compute.Pfa.sqr)
-ses2.Pfa.sqr <- sapply(behav_ses_2, compute.Pfa.sqr)
+ses1.fa.sqr <- lapply(as.list(behav_ses_1), extract.fa.sqr)
+ses2.fa.sqr <- lapply(as.list(behav_ses_2), extract.fa.sqr)
 #random
-ses1.Pfa.rand <- sapply(behav_ses_1, compute.Pfa.rand)
-ses2.Pfa.rand <- sapply(behav_ses_2, compute.Pfa.rand)
+ses1.fa.rand <- lapply(as.list(behav_ses_1), extract.fa.rand)
+ses2.fa.rand <- lapply(as.list(behav_ses_2), extract.fa.rand)
 # Both
-ses1.Pfa <- sapply(behav_ses_1, compute.Pfa)
-ses2.Pfa <- sapply(behav_ses_2, compute.Pfa)
-ses3.Pfa <- sapply(behav_ses_3, compute.Pfa.ses3)
+ses1.fa <- lapply(as.list(behav_ses_1), extract.fa)
+ses2.fa <- lapply(as.list(behav_ses_2), extract.fa)
+ses3.fa <- lapply(as.list(behav_ses_3), extract.fa.ses3)
 
-# 1.4. Compute proportion correct rejections, misses, correct
+# 1.4. Compute proportions (hits, false alarms, correct rejections, misses, correct)
 # 1.4.1. Square
 # 1.4.1.1. Session 1
+ses1.Ph.sqr <- sapply(ses1.h.sqr, mean)
+ses1.Pfa.sqr <- sapply(ses1.fa.sqr, mean)
 ses1.Pcr.sqr <- sapply(ses1.Pfa.sqr, function(x) 1-x)
 ses1.Pm.sqr <- sapply(ses1.Ph.sqr, function(y) 1-y)
 ses1.Pc.sqr <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph.sqr, ses1.Pcr.sqr)
 # 1.4.1.1. Session 2
+ses2.Ph.sqr <- sapply(ses2.h.sqr, mean)
+ses2.Pfa.sqr <- sapply(ses2.fa.sqr, mean)
 ses2.Pcr.sqr <- sapply(ses2.Pfa.sqr, function(x) 1-x)
 ses2.Pm.sqr <- sapply(ses2.Ph.sqr, function(y) 1-y)
 ses2.Pc.sqr <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph.sqr, ses2.Pcr.sqr)
 # 1.4.2. Random
 # 1.4.2.1. Session 1
+ses1.Ph.rand <- sapply(ses1.h.rand, mean)
+ses1.Pfa.rand <- sapply(ses1.fa.rand, mean)
 ses1.Pcr.rand <- sapply(ses1.Pfa.rand, function(x) 1-x)
 ses1.Pm.rand <- sapply(ses1.Ph.rand, function(y) 1-y)
 ses1.Pc.rand <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph.rand, ses1.Pcr.rand)
 # 1.4.2.1. Session 2
+ses2.Ph.rand <- sapply(ses2.h.rand, mean)
+ses2.Pfa.rand <- sapply(ses2.fa.rand, mean)
 ses2.Pcr.rand <- sapply(ses2.Pfa.rand, function(x) 1-x)
 ses2.Pm.rand <- sapply(ses2.Ph.rand, function(y) 1-y)
 ses2.Pc.rand <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph.rand, ses2.Pcr.rand)
 # 1.4.3. Both
 # 1.4.3.1. Session 1
+ses1.Ph <- sapply(ses1.h, mean)
+ses1.Pfa <- sapply(ses1.fa, mean)
 ses1.Pcr <- sapply(ses1.Pfa, function(x) 1-x)
 ses1.Pm <- sapply(ses1.Ph, function(y) 1-y)
 ses1.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph, ses1.Pcr)
 # 1.4.3.2. Session 2
+ses2.Ph <- sapply(ses2.h, mean)
+ses2.Pfa <- sapply(ses2.fa, mean)
 ses2.Pcr <- sapply(ses2.Pfa, function(x) 1-x)
 ses2.Pm <- sapply(ses2.Ph, function(y) 1-y)
 ses2.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph, ses2.Pcr)
 # 1.4.3.3. Session 3
+ses3.Ph <- sapply(ses3.h, mean)
+ses3.Pfa <- sapply(ses3.fa, mean)
 ses3.Pcr <- sapply(ses3.Pfa, function(x) 1-x)
 ses3.Pm <- sapply(ses3.Ph, function(y) 1-y)
 ses3.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses3.Ph, ses3.Pcr)
@@ -404,6 +417,7 @@ remove.outliers <- function(vectorx) {
 # 2.3.2 Boxplots to detect outliers
 testout<- remove.outliers(RT_1[[21]])
 boxplot(RT_1[[21]], col = 3)
+
 # 2.3.3. Apply function to RT lists
 RT_1 <- lapply(RT_1, remove.outliers)
 RT_2 <- lapply(RT_2, remove.outliers)
