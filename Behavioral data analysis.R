@@ -29,6 +29,10 @@ defaults <- par()
 
 
 #---------------------------Psychophysical analysis-------------------------
+# 0. Subsets
+aware <- subset(questionnaire.ERPs, group.original == 'aware')
+unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
+
 # 1.RT
 # 1.1. Descriptives
 summary(rep_data4$RT_1)
@@ -43,6 +47,12 @@ hist(rep_data4$RT.mean.1, main = "RT in session 1",
      xlab = "RT", col = 7)
 hist(rep_data4$RT.mean.2, main = "RT in session 2",
      xlab = "RT", col = 12)
+
+# 1.3. Compare RTs between square and random
+t.test(unaware$RT.mean.sqr.1, unaware$RT.mean.rand.1, paired = T)
+t.test(aware$RT.mean.sqr.1, aware$RT.mean.rand.1, paired = T)
+t.test(questionnaire.ERPs$RT.mean.sqr.1, questionnaire.ERPs$RT.mean.rand.1, 
+       paired = T)
 
 # 1.4. Compare RT across conditions
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
@@ -435,9 +445,6 @@ cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$aware.index.1,
 # 1. Behavioral data correlations matrix
 ggpairs(questionnaire.ratings1, mapping = aes(color=Recall))
 
-# 1.2. Group subsets
-aware <- subset(questionnaire.ERPs, group.original == 'aware')
-unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
 # 1.3. Correlational measures subset
 cor_data <- questionnaire.ERPs[,c("RT_1", "threshold.1", "conf.4.ses1",
                                   "freq.4.ses1", "aware.index.1", "ses.1.Pc",

@@ -304,28 +304,29 @@ names(rep_data_long2)[names(rep_data_long2) == "time"] <- "configuration"
 rep_data_long2$configuration[rep_data_long2$configuration == 1] <- "sqr"
 rep_data_long2$configuration[rep_data_long2$configuration == 2] <- "rand"
 
-# Rename columns to separate electrode location number using sep = "_"
-names(rep_data_long)[names(rep_data_long) == "occ.nd1"] <- "nd1_1"
-names(rep_data_long)[names(rep_data_long) == "occ.nd2"] <- "nd2_1"
-names(rep_data_long)[names(rep_data_long) == "left.nd1"] <- "nd1_2"
-names(rep_data_long)[names(rep_data_long) == "left.nd2"] <- "nd2_2"
-names(rep_data_long)[names(rep_data_long) == "right.nd1"] <- "nd1_3"
-names(rep_data_long)[names(rep_data_long) == "right.nd2"] <- "nd2_3"
-names(rep_data_long)[names(rep_data_long) == "RL.nd1"] <- "nd1_4"
-names(rep_data_long)[names(rep_data_long) == "RL.nd2"] <- "nd2_4"
-# Extracts configuration number to column
-rep_data_long2 <- reshape(rep_data_long, varying = c("nd1_1", "nd2_1",
-                                                     "nd1_2", "nd2_2",
-                                                     "nd1_3", "nd2_3",
-                                                     "nd1_4", "nd2_4"),  
-                          direction = "long", idvar = " Subject", sep = "_")
-# Rename configuration column name
-names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
-# Rename configuration levels
-rep_data_long2$configuration[rep_data_long2$location == 1] <- "occ"
-rep_data_long2$configuration[rep_data_long2$location == 2] <- "left"
-rep_data_long2$configuration[rep_data_long2$location == 3] <- "right"
-rep_data_long2$configuration[rep_data_long2$location == 4] <- "RL"
+# # Rename columns to separate electrode location number using sep = "_"
+# names(rep_data_long)[names(rep_data_long) == "occ.nd1"] <- "nd1_1"
+# names(rep_data_long)[names(rep_data_long) == "occ.nd2"] <- "nd2_1"
+# names(rep_data_long)[names(rep_data_long) == "left.nd1"] <- "nd1_2"
+# names(rep_data_long)[names(rep_data_long) == "left.nd2"] <- "nd2_2"
+# names(rep_data_long)[names(rep_data_long) == "right.nd1"] <- "nd1_3"
+# names(rep_data_long)[names(rep_data_long) == "right.nd2"] <- "nd2_3"
+# names(rep_data_long)[names(rep_data_long) == "RL.nd1"] <- "nd1_4"
+# names(rep_data_long)[names(rep_data_long) == "RL.nd2"] <- "nd2_4"
+# # Extracts configuration number to column
+# rep_data_long2 <- reshape(rep_data_long, varying = c("nd1_1", "nd2_1",
+#                                                      "nd1_2", "nd2_2",
+#                                                      "nd1_3", "nd2_3",
+#                                                      "nd1_4", "nd2_4"),  
+#                           direction = "long", idvar = " Subject", sep = "_")
+# # Rename configuration column name
+# names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
+# # Rename configuration levels
+# rep_data_long2$configuration[rep_data_long2$location == 1] <- "occ"
+# rep_data_long2$configuration[rep_data_long2$location == 2] <- "left"
+# rep_data_long2$configuration[rep_data_long2$location == 3] <- "right"
+# rep_data_long2$configuration[rep_data_long2$location == 4] <- "RL"
+
 # Remove redundant subject column
 rep_data_long2[,ncol(rep_data_long2)]<- NULL
 
