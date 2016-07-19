@@ -336,7 +336,7 @@ rand2.points.N2.dat <- cbind(rand2.points.N2.dat, group.original, group)
 rand2.points.LP.dat <- cbind(rand2.points.LP.dat, group.original, group)
 
 # Change columns names
-col_headers <- c(seq(-100, 596, by = 4), "group,original", "group")
+col_headers <- c(seq(-100, 596, by = 4), "group.original", "group")
 
 colnames(sqr1.points.C1.dat) <- col_headers
 colnames(sqr1.points.P1.dat) <- col_headers
@@ -460,6 +460,92 @@ rand2.points.LP.unaware <- subset(rand2.points.LP.dat, group.original == "unawar
 
 
 # Remove group column
+sqr1.points.C1.dat$group <- NULL
+sqr1.points.P1.dat$group <- NULL
+sqr1.points.N1.dat$group <- NULL
+sqr1.points.Occ.dat$group <- NULL
+sqr1.points.Left.dat$group <- NULL
+sqr1.points.Right.dat$group <- NULL
+sqr1.points.Right_Left.dat$group <- NULL
+sqr1.points.N2.dat$group <- NULL
+sqr1.points.LP.dat$group <- NULL
+
+sqr2.points.C1.dat$group <- NULL
+sqr2.points.P1.dat$group <- NULL
+sqr2.points.N1.dat$group <- NULL
+sqr2.points.Occ.dat$group <- NULL
+sqr2.points.Left.dat$group <- NULL
+sqr2.points.Right.dat$group <- NULL
+sqr2.points.Right_Left.dat$group <- NULL
+sqr2.points.N2.dat$group <- NULL
+sqr2.points.LP.dat$group <- NULL
+
+rand1.points.C1.dat$group <- NULL
+rand1.points.P1.dat$group <- NULL
+rand1.points.N1.dat$group <- NULL
+rand1.points.Occ.dat$group <- NULL
+rand1.points.Left.dat$group <- NULL
+rand1.points.Right.dat$group <- NULL
+rand1.points.Right_Left.dat$group <- NULL
+rand1.points.N2.dat$group <- NULL
+rand1.points.LP.dat$group <- NULL
+
+rand2.points.C1.dat$group <- NULL
+rand2.points.P1.dat$group <- NULL
+rand2.points.N1.dat$group <- NULL
+rand2.points.Occ.dat$group <- NULL
+rand2.points.Left.dat$group <- NULL
+rand2.points.Right.dat$group <- NULL
+rand2.points.Right_Left.dat$group <- NULL
+rand2.points.N2.dat$group <- NULL
+rand2.points.LP.dat$group <- NULL
+
+
+sqr1.points.C1.dat$group.original <- NULL
+sqr1.points.P1.dat$group.original <- NULL
+sqr1.points.N1.dat$group.original <- NULL
+sqr1.points.Occ.dat$group.original <- NULL
+sqr1.points.Left.dat$group.original <- NULL
+sqr1.points.Right.dat$group.original <- NULL
+sqr1.points.Right_Left.dat$group.original <- NULL
+sqr1.points.N2.dat$group.original <- NULL
+sqr1.points.LP.dat$group.original <- NULL
+
+sqr2.points.C1.dat$group.original <- NULL
+sqr2.points.P1.dat$group.original <- NULL
+sqr2.points.N1.dat$group.original <- NULL
+sqr2.points.Occ.dat$group.original <- NULL
+sqr2.points.Left.dat$group.original <- NULL
+sqr2.points.Right.dat$group.original <- NULL
+sqr2.points.Right_Left.dat$group.original <- NULL
+sqr2.points.N2.dat$group.original <- NULL
+sqr2.points.LP.dat$group.original <- NULL
+
+rand1.points.C1.dat$group.original <- NULL
+rand1.points.P1.dat$group.original <- NULL
+rand1.points.N1.dat$group.original <- NULL
+rand1.points.Occ.dat$group.original <- NULL
+rand1.points.Left.dat$group.original <- NULL
+rand1.points.Right.dat$group.original <- NULL
+rand1.points.Right_Left.dat$group.original <- NULL
+rand1.points.N2.dat$group.original <- NULL
+rand1.points.LP.dat$group.original <- NULL
+
+rand2.points.C1.dat$group.original <- NULL
+rand2.points.P1.dat$group.original <- NULL
+rand2.points.N1.dat$group.original <- NULL
+rand2.points.Occ.dat$group.original <- NULL
+rand2.points.Left.dat$group.original <- NULL
+rand2.points.Right.dat$group.original <- NULL
+rand2.points.Right_Left.dat$group.original <- NULL
+rand2.points.N2.dat$group.original <- NULL
+rand2.points.LP.dat$group.original <- NULL
+
+
+
+
+
+
 sqr1.points.C1.aware$group <- NULL
 sqr1.points.P1.aware$group <- NULL
 sqr1.points.N1.aware$group <- NULL
@@ -638,6 +724,36 @@ sqr1.points.Right.means <- colMeans(sqr1.points.Right.dat)
 sqr1.points.Right_Left.means <- colMeans(sqr1.points.Right_Left.dat)
 sqr1.points.N2.means <- colMeans(sqr1.points.N2.dat)
 sqr1.points.LP.means <- colMeans(sqr1.points.LP.dat)
+
+sqr2.points.C1.means <- colMeans(sqr2.points.C1.dat)
+sqr2.points.P1.means <- colMeans(sqr2.points.P1.dat)
+sqr2.points.N1.means <- colMeans(sqr2.points.N1.dat)
+sqr2.points.Occ.means <- colMeans(sqr2.points.Occ.dat)
+sqr2.points.Left.means <- colMeans(sqr2.points.Left.dat)
+sqr2.points.Right.means <- colMeans(sqr2.points.Right.dat)
+sqr2.points.Right_Left.means <- colMeans(sqr2.points.Right_Left.dat)
+sqr2.points.N2.means <- colMeans(sqr2.points.N2.dat)
+sqr2.points.LP.means <- colMeans(sqr2.points.LP.dat)
+
+rand1.points.C1.means <- colMeans(rand1.points.C1.dat)
+rand1.points.P1.means <- colMeans(rand1.points.P1.dat)
+rand1.points.N1.means <- colMeans(rand1.points.N1.dat)
+rand1.points.Occ.means <- colMeans(rand1.points.Occ.dat)
+rand1.points.Left.means <- colMeans(rand1.points.Left.dat)
+rand1.points.Right.means <- colMeans(rand1.points.Right.dat)
+rand1.points.Right_Left.means <- colMeans(rand1.points.Right_Left.dat)
+rand1.points.N2.means <- colMeans(rand1.points.N2.dat)
+rand1.points.LP.means <- colMeans(rand1.points.LP.dat)
+
+rand2.points.C1.means <- colMeans(rand2.points.C1.dat)
+rand2.points.P1.means <- colMeans(rand2.points.P1.dat)
+rand2.points.N1.means <- colMeans(rand2.points.N1.dat)
+rand2.points.Occ.means <- colMeans(rand2.points.Occ.dat)
+rand2.points.Left.means <- colMeans(rand2.points.Left.dat)
+rand2.points.Right.means <- colMeans(rand2.points.Right.dat)
+rand2.points.Right_Left.means <- colMeans(rand2.points.Right_Left.dat)
+rand2.points.N2.means <- colMeans(rand2.points.N2.dat)
+rand2.points.LP.means <- colMeans(rand2.points.LP.dat)
 
 # Compute means for group subsets
 sqr1.points.C1.aware.means <- colMeans(sqr1.points.C1.aware)
