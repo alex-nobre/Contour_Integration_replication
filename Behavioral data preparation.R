@@ -402,26 +402,26 @@ RT_1 <- lapply(as.list(behav_ses_1), retrieve.RT)
 RT_2 <- lapply(as.list(behav_ses_2), retrieve.RT)
 RT_3 <- lapply(as.list(behav_ses_3), retrieve.RT)
 
-# 2.3. Remove outliers (RTs above or below 3sds from the mean)
-# 2.3.1. Function to remove outliers
-remove.outliers <- function(vectorx) {
-  vec.mean <- mean(vectorx)
-  vec.sd <- sd(vectorx)
-  for (i in 1:length(vectorx)) {
-    if (vectorx[i] < vec.mean - 2*vec.sd  | vectorx[i] > 2*vec.sd + vec.mean) {
-      vectorx[-i]
-    }
-  }
-  return(vectorx)
-}
-# 2.3.2 Boxplots to detect outliers
-testout<- remove.outliers(RT_1[[21]])
-boxplot(RT_1[[21]], col = 3)
-
-# 2.3.3. Apply function to RT lists
-RT_1 <- lapply(RT_1, remove.outliers)
-RT_2 <- lapply(RT_2, remove.outliers)
-RT_3 <- lapply(RT_3, remove.outliers)
+# # 2.3. Remove outliers (RTs above or below 3sds from the mean)
+# # 2.3.1. Function to remove outliers
+# remove.outliers <- function(vectorx) {
+#   vec.mean <- mean(vectorx)
+#   vec.sd <- sd(vectorx)
+#   for (i in 1:length(vectorx)) {
+#     if (vectorx[i] < vec.mean - 2*vec.sd  | vectorx[i] > 2*vec.sd + vec.mean) {
+#       vectorx[-i]
+#     }
+#   }
+#   return(vectorx)
+# }
+# # 2.3.2 Boxplots to detect outliers
+# testout<- remove.outliers(RT_1[[21]])
+# boxplot(RT_1[[21]], col = 3)
+# 
+# # 2.3.3. Apply function to RT lists
+# RT_1 <- lapply(RT_1, remove.outliers)
+# RT_2 <- lapply(RT_2, remove.outliers)
+# RT_3 <- lapply(RT_3, remove.outliers)
 
 # 2.4. Compute mean RTs
 # 2.4.1. Square
@@ -680,3 +680,39 @@ rep_data_long2$group <- factor(rep_data_long2$group)
 rep_data_long2$group.original <- factor(rep_data_long2$group.original)
 rep_data_long2$session <- factor(rep_data_long2$session)
 rep_data_long2$configuration <- factor(rep_data_long2$configuration)
+
+# 2. Compute Correlational measures
+# 2.1. Combined measure of awareness: RT x confidence ratings
+# 2.1.1. Session 1
+questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT.mean.1 * 
+  questionnaire.ERPs$conf.4.ses1
+# 2.1.2. Session 2
+questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT.mean.2 * 
+  questionnaire.ERPs$conf.4.ses2
+
+# 2.2. Combined measure of awareness: RT x threshold value
+# 2.2.1. Session 1
+questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
+  questionnaire.ERPs$conf.4.ses1
+# 2.2.1. Session 2
+questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
+  questionnaire.ERPs$conf.4.ses1
+
+# 2.2 Compute RT means across sessions
+questionnaire.ERPs$RT_1_2 <- rowMeans(questionnaire.ERPs[,19:20])
+
+# 2.3. Compute differences
+# session 1
+questionnaire.ERPs$occ_diff_1 <- questionnaire.ERPs$occ.sqr.nd1_1 - 
+  questionnaire.ERPs$occ.rand.nd1_1
+questionnaire.ERPs$left_diff_1 <- questionnaire.ERPs$left.sqr.nd2_1 - 
+  questionnaire.ERPs$left.rand.nd2_1
+questionnaire.ERPs$right_diff_1 <- questionnaire.ERPs$right.sqr.nd2_1 - 
+  questionnaire.ERPs$right.rand.nd2_1
+# session 2
+questionnaire.ERPs$occ_diff_2 <- questionnaire.ERPs$occ.sqr.nd1_2 - 
+  questionnaire.ERPs$occ.rand.nd1_2
+questionnaire.ERPs$left_diff_2 <- questionnaire.ERPs$left.sqr.nd2_2 - 
+  questionnaire.ERPs$left.rand.nd2_2
+questionnaire.ERPs$right_diff_2 <- questionnaire.ERPs$right.sqr.nd2_2 - 
+  questionnaire.ERPs$right.rand.nd2_2

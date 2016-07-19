@@ -8,6 +8,7 @@ library(dplyr)
 library(lattice)
 library(ggplot2)
 library(gridExtra)
+library(corrplot)
 library(GGally)
 # Analysis packages
 library(polycor)
@@ -113,67 +114,6 @@ eeg.LP.points <- function(eeg.file) {
                          dec = ",", header = TRUE)
   LP <- eeg.data$LP
 }
-
-# # Sqr, session 1
-# sqr_ses1_points <- function(sqr1_file) {
-#   sqr1_data <- read.delim(sqr1_file, sep = " ", dec = ",",
-#                           header = TRUE)
-#   # Remove last two columns
-#   sqr1_data$Right <- NULL
-#   sqr1_data$Occ.par.1 <- NULL
-#   # Rename last column
-#   names(sqr1_data)[names(sqr1_data) == "Occ.par"] <- "Right"
-#   # Remove left & right
-#   sqr1_data$Left <- NULL
-#   sqr1_data$Right <- NULL
-#   # Coerces table to data frame
-#   sqr1_occ_points <- sqr1_data$Occ
-# }
-# # Sqr, session 2
-# sqr_ses2_points <- function(sqr2_file) {
-#   sqr2_data <- read.delim(sqr2_file, sep = " ", dec = ",",
-#                           header = TRUE)
-#   # Remove last two columns
-#   sqr2_data$Right <- NULL
-#   sqr2_data$Occ.par.1 <- NULL
-#   # Rename last column
-#   names(sqr2_data)[names(sqr2_data) == "Occ.par"] <- "Right"
-#   # Remove left & right
-#   sqr2_data$Left <- NULL
-#   sqr2_data$Right <- NULL
-#   # Coerces table to data frame
-#   sqr2_occ_points <- sqr2_data$Occ
-# }
-# # Rand, session 1
-# rand_ses1_points <- function(rand1_file) {
-#   rand1_data <- read.delim(rand1_file, sep = " ", dec = ",",
-#                            header = TRUE)
-#   # Remove last two columns
-#   rand1_data$Right <- NULL
-#   rand1_data$Occ.par.1 <- NULL
-#   # Rename last column
-#   names(rand1_data)[names(rand1_data) == "Occ.par"] <- "Right"
-#   # Remove left & right
-#   rand1_data$Left <- NULL
-#   rand1_data$Right <- NULL
-#   # Coerces table to data frame
-#   rand1_occ_points <- rand1_data$Occ
-# }
-# # Rand, session 2
-# rand_ses2_points <- function(rand2_file) {
-#   rand2_data <- read.delim(rand2_file, sep = " ", dec = ",",
-#                            header = TRUE)
-#   # Remove last two columns
-#   rand2_data$Right <- NULL
-#   rand2_data$Occ.par.1 <- NULL
-#   # Rename last column
-#   names(rand2_data)[names(rand2_data) == "Occ.par"] <- "Right"
-#   # Remove left & right
-#   rand2_data$Left <- NULL
-#   rand2_data$Right <- NULL
-#   # Coerces table to data frame
-#   rand2_occ_points <- rand2_data$Occ
-# }
 
 
 # Extract occ time point values for each file
@@ -839,35 +779,36 @@ rand2.points.LP.unaware.means <- colMeans(rand2.points.LP.unaware)
 
 #------------------------Plot Occ Nd1 Grand Averages------------------------------
 labels <- levels(factor(rep_data_long2$configuration))
+labels <- c("random", "square")
 col_headers <- seq(-100, 596, by = 4)
 # 1. Configuration comparison
+# C1
 # 1.1 Both groups - session 1
 pdf("C1 - both groups - sqr x rand.pdf")
 par(mfrow = c(2,1))
-plot(col_headers, sqr1.points.means, type = "l", xlab = "Time points", 
-     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 1 both groups - sqr x rand")
-lines(col_headers, rand1_points_means, type = "l", col = "blue")
+plot(col_headers, sqr1.points.C1.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "C1 ROI session 1 - sqr x rand")
+lines(col_headers, rand1.points.C1.means, type = "l", col = "blue")
 abline(h = 0, lty = 2, col = "black")
 legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
 # 1.2. Both groups - session 2
-plot(col_headers, sqr2_points_means, type = "l", xlab = "Time points", 
-     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 2 both groups - sqr x rand")
-lines(col_headers, rand2_points_means, type = "l", col = "blue")
+plot(col_headers, sqr2.points.C1.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "C1 ROI session 2 - sqr x rand")
+lines(col_headers, rand2.points.C1.means, type = "l", col = "blue")
 abline(h = 0, lty = 2, col = "black")
 legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
 dev.off()
 
-labels <- levels(factor(rep_data_long2$configuration))
-col_headers <- seq(-100, 596, by = 4)
+# P1
 # 1.3. Aware - session 1
 pdf("Nd1 occ aware - sqr x rand.pdf")
 par(mfrow = c(2,1))
-plot(col_headers, sqr1_points_aware_means, type = "l", xlab = "Time points", 
+plot(col_headers, sqr1.points.Occ.means, type = "l", xlab = "Time points", 
      ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 1 aware - sqr x rand")
-lines(col_headers, rand1_points_aware_means, type = "l", col = "blue")
+     main = "Nd1 occ session 1 sqr x rand")
+lines(col_headers, rand1.points.Occ.means, type = "l", col = "blue")
 abline(h = 0, lty = 2, col = "black")
 legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
 # 1.2. Unaware - session 2
@@ -878,6 +819,73 @@ lines(col_headers, rand2_points_aware_means, type = "l", col = "blue")
 abline(h = 0, lty = 2, col = "black")
 legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
 dev.off()
+
+# N1
+# 1.3. Aware - session 1
+pdf("Nd1 occ aware - sqr x rand.pdf")
+par(mfrow = c(2,1))
+plot(col_headers, sqr1.points.Occ.means, type = "l", xlab = "Time points", 
+     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 occ session 1 sqr x rand")
+lines(col_headers, rand1.points.Occ.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Unaware - session 2
+plot(col_headers, sqr2_points_aware_means, type = "l", xlab = "Time points", 
+     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 occ session 2 aware - sqr x rand")
+lines(col_headers, rand2_points_aware_means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+dev.off()
+
+# Occ
+pdf("Nd1 both - sqr x rand.pdf")
+par(mfrow = c(2,1))
+plot(col_headers, sqr1.points.Occ.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 session 1 - sqr x rand")
+lines(col_headers, rand1.points.Occ.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Occ.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 session 2 - sqr x rand")
+lines(col_headers, rand2.points.Occ.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+dev.off()
+
+# Left
+plot(col_headers, sqr1.points.Left.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (left) session 1 - sqr x rand")
+lines(col_headers, rand1.points.Left.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Left.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (left) session 2 - sqr x rand")
+lines(col_headers, rand2.points.Left.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+
+# Right
+plot(col_headers, sqr1.points.Right.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (Right) session 1 - sqr x rand")
+lines(col_headers, rand1.points.Right.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Right.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (Right) session 2 - sqr x rand")
+lines(col_headers, rand2.points.Right.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
 
 labels <- levels(factor(rep_data_long2$configuration))
 col_headers <- seq(-100, 596, by = 4)
@@ -898,6 +906,110 @@ lines(col_headers, rand2_points_unaware_means, type = "l", col = "blue")
 abline(h = 0, lty = 2, col = "black")
 legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
 dev.off()
+
+# Aware
+# Occ
+pdf("Nd1 both - sqr x rand.pdf")
+par(mfrow = c(2,1))
+plot(col_headers, sqr1.points.Occ.aware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 session 1 - sqr x rand")
+lines(col_headers, rand1.points.Occ.aware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Occ.aware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 session 2 - sqr x rand")
+lines(col_headers, rand2.points.Occ.aware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+dev.off()
+
+# Left
+plot(col_headers, sqr1.points.Left.aware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (left) session 1 - sqr x rand")
+lines(col_headers, rand1.points.Left.aware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Left.aware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (left) session 2 - sqr x rand")
+lines(col_headers, rand2.points.Left.aware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+
+# Right
+plot(col_headers, sqr1.points.Right.aware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (Right) session 1 - sqr x rand")
+lines(col_headers, rand1.points.Right.aware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Right.aware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (Right) session 2 - sqr x rand")
+lines(col_headers, rand2.points.Right.aware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+
+
+# Unaware
+# Occ
+pdf("Nd1 both - sqr x rand.pdf")
+par(mfrow = c(2,1))
+plot(col_headers, sqr1.points.Occ.unaware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 session 1 - sqr x rand")
+lines(col_headers, rand1.points.Occ.unaware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Occ.unaware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd1 session 2 - sqr x rand")
+lines(col_headers, rand2.points.Occ.unaware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+dev.off()
+
+# Left
+plot(col_headers, sqr1.points.Left.unaware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (left) session 1 - sqr x rand")
+lines(col_headers, rand1.points.Left.unaware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Left.unaware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (left) session 2 - sqr x rand")
+lines(col_headers, rand2.points.Left.unaware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+
+# Right
+plot(col_headers, sqr1.points.Right.unaware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (Right) session 1 - sqr x rand")
+lines(col_headers, rand1.points.Right.unaware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+# 1.2. Both groups - session 2
+plot(col_headers, sqr2.points.Right.unaware.means, type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
+     main = "Nd2 (Right) session 2 - sqr x rand")
+lines(col_headers, rand2.points.Right.unaware.means, type = "l", col = "blue")
+abline(h = 0, lty = 2, col = "black")
+legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
+
+
+
+#----------------fix before and continue!!------------------------
+
 
 # 2. Group comparison
 labels <- c("aware", "unaware")

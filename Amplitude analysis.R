@@ -224,11 +224,11 @@ P1.line <- ggplot(rep_data_long2, aes(x = group.original, y = P1,
        y = "P1 mean amplitude", colour = "configuration")
 
 # ANOVA
-contrasts(ROImap_data_long$configuration) <- c(-1, 1) # set contrasts for config
-contrasts(ROImap_data_long$session) <- c(-1, 1) # set contrasts for session
-contrasts(ROImap_data_long$group) <- c(-1, 1) # set contrasts for group
-P1_baseline <- lme(P1 ~ 1, random = ~1|subject/configuration/session, 
-                                 data = ROImap_data_long, method = "ML") #baseline
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # set contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # set contrasts for session
+contrasts(rep_data_long2$group) <- c(-1, 1) # set contrasts for group
+P1_baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/session, 
+                                 data = rep_data_long2, method = "ML") #baseline
 P1_config <- update(P1_baseline, .~. + configuration)
 P1_session <- update(P1_config, .~. + session)
 P1_group <- update(P1_session, .~. + group)
@@ -271,6 +271,7 @@ summary(N1_lme)
 
 # 8.4. Nd1 (P2)
 # Line plot
+jpeg(file = "./Plots/Pitts ROIs/nd1line.jpeg")
 nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1, 
                                                colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -279,11 +280,13 @@ nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1,
   facet_grid(.~session) +
   labs(title = "Occ Nd1 mean amplitude", x = "group", y = "Occ Nd1 mean amplitude", 
        colour = "configuration")
+nd1.line
+dev.off()
 # ANOVA
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
-nd1_baseline <- lme(occ ~ 1, random = ~1|Subject/configuration/session, 
+nd1_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
                     data = rep_data_long2, method = "ML") #baseline
 nd1_config <- update(nd1_baseline, .~. + configuration)
 nd1_session <- update(nd1_config, .~. + session)
@@ -301,7 +304,7 @@ summary(nd1_lme)
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
-nd2_left_baseline <- lme(left ~ 1, random = ~1|Subject/configuration/session, 
+nd2_left_baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                          data = rep_data_long2, method = "ML") #baseline
 nd2_left_config <- update(nd2_left_baseline, .~. + configuration)
 nd2_left_session <- update(nd2_left_config, .~. + session)
@@ -319,7 +322,7 @@ summary(nd2_left_lme)
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
-nd2_right_baseline <- lme(right ~ 1, random = ~1|Subject/configuration/session, 
+nd2_right_baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                           data = rep_data_long2, method = "ML") #baseline
 nd2_right_config <- update(nd2_right_baseline, .~. + configuration)
 nd2_right_session <- update(nd2_right_config, .~. + session)
