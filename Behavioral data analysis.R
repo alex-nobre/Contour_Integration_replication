@@ -36,45 +36,44 @@ unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
 
 # 1.RT
 # 1.1. Descriptives
-summary(rep_data4$RT_1)
-summary(rep_data4$RT_2)
-
-# Means session 3
-mean(aware$RT.mean.3)
-mean(unaware$RT.mean.3)
+summary(rep_data4$RT.mean.1)
+summary(rep_data4$RT.mean.2)
+summary(rep_data4$RT.mean.3)
 
 # 1.2. Plots
-# 1.2.1. Scatterplot
-plot(rep_data4$Subject, rep_data4$RT_1, main = "RT in session 1",
-     xlab = "RT", pch = 16, col = 6)
-# 1.2.2. Histograms
+# 1.2.1. Scatterplot of mean RT per session
+plot(rep_data4$Subject, rep_data4$RT.mean.1, main = "RT in session 1",
+     xlab = "RT", pch = 16, col = 6) #session 1
+plot(rep_data4$Subject, rep_data4$RT.mean.2, main = "RT in session 2",
+     xlab = "RT", pch = 16, col = 6) #session 2
+# 1.2.2. Histograms of mean RT per session
 hist(rep_data4$RT.mean.1, main = "RT in session 1",
-     xlab = "RT", col = 7)
+     xlab = "RT", col = 7) #session 1
 hist(rep_data4$RT.mean.2, main = "RT in session 2",
-     xlab = "RT", col = 12)
+     xlab = "RT", col = 12) #session 2
 
 # 1.3. Compare RTs between square and random
-t.test(unaware$RT.mean.sqr.1, unaware$RT.mean.rand.1, paired = T)
-t.test(aware$RT.mean.sqr.1, aware$RT.mean.rand.1, paired = T)
+t.test(unaware$RT.mean.sqr.1, unaware$RT.mean.rand.1, paired = T) #unaware
+t.test(aware$RT.mean.sqr.1, aware$RT.mean.rand.1, paired = T) #aware
 t.test(questionnaire.ERPs$RT.mean.sqr.1, questionnaire.ERPs$RT.mean.rand.1, 
-       paired = T)
+       paired = T) #both groups
 
-# 1.4. Compare RT across conditions
+# 1.4. ANOVA - RT for mean RT; session x configuration x group
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
-RT_baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
+RT.mean.baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
                    data = rep_data_long2, method = "ML") #baseline
-RT_config <- update(RT_baseline, .~. + configuration)
-RT_session <- update(RT_config, .~. + session)
-RT_group.original <- update(RT_session, .~. + group.original)
-RT_config_session <- update(RT_group.original, .~. + configuration:session)
-RT_session_group.original <- update(RT_config_session, .~. + session:group.original)
-RT_config_group.original <- update(RT_session_group.original, .~. + configuration:group.original)
-RT_lme <- update(RT_config_group.original, .~. + configuration:session:group.original)
-anova(RT_baseline, RT_config, RT_session, RT_group.original, 
-      RT_config_session, RT_session_group.original, RT_config_group.original, 
-      RT_lme)
+RT.mean.config <- update(RT.mean.baseline, .~. + configuration)
+RT.mean.session <- update(RT.mean.config, .~. + session)
+RT.mean.group.original <- update(RT.mean.session, .~. + group.original)
+RT.mean.config_session <- update(RT.mean.group.original, .~. + configuration:session)
+RT.mean.session_group.original <- update(RT.mean.config_session, .~. + session:group.original)
+RT.mean.config_group.original <- update(RT.mean.session_group.original, .~. + configuration:group.original)
+RT.mean.lme <- update(RT.mean.config_group.original, .~. + configuration:session:group.original)
+anova(RT.mean.baseline, RT.mean.config, RT.mean.session, RT.mean.group.original, 
+      RT.mean.config_session, RT.mean.session_group.original, RT.mean.config_group.original, 
+      RT.mean.lme)
 
 # # Function to bind values for each subject
 # nested.columns <- function(adata, avector, aname) {
@@ -85,7 +84,8 @@ anova(RT_baseline, RT_config, RT_session, RT_group.original,
 #   blocksnames <- paste("block.intensities.", seq_along(0:9), sep = "")
 # }
 
-# Create data frame for intensities
+# 2. Intensities
+# 1. Create data frame for intensities
 intensities.data <- data.frame()
 intensities.columsn <- data.frame()
 intensities.data <- rbind(blockintensities.1[[1]], blockintensities.1[[2]], 
@@ -105,7 +105,7 @@ rep_data4 <- cbind(rep_data4, intensities.data)
 rep_data4$group <- factor(rep_data4$group)
 rep_data4$group.original <- factor(rep_data4$group.original)
 
-# Intensities
+
 # 1.1. Function to plot intensities
 plot.intensities <- function(intlist, subject) {
   plot(seq(1:length(intlist[[subject]])), intlist[[subject]], ylim = c(-0.5, 0.5),
@@ -135,8 +135,6 @@ abline(h = mean(rep_data4[rep_data4$group.original == 'aware', ]$threshold.1))
 abline(h = mean(rep_data4[rep_data4$group.original == 'unaware', ]$threshold.1), 
        col = 'red')
 
-# 3. Median split analysis of ERPs
-# Threshold
 # Line plot
 threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original, 
                                                  y = threshold,
@@ -148,6 +146,8 @@ threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original,
   labs(title = "Quest Threshold", x = "group", y = "Threshold", 
        colour = "configuration")
 # 3.0. Histogram 
+
+# 3. Median split analysis of ERPs
 # 3.1. Compute medians
 low.threshold.group <- rep_data4[which(rep_data4$threshold.1 < 
                                          median(rep_data4$threshold.1)),]$Subject
@@ -155,34 +155,36 @@ high.threshold.group <- rep_data4[which(rep_data4$threshold.1 >
                                           median(rep_data4$threshold.1)),]$Subject
 
 # 3.2. Create factor for median split group
-rep_data4$split.group <- numeric(32)
+rep_data4$split.group <- numeric(nrow(rep_data4))
 rep_data4[which(rep_data4$Subject %in% 
                   low.threshold.group),]$split.group <- 'low.thresh'
 rep_data4[which(rep_data4$Subject %in% 
                   high.threshold.group),]$split.group <- 'high.thresh'
 rep_data4$split.group <- factor(rep_data4$split.group)
 
-# 3.3. Plot median split group x awareness group
+# 3.3. Plot - median split group x awareness group
 table(rep_data4$split.group, rep_data4$group.original)
 plot(rep_data4$split.group, rep_data4$group.original, 
      main = "Median split group x awareness",
      xlab = "median split group", ylab = "awareness group")
 
-# 3.4. Chi-square
+# 3.4. Chi-square - median split group x awareness group
 CrossTable(rep_data4$split.group, rep_data4$group.original, fisher = TRUE,
            chisq = TRUE, expected = TRUE, sresid = TRUE, format = 'SPSS')
 
-# 6. Nd2 ERPs between median-split groups
+# 3.5. ERPs between median-split groups
 rep_data_long2$split.group <- numeric(nrow(rep_data_long2))
 rep_data_long2[which(rep_data_long2$Subject %in% 
                        low.threshold.group),]$split.group <- 'low.thresh'
 rep_data_long2[which(rep_data_long2$Subject %in% 
                        high.threshold.group),]$split.group <- 'high.thresh'
 rep_data_long2$split.group <- factor(rep_data_long2$split.group)
-t.test(RL.nd2 ~ split.group, data = rep_data_long2)
+t.test(occ.nd1 ~ split.group, data = rep_data_long2) #nd1
+t.test(left.nd2 ~ split.group, data = rep_data_long2) #nd2 left
+t.test(left.nd2 ~ split.group, data = rep_data_long2) #nd2 right
 
-# 3.6. Compare nd2 across conditions
-# 3.6.1. Line plot
+# 3.6. Comparison Nd2 - session x configuration x median split group
+# 3.6.1. Line plots
 # 3.6.1.1. Left nd2
 leftnd2.split.lineplot <- ggplot(rep_data_long2, aes(x = split.group, 
                                                      y = left.nd2,
@@ -258,49 +260,71 @@ psychometricFit <- quickpsy(psychData, x = intensities, k = accuracy,
                             grouping = .(subjects))
 
 #---------------------------------Questionnaire data------------------------------
-
-
-# 1. Variances and means
+# 1. Descriptives
 summary(questionnaire.ERPs[,c(25:30)])
 lapply(questionnaire.ERPs[,c(25:30)], sd)
 
 by(questionnaire.ERPs[,25:30], questionnaire.ERPs$group, 
    stat.desc, basic = FALSE)
 
-
-# Heat maps - questionnaire measures
+# 2. Plots
+# 2.1. Heat maps - questionnaire measures
 # Session 1
 cross.Freq <- count(questionnaire.ERPs, freq.4.ses1, conf.4.ses1)
 kable(head(cross.Freq))
 conf.x.freq <- ggplot(cross.Freq, aes(conf.4.ses1, freq.4.ses1)) +
   geom_tile(aes(fill = n), colour = "black") +
   scale_fill_gradient(low = "white", high = "steelblue") +
-  labs(title = "Confidence x frequency session 1", x = "Confidence", y = "Frequency") 
+  labs(title = "Confidence x frequency session 1", x = "Confidence", y = "Frequency")
 
-# Histograms - questionnaire measures
+# Session 2
+cross.Freq <- count(questionnaire.ERPs, freq.4.ses2, conf.4.ses2)
+kable(head(cross.Freq))
+conf.x.freq <- ggplot(cross.Freq, aes(conf.4.ses2, freq.4.ses2)) +
+  geom_tile(aes(fill = n), colour = "black") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(title = "Confidence x frequency session 1", x = "Confidence", y = "Frequency")
+
+# 2.2. Histograms - questionnaire measures
 par(mfrow = c(1, 2))
-# session 1
+# Session 1
 hist(questionnaire.ERPs$conf.4.ses1, main = "Confidence rating square session 1",
      xlab = "Confidence rated", col = "red", breaks = c(0,1,2,3,4,5))
 hist(questionnaire.ERPs$freq.4.ses1, main = "Frequency rating square session 1",
      xlab = "Frequency rated", col = "green", breaks = c(0,1,2,3,4,5))
-# session 2
+# Session 2
 hist(questionnaire.ERPs$conf.4.ses2, main = "Confidence ratings square session 2",
      xlab = "Confidence rated", col = "red", breaks = c(0,1,2,3,4,5))
 hist(questionnaire.ERPs$freq.4.ses2, main = "Frequency ratings square session 1",
      xlab = "Frequency rated", col = "green", breaks = c(0,1,2,3,4,5))
 
-# 1.3. Test correlations between awareness ratings
-# 1.3.1. Session 1
+# 3. Correlations between awareness ratings
+# 3.1. Session 1
 cor.test(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$freq.4.ses1, 
          method = "pearson")
-# 1.3.2. session 2
+# 3.2. session 2
 cor.test(questionnaire.ERPs$conf.4.ses2, questionnaire.ERPs$freq.4.ses2, 
          method = "pearson")
 
+# 4. Comparison of awareness measures by session in unaware group
+# 4.1. Confidence ratings
+# 4.1.1. Compare means in confidence ratings
+t.test(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, 
+       paired = TRUE)
+# 4.1.2. Compute effect sizes
+cohen.d(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, 
+        paired = TRUE)
+# 4.2. Frequency ratings
+# 4.1.1. Compare means in frequency ratings
+t.test(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, 
+       paired = TRUE)
+# 4.2.2. Compute effect sizes
+cohen.d(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, 
+        paired = TRUE)
 
-
-# 2.1.3. Scatterplot - aware index session 1
+# 5. Composite awareness index
+# 5.1. Plots
+# 5.1.1. Scatterplot - aware index session 1
 plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$aware.index.1, 
      col = questionnaire.ERPs$group.original, pch = 16, 
      main = "Awareness index session 1",
@@ -309,7 +333,7 @@ legend(2, 0, legend = levels(questionnaire.ERPs$group.original),
        col = c("black", "red"),
        pch = 16)
 
-# 2.1.3. Scatterplot - aware index session 2
+# 5.1.2. Scatterplot - aware index session 2
 plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$aware.index.2, 
      col = questionnaire.ERPs$group.original, pch = 16, 
      main = "Awareness index session 1",
@@ -318,7 +342,7 @@ legend(2, 0, legend = levels(questionnaire.ERPs$group.original),
        col = c("black", "red"),
        pch = 16)
 
-# 2.1.4. Line plots with error bars - Aware index session 1 per group
+# 5.1.3. Line plots with error bars - Aware index session 1 per group
 aware.index.1.lines <- ggplot(questionnaire.ERPs, aes(x = group.original, 
                                                       y = aware.index.1)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -326,14 +350,13 @@ aware.index.1.lines <- ggplot(questionnaire.ERPs, aes(x = group.original,
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2)
 labs(title = "Aware index session 1", x = "group", y = "aware index")
 
-# 2.1.4. Line plots with error bars - Aware index session 2 per group
+# 5.1.4. Line plots with error bars - Aware index session 2 per group
 aware.index.2.lines <- ggplot(questionnaire.ERPs, aes(x = group.original, 
                                                       y = aware.index.2)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line") + 
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2)
 labs(title = "Aware index session 2", x = "group", y = "aware index")
-
 
 
 # 3. Correlations: ERP differences x awareness measures
@@ -390,6 +413,11 @@ cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$freq.4.ses2,
 
 # 3.2.2. By group
 # 3.2.2.1. Session 1
+corr.test(data.frame(questionnaire.ERPs[group.original == "aware",]$occ_diff_1, 
+                     questionnaire.ERPs[group.original == "aware",]$left_diff_1, 
+                     questionnaire.ERPs[group.original == "aware",]$right_diff_1, 
+                     questionnaire.ERPs[group.original == "aware",]$conf.4.ses1, 
+                     questionnaire.ERPs[group.original == "aware",]$freq.4.ses1))
 cor.test(aware$freq.4.ses1, aware$occ_diff_1)
 cor.test(aware$freq.4.ses1, aware$left_diff_1)
 cor.test(aware$freq.4.ses1, aware$right_diff_1)
@@ -417,10 +445,10 @@ cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$aware.index.1,
 ggpairs(questionnaire.ratings1, mapping = aes(color=Recall))
 
 # 1.3. Correlational measures subset
-# cor_data <- questionnaire.ERPs[,c("RT_1", "threshold.1", "conf.4.ses1",
+# cor_data <- questionnaire.ERPs[,c("RT.mean.1", "threshold.1", "conf.4.ses1",
 #                                   "freq.4.ses1", "aware.index.1", "ses.1.Pc",
 #                                   "ses1.Ph", "ses1.Pm", "ses1.Pfa", "ses1.Pcr")]
-# cor_data2 <- questionnaire.ERPs[,c("RT_2", "threshold.2", "conf.4.ses2",
+# cor_data2 <- questionnaire.ERPs[,c("RT.mean.2", "threshold.2", "conf.4.ses2",
 #                                   "freq.4.ses2", "aware.index.2", "ses.2.Pc",
 #                                   "ses2.Ph", "ses2.Pm", "ses2.Pfa", "ses2.Pcr")]
 
@@ -441,22 +469,22 @@ corrplot(cor(cor_data2), method = "circle")
 # 2.1. d' x Confidence ratings - session 1
 cor.test(questionnaire.ERPs$ses.dprime_1, questionnaire.ERPs$conf.4.ses1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$RT_1, questionnaire.ERPs$conf.4.ses1, 
+cor.test(questionnaire.ERPs$RT.mean.1, questionnaire.ERPs$conf.4.ses1, 
          method = "pearson")
 
 # 2.2. d' x Frequency ratings - session 1
 cor.test(questionnaire.ERPs$ses.dprime_1, questionnaire.ERPs$freq.4.ses1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$RT_1, questionnaire.ERPs$freq.4.ses1, 
+cor.test(questionnaire.ERPs$RT.mean.1, questionnaire.ERPs$freq.4.ses1, 
          method = "pearson")
 
 # 2.3. RT x confidence ratings by group
 # 2.3.1. Session 1
-cor.test(aware$RT_1, aware$conf.4.ses1)
-cor.test(unaware$RT_1, unaware$conf.4.ses1)
+cor.test(aware$RT.mean.1, aware$conf.4.ses1)
+cor.test(unaware$RT.mean.1, unaware$conf.4.ses1)
 # 2.3.1. Session 2
-cor.test(aware$RT_2, aware$conf.4.ses2)
-cor.test(unaware$RT_2, unaware$conf.4.ses2)
+cor.test(aware$RT.mean.2, aware$conf.4.ses2)
+cor.test(unaware$RT.mean.2, unaware$conf.4.ses2)
 
 # 4. Correlations: ERP differences x psychophysical measures
 # 4.1. Correlations: ERP Differences x reaction time
@@ -476,28 +504,28 @@ cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$RT.mean.2,
 cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
 # 4.1.1.3 Average
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT_1_2, 
+cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT.mean.1_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT_1_2, 
+cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT.mean.1_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT_1_2, 
+cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT.mean.1_2, 
          method = "pearson")
 
 # 4.1.2. By group
 # 4.1.2.1. Session 1
-cor.test(aware$RT_1, aware$occ_diff_1)
-cor.test(aware$RT_1, aware$left_diff_1)
-cor.test(aware$RT_1, aware$right_diff_1)
-cor.test(unaware$RT_1, unaware$occ_diff_1)
-cor.test(unaware$RT_1, unaware$left_diff_1)
-cor.test(unaware$RT_1, unaware$right_diff_1)
+cor.test(aware$RT.mean.1, aware$occ_diff_1)
+cor.test(aware$RT.mean.1, aware$left_diff_1)
+cor.test(aware$RT.mean.1, aware$right_diff_1)
+cor.test(unaware$RT.mean.1, unaware$occ_diff_1)
+cor.test(unaware$RT.mean.1, unaware$left_diff_1)
+cor.test(unaware$RT.mean.1, unaware$right_diff_1)
 # 4.1.2.1. Session 2
-cor.test(aware$RT_2, aware$occ_diff_2)
-cor.test(aware$RT_2, aware$left_diff_2)
-cor.test(aware$RT_2, aware$right_diff_2)
-cor.test(unaware$RT_2, unaware$occ_diff_2)
-cor.test(unaware$RT_2, unaware$left_diff_2)
-cor.test(unaware$RT_2, unaware$right_diff_2)
+cor.test(aware$RT.mean.2, aware$occ_diff_2)
+cor.test(aware$RT.mean.2, aware$left_diff_2)
+cor.test(aware$RT.mean.2, aware$right_diff_2)
+cor.test(unaware$RT.mean.2, unaware$occ_diff_2)
+cor.test(unaware$RT.mean.2, unaware$left_diff_2)
+cor.test(unaware$RT.mean.2, unaware$right_diff_2)
 
 # 4.2. ERP Differences x d'
 # 4.2.1. Both groups
@@ -571,18 +599,18 @@ anova(dprime_baseline, dprime_config, dprime_session, dprime_group.original,
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
-RT_baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
+RT.mean.baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
                    data = rep_data_long2, method = "ML") #baseline
-RT_config <- update(RT_baseline, .~. + configuration)
-RT_session <- update(RT_config, .~. + session)
-RT_group.original <- update(RT_session, .~. + group.original)
-RT_config_session <- update(RT_group.original, .~. + configuration:session)
-RT_session_group.original <- update(RT_config_session, .~. + session:group.original)
-RT_config_group.original <- update(RT_session_group.original, .~. + configuration:group.original)
-RT_lme <- update(RT_config_group.original, .~. + configuration:session:group.original)
-anova(RT_baseline, RT_config, RT_session, RT_group.original, 
-      RT_config_session, RT_session_group.original, RT_config_group.original, 
-      RT_lme)
+RT.mean.config <- update(RT.mean.baseline, .~. + configuration)
+RT.mean.session <- update(RT.mean.config, .~. + session)
+RT.mean.group.original <- update(RT.mean.session, .~. + group.original)
+RT.mean.config_session <- update(RT.mean.group.original, .~. + configuration:session)
+RT.mean.session_group.original <- update(RT.mean.config_session, .~. + session:group.original)
+RT.mean.config_group.original <- update(RT.mean.session_group.original, .~. + configuration:group.original)
+RT.mean.lme <- update(RT.mean.config_group.original, .~. + configuration:session:group.original)
+anova(RT.mean.baseline, RT.mean.config, RT.mean.session, RT.mean.group.original, 
+      RT.mean.config_session, RT.mean.session_group.original, RT.mean.config_group.original, 
+      RT.mean.lme)
 
 # 3. Compare threshold across conditions
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
@@ -606,18 +634,7 @@ t.test(threshold.1 ~ group.original, data = questionnaire.ERPs)
 t.test(threshold.2 ~ group.original, data = questionnaire.ERPs)
 
 # 5. Awareness ratings between session in unaware group
-# 5.1. Compare means in confidence ratings
-t.test(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, 
-       paired = TRUE)
-# 5.2. Compute effect sizes
-cohen.d(questionnaire.ERPs$conf.4.ses1, questionnaire.ERPs$conf.4.ses2, 
-        paired = TRUE)
-# 5.3. Compare means in frequency ratings
-t.test(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, 
-       paired = TRUE)
-# 5.2. Compute effect sizes
-cohen.d(questionnaire.ERPs$freq.4.ses1, questionnaire.ERPs$freq.4.ses2, 
-        paired = TRUE)
+
 
 # 5.1. Compare means in awareness index
 t.test(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2, 

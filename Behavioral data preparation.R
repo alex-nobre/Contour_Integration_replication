@@ -546,7 +546,7 @@ rep_data4 <- cbind(rep_data4, threshold.sqr_1, threshold.sqr_2, threshold.rand_1
                    threshold.rand_2, threshold.1, threshold.2)
 
 # 4.3.2. Proportion correct, hits, misses, false alarms and correct rejections
-rep_data4 <- cbind(ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
+rep_data4 <- cbind(rep_data4, ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
                    ses2.Ph, ses3.Ph, ses1.Pfa.sqr, ses2.Pfa.sqr, ses1.Pfa.rand, 
                    ses2.Pfa.rand, ses1.Pfa, ses2.Pfa, ses3.Pfa, ses1.Pm.sqr, 
                    ses2.Pm.sqr, ses1.Pm.rand, ses2.Pm.rand, ses1.Pm, ses2.Pm,

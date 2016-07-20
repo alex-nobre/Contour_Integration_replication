@@ -13,12 +13,6 @@ list_fnames <- c(sqr1_fnames, sqr2_fnames, rand1_fnames, rand2_fnames)
 sqr_ses1_means <- function(sqr1_file) {
   sqr1_data <- read.delim(paste('./Data/Data_BVA/', sqr1_file, sep = ""), sep = " ", 
                           dec = ",", header = TRUE)
-  # # Remove last two columns
-  # sqr1_data$Right <- NULL
-  # sqr1_data$Occ.par.1 <- NULL
-  # # Rename last column
-  # names(sqr1_data)[names(sqr1_data) == "Occ.par"] <- "Right"
-  # Compute means for each region and append to main data frame
   C1 <- sqr1_data[40:50,1]
   P1 <- sqr1_data[51:61,2]
   N1 <- sqr1_data[62:75,3]
@@ -54,12 +48,6 @@ sqr_ses1_means <- function(sqr1_file) {
 sqr_ses2_means <- function(sqr2_file) {
   sqr2_data <- read.delim(paste('./Data/Data_BVA/', sqr2_file, sep = ""), sep = " ", 
                           dec = ",", header = TRUE)
-  # # Remove last two columns
-  # sqr2_data$Right <- NULL
-  # sqr2_data$Occ.par.1 <- NULL
-  # # Rename last column
-  # names(sqr2_data)[names(sqr2_data) == "Occ.par"] <- "Right"
-  # Compute means for each region and append to main data frame
   C1 <- sqr2_data[40:50,1]
   P1 <- sqr2_data[51:61,2]
   N1 <- sqr2_data[62:75,3]
@@ -95,12 +83,6 @@ sqr_ses2_means <- function(sqr2_file) {
 rand_ses1_means <- function(rand1_file) {
   rand1_data <- read.delim(paste('./Data/Data_BVA/', rand1_file, sep = ""), sep = " ", 
                            dec = ",", header = TRUE)
-  # # Remove last two columns
-  # rand1_data$Right <- NULL
-  # rand1_data$Occ.par.1 <- NULL
-  # # Rename last column
-  # names(rand1_data)[names(rand1_data) == "Occ.par"] <- "Right"
-  # Compute means for each region and append to main data frame
   C1 <- rand1_data[40:50,1]
   P1 <- rand1_data[51:61,2]
   N1 <- rand1_data[62:75,3]
@@ -136,12 +118,6 @@ rand_ses1_means <- function(rand1_file) {
 rand_ses2_means <- function(rand2_file) {
   rand2_data <- read.delim(paste('./Data/Data_BVA/', rand2_file, sep = ""), sep = " ", 
                            dec = ",", header = TRUE)
-  # # Remove last two columns
-  # rand2_data$Right <- NULL
-  # rand2_data$Occ.par.1 <- NULL
-  # # Rename last column
-  # names(rand2_data)[names(rand2_data) == "Occ.par"] <- "Right"
-  # Compute means for each region and append to main data frame
   C1 <- rand2_data[40:50,1]
   P1 <- rand2_data[51:61,2]
   N1 <- rand2_data[62:75,3]
