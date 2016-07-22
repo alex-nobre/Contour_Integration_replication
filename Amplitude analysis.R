@@ -285,18 +285,18 @@ dev.off()
 # ANOVA
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
+contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
 nd1_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
                     data = rep_data_long2, method = "ML") #baseline
 nd1_config <- update(nd1_baseline, .~. + configuration)
 nd1_session <- update(nd1_config, .~. + session)
-nd1_group <- update(nd1_session, .~. + group)
-nd1_config_session <- update(nd1_group, .~. + configuration:session)
-nd1_session_group <- update(nd1_config_session, .~. + session:group)
-nd1_config_group <- update(nd1_session_group, .~. + configuration:group)
-nd1_lme <- update(nd1_config_group, .~. + configuration:session:group)
-anova(nd1_baseline, nd1_config, nd1_session, nd1_group, nd1_config_session,
-      nd1_session_group, nd1_config_group, nd1_lme)
+nd1_group.original <- update(nd1_session, .~. + group.original)
+nd1_config_session <- update(nd1_group.original, .~. + configuration:session)
+nd1_session_group.original <- update(nd1_config_session, .~. + session:group.original)
+nd1_config_group.original <- update(nd1_session_group.original, .~. + configuration:group.original)
+nd1_lme <- update(nd1_config_group.original, .~. + configuration:session:group.original)
+anova(nd1_baseline, nd1_config, nd1_session, nd1_group.original, nd1_config_session,
+      nd1_session_group.original, nd1_config_group.original, nd1_lme)
 
 summary(nd1_lme)
 
