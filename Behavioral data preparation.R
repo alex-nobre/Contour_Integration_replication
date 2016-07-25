@@ -97,9 +97,9 @@ accuracies.2 <- lapply(behav_ses_2, compute.accuracy)
 accuracies.3 <- lapply(behav_ses_3, compute.accuracy)
 
 
-for (i in 1:32) {
-  accuracies.1[i] <- compute.accuracy(behav_ses_1[[i]])
-}
+# for (i in 1:32) {
+#   accuracies.1[i] <- compute.accuracy(behav_ses_1[[i]])
+# }
 
 # accuracies.sub1 <- compute.accuracy(behav_ses_1[[1]])
 # accuracies.sub2 <- compute.accuracy(behav_ses_1[[2]])
