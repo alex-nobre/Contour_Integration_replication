@@ -482,3 +482,246 @@ t.test(rep_data4[rep_data4$alpha.rand1.group == "low alpha rand1",]$RL.rand.nd2_
 t.test(rep_data4[rep_data4$alpha.rand2.group == "low alpha rand2",]$RL.rand.nd2_2, 
        rep_data4[rep_data4$alpha.rand2.group == "high alpha rand2",]$RL.rand.nd2_2)
 
+# 6. Nd1
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_nd1_occ_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
+                                data = rep_data_long2, method = "ML") #baseline
+alpha_nd1_occ_config <- update(alpha_nd1_occ_baseline, .~. + configuration)
+alpha_nd1_occ_session <- update(alpha_nd1_occ_config, .~. + session)
+alpha_nd1_occ_alpha.group <- update(alpha_nd1_occ_session, .~. + alpha.group)
+alpha_nd1_occ_config_session <- update(alpha_nd1_occ_alpha.group, .~. + 
+                                           configuration:session)
+alpha_nd1_occ_session_alpha.group <- update(alpha_nd1_occ_config_session, .~. + 
+                                                session:alpha.group)
+alpha_nd1_occ_config_alpha.group <- update(alpha_nd1_occ_session_alpha.group, .~. + 
+                                               configuration:alpha.group)
+alpha_nd1_occ_lme <- update(alpha_nd1_occ_config_alpha.group, .~. + 
+                                configuration:session:alpha.group)
+anova(alpha_nd1_occ_baseline, alpha_nd1_occ_config, alpha_nd1_occ_session, 
+      alpha_nd1_occ_alpha.group, 
+      alpha_nd1_occ_config_session, alpha_nd1_occ_session_alpha.group, 
+      alpha_nd1_occ_config_alpha.group, 
+      alpha_nd1_occ_lme)
+
+# line
+alpha.nd1.occ.line <- ggplot(rep_data_long2, aes(x = alpha.group, y = occ.nd1, 
+                                                colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "nd1 occ x alpha group", x = "alpha group", y = "nd1 occ amplitude", 
+       colour = "configuration")
+
+# P1
+contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long2$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_nd1_P1_baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/session, 
+                              data = rep_data_long2, method = "ML") #baseline
+alpha_nd1_P1_config <- update(alpha_nd1_P1_baseline, .~. + configuration)
+alpha_nd1_P1_session <- update(alpha_nd1_P1_config, .~. + session)
+alpha_nd1_P1_alpha.group <- update(alpha_nd1_P1_session, .~. + alpha.group)
+alpha_nd1_P1_config_session <- update(alpha_nd1_P1_alpha.group, .~. + 
+                                         configuration:session)
+alpha_nd1_P1_session_alpha.group <- update(alpha_nd1_P1_config_session, .~. + 
+                                              session:alpha.group)
+alpha_nd1_P1_config_alpha.group <- update(alpha_nd1_P1_session_alpha.group, .~. + 
+                                             configuration:alpha.group)
+alpha_nd1_P1_lme <- update(alpha_nd1_P1_config_alpha.group, .~. + 
+                              configuration:session:alpha.group)
+anova(alpha_nd1_P1_baseline, alpha_nd1_P1_config, alpha_nd1_P1_session, 
+      alpha_nd1_P1_alpha.group, 
+      alpha_nd1_P1_config_session, alpha_nd1_P1_session_alpha.group, 
+      alpha_nd1_P1_config_alpha.group, 
+      alpha_nd1_P1_lme)
+
+# C1
+alpha_nd1_C1_baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration/session, 
+                             data = rep_data_long2, method = "ML") #baseline
+alpha_nd1_C1_config <- update(alpha_nd1_C1_baseline, .~. + configuration)
+alpha_nd1_C1_session <- update(alpha_nd1_C1_config, .~. + session)
+alpha_nd1_C1_alpha.group <- update(alpha_nd1_C1_session, .~. + alpha.group)
+alpha_nd1_C1_config_session <- update(alpha_nd1_C1_alpha.group, .~. + 
+                                        configuration:session)
+alpha_nd1_C1_session_alpha.group <- update(alpha_nd1_C1_config_session, .~. + 
+                                             session:alpha.group)
+alpha_nd1_C1_config_alpha.group <- update(alpha_nd1_C1_session_alpha.group, .~. + 
+                                            configuration:alpha.group)
+alpha_nd1_C1_lme <- update(alpha_nd1_C1_config_alpha.group, .~. + 
+                             configuration:session:alpha.group)
+anova(alpha_nd1_C1_baseline, alpha_nd1_C1_config, alpha_nd1_C1_session, 
+      alpha_nd1_C1_alpha.group, 
+      alpha_nd1_C1_config_session, alpha_nd1_C1_session_alpha.group, 
+      alpha_nd1_C1_config_alpha.group, 
+      alpha_nd1_C1_lme)
+
+# N1
+alpha_nd1_N1_baseline <- lme(N1 ~ 1, random = ~1|Subject/configuration/session, 
+                             data = rep_data_long2, method = "ML") #baseline
+alpha_nd1_N1_config <- update(alpha_nd1_N1_baseline, .~. + configuration)
+alpha_nd1_N1_session <- update(alpha_nd1_N1_config, .~. + session)
+alpha_nd1_N1_alpha.group <- update(alpha_nd1_N1_session, .~. + alpha.group)
+alpha_nd1_N1_config_session <- update(alpha_nd1_N1_alpha.group, .~. + 
+                                        configuration:session)
+alpha_nd1_N1_session_alpha.group <- update(alpha_nd1_N1_config_session, .~. + 
+                                             session:alpha.group)
+alpha_nd1_N1_config_alpha.group <- update(alpha_nd1_N1_session_alpha.group, .~. + 
+                                            configuration:alpha.group)
+alpha_nd1_N1_lme <- update(alpha_nd1_N1_config_alpha.group, .~. + 
+                             configuration:session:alpha.group)
+anova(alpha_nd1_N1_baseline, alpha_nd1_N1_config, alpha_nd1_N1_session, 
+      alpha_nd1_N1_alpha.group, 
+      alpha_nd1_N1_config_session, alpha_nd1_N1_session_alpha.group, 
+      alpha_nd1_N1_config_alpha.group, 
+      alpha_nd1_N1_lme)
+
+# LP
+alpha_nd1_LP_baseline <- lme(LP ~ 1, random = ~1|Subject/configuration/session, 
+                             data = rep_data_long2, method = "ML") #baseline
+alpha_nd1_LP_config <- update(alpha_nd1_LP_baseline, .~. + configuration)
+alpha_nd1_LP_session <- update(alpha_nd1_LP_config, .~. + session)
+alpha_nd1_LP_alpha.group <- update(alpha_nd1_LP_session, .~. + alpha.group)
+alpha_nd1_LP_config_session <- update(alpha_nd1_LP_alpha.group, .~. + 
+                                        configuration:session)
+alpha_nd1_LP_session_alpha.group <- update(alpha_nd1_LP_config_session, .~. + 
+                                             session:alpha.group)
+alpha_nd1_LP_config_alpha.group <- update(alpha_nd1_LP_session_alpha.group, .~. + 
+                                            configuration:alpha.group)
+alpha_nd1_LP_lme <- update(alpha_nd1_LP_config_alpha.group, .~. + 
+                             configuration:session:alpha.group)
+anova(alpha_nd1_LP_baseline, alpha_nd1_LP_config, alpha_nd1_LP_session, 
+      alpha_nd1_LP_alpha.group, 
+      alpha_nd1_LP_config_session, alpha_nd1_LP_session_alpha.group, 
+      alpha_nd1_LP_config_alpha.group, 
+      alpha_nd1_LP_lme)
+
+ses1.data <- subset(rep_data_long2, session == 1)
+
+# anova
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_nd2_left_baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration, 
+                               data = ses1.data, method = "ML") #baseline
+alpha_nd2_left_config <- update(alpha_nd2_left_baseline, .~. + configuration)
+alpha_nd2_left_alpha.group <- update(alpha_nd2_left_config, .~. + alpha.group)
+alpha_nd2_left_lme <- update(alpha_nd2_left_alpha.group, .~. + 
+                                              configuration:alpha.group)
+anova(alpha_nd2_left_baseline, alpha_nd2_left_config, 
+      alpha_nd2_left_alpha.group,
+      alpha_nd2_left_lme)
+
+# 3.4.2. Nd2 left
+alpha.nd2.left.ses1 <- ggplot(ses1.data, aes(x = alpha.group, y = left.nd2, 
+                                                  colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  labs(title = "Nd2 left x alpha group", x = "alpha.group", y = "Nd2 left amplitude", 
+       colour = "configuration")
+
+# anova
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_nd2_right_baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration, 
+                               data = ses1.data, method = "ML") #baseline
+alpha_nd2_right_config <- update(alpha_nd2_right_baseline, .~. + configuration)
+alpha_nd2_right_alpha.group <- update(alpha_nd2_right_config, .~. + alpha.group)
+alpha_nd2_right_lme <- update(alpha_nd2_right_alpha.group, .~. + 
+                               configuration:alpha.group)
+anova(alpha_nd2_right_baseline, alpha_nd2_right_config, 
+      alpha_nd2_right_alpha.group,
+      alpha_nd2_right_lme)
+
+# 3.4.2. Nd2 right
+alpha.nd2.right.ses1 <- ggplot(ses1.data, aes(x = alpha.group, y = right.nd2, 
+                                             colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  labs(title = "Nd2 right x alpha group", x = "alpha.group", y = "Nd2 right amplitude", 
+       colour = "configuration")
+
+# anova
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_nd2_occ_baseline <- lme(RL.nd2 ~ 1, random = ~1|Subject/configuration, 
+                                data = ses1.data, method = "ML") #baseline
+alpha_nd2_RL_config <- update(alpha_nd2_RL_baseline, .~. + configuration)
+alpha_nd2_RL_alpha.group <- update(alpha_nd2_RL_config, .~. + alpha.group)
+alpha_nd2_RL_lme <- update(alpha_nd2_RL_alpha.group, .~. + 
+                                configuration:alpha.group)
+anova(alpha_nd2_RL_baseline, alpha_nd2_RL_config, 
+      alpha_nd2_RL_alpha.group,
+      alpha_nd2_RL_lme)
+
+# 3.4.2. Nd2 RL
+alpha.nd2.RL.ses1 <- ggplot(ses1.data, aes(x = alpha.group, y = RL.nd2, 
+                                              colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  labs(title = "Nd2 RL x alpha group", x = "alpha.group", y = "Nd2 RL amplitude", 
+       colour = "configuration")
+
+
+# anova
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_nd1_occ_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration, 
+                             data = ses1.data, method = "ML") #baseline
+alpha_nd1_occ_config <- update(alpha_nd1_occ_baseline, .~. + configuration)
+alpha_nd1_occ_alpha.group <- update(alpha_nd1_occ_config, .~. + alpha.group)
+alpha_nd1_occ_lme <- update(alpha_nd1_occ_alpha.group, .~. + 
+                             configuration:alpha.group)
+anova(alpha_nd1_occ_baseline, alpha_nd1_occ_config, 
+      alpha_nd1_occ_alpha.group,
+      alpha_nd1_occ_lme)
+
+# anova
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_P1_baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration, 
+                             data = ses1.data, method = "ML") #baseline
+alpha_P1_config <- update(alpha_P1_baseline, .~. + configuration)
+alpha_P1_alpha.group <- update(alpha_P1_config, .~. + alpha.group)
+alpha_P1_lme <- update(alpha_P1_alpha.group, .~. + 
+                             configuration:alpha.group)
+anova(alpha_P1_baseline, alpha_P1_config, 
+      alpha_P1_alpha.group,
+      alpha_P1_lme)
+
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_C1_baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration, 
+                         data = ses1.data, method = "ML") #baseline
+alpha_C1_config <- update(alpha_C1_baseline, .~. + configuration)
+alpha_C1_alpha.group <- update(alpha_C1_config, .~. + alpha.group)
+alpha_C1_lme <- update(alpha_C1_alpha.group, .~. + 
+                         configuration:alpha.group)
+anova(alpha_C1_baseline, alpha_C1_config, 
+      alpha_C1_alpha.group,
+      alpha_C1_lme)
+
+contrasts(ses1.data$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(ses1.data$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+alpha_N1_baseline <- lme(N1 ~ 1, random = ~1|Subject/configuration, 
+                         data = ses1.data, method = "ML") #baseline
+alpha_N1_config <- update(alpha_N1_baseline, .~. + configuration)
+alpha_N1_alpha.group <- update(alpha_N1_config, .~. + alpha.group)
+alpha_N1_lme <- update(alpha_N1_alpha.group, .~. + 
+                         configuration:alpha.group)
+anova(alpha_N1_baseline, alpha_N1_config, 
+      alpha_N1_alpha.group,
+      alpha_N1_lme)
+
+# 3.4.2. Nd2 RL
+alpha.N1.ses1 <- ggplot(ses1.data, aes(x = alpha.group, y = N1, 
+                                           colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  labs(title = "N1 x alpha group", x = "alpha.group", y = "N1 amplitude", 
+       colour = "configuration")

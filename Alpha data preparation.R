@@ -84,3 +84,26 @@ rep_data4$log.alpha.rand.1 <- log(rep_data4$alpha.rand.1)
 rep_data4$log.alpha.rand.2 <- log(rep_data4$alpha.rand.2)
 # Compute means across conditions
 rep_data4$mean.log.alpha <- rowMeans(rep_data4[,131:134])
+
+
+# 9. Append to dataset without behavioral responses
+rep_data2$alpha.sqr.1 <- sqr1.mean.alpha
+rep_data2$alpha.sqr.2 <- sqr2.mean.alpha
+rep_data2$alpha.rand.1 <- rand1.mean.alpha
+rep_data2$alpha.rand.2 <- rand2.mean.alpha
+# Compute means across conditions
+rep_data2$mean.alpha <- rowMeans(rep_data2[,56:59])
+
+# 9.1. Build groups based on median-split of alpha power
+low.alpha.group <- rep_data2[which(rep_data2$mean.alpha < 
+                                     median(rep_data2$mean.alpha)),]$Subject
+high.alpha.group <- rep_data2[which(rep_data2$mean.alpha > 
+                                      median(rep_data2$mean.alpha)),]$Subject
+
+# 9.2. Create factor for median split group
+rep_data2$alpha.group <- numeric(nrow(rep_data2))
+rep_data2[which(rep_data2$Subject %in% 
+                  low.alpha.group),]$alpha.group <- 'low.alpha'
+rep_data2[which(rep_data2$Subject %in% 
+                  high.alpha.group),]$alpha.group <- 'high.alpha'
+rep_data2$alpha.group <- factor(rep_data2$alpha.group)
