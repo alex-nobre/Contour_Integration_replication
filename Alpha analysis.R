@@ -277,93 +277,6 @@ CrossTable(rep_data4$alpha.group, rep_data4$group.original, fisher = TRUE,
            chisq = TRUE, expected = TRUE, sresid = TRUE, format = 'SPSS')
 
 
-# # 4. Median split analysis of ERPs x log alpha
-# # 4.1. Build groups based on median-split of log of alpha power
-# low.log.alpha.group <- rep_data4[which(rep_data4$mean.log.alpha < 
-#                                          median(rep_data4$mean.log.alpha)),]$Subject
-# high.log.alpha.group <- rep_data4[which(rep_data4$mean.log.alpha > 
-#                                           median(rep_data4$mean.log.alpha)),]$Subject
-# 
-# 
-# # 4.2. Create factor for median split group
-# rep_data4$log.alpha.group <- numeric(nrow(rep_data4))
-# rep_data4[which(rep_data4$Subject %in% 
-#                   low.log.alpha.group),]$log.alpha.group <- 'low.log.alpha'
-# rep_data4[which(rep_data4$Subject %in% 
-#                   high.log.alpha.group),]$log.alpha.group <- 'high.log.alpha.'
-# rep_data4$log.alpha.group <- factor(rep_data4$log.alpha.group)
-# 
-# # 4.3. Append to long data frame
-# rep_data_long2$log.alpha.group <- rep(rep_data4$log.alpha.group, 4)
-# 
-# # 4.4. ANOVAs
-# # 4.4.1. Nd2 (VAN) left
-# contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-# contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-# contrasts(rep_data_long2$log.alpha.group) <- c(-1, 1) # setting contrasts for log.alpha.group
-# alpha_nd2_left_baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
-#                                data = rep_data_long2, method = "ML") #baseline
-# alpha_nd2_left_config <- update(alpha_nd2_left_baseline, .~. + configuration)
-# alpha_nd2_left_session <- update(alpha_nd2_left_config, .~. + session)
-# alpha_nd2_left_log.alpha.group <- update(alpha_nd2_left_session, .~. + log.alpha.group)
-# alpha_nd2_left_config_session <- update(alpha_nd2_left_log.alpha.group, .~. + 
-#                                           configuration:session)
-# alpha_nd2_left_session_log.alpha.group <- update(alpha_nd2_left_config_session, .~. + 
-#                                                    session:log.alpha.group)
-# alpha_nd2_left_config_log.alpha.group <- update(alpha_nd2_left_session_log.alpha.group, .~. + 
-#                                                   configuration:log.alpha.group)
-# alpha_nd2_left_lme <- update(alpha_nd2_left_config_log.alpha.group, .~. + 
-#                                configuration:session:log.alpha.group)
-# anova(alpha_nd2_left_baseline, alpha_nd2_left_config, alpha_nd2_left_session, 
-#       alpha_nd2_left_log.alpha.group, 
-#       alpha_nd2_left_config_session, alpha_nd2_left_session_log.alpha.group, 
-#       alpha_nd2_left_config_log.alpha.group, 
-#       alpha_nd2_left_lme)
-# 
-# # 4.4.2. Nd2 left - session
-# log.alpha.nd2.left.line <- ggplot(rep_data_long2, aes(x = log.alpha.group, y = left.nd2, 
-#                                                       colour = configuration)) + 
-#   stat_summary(fun.y = mean, geom = "point") + 
-#   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-#   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-#   facet_grid(.~session) +
-#   labs(title = "Nd2 left x log alpha group", x = "log alpha group", 
-#        y = "Nd2 left amplitude", 
-#        colour = "configuration")
-# 
-# # 4.4.3. Nd2 (VAN) right
-# contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-# contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-# contrasts(rep_data_long2$log.alpha.group) <- c(-1, 1) # setting contrasts for log.alpha.group
-# alpha_nd2_right_baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
-#                                 data = rep_data_long2, method = "ML") #baseline
-# alpha_nd2_right_config <- update(alpha_nd2_right_baseline, .~. + configuration)
-# alpha_nd2_right_session <- update(alpha_nd2_right_config, .~. + session)
-# alpha_nd2_right_log.alpha.group <- update(alpha_nd2_right_session, .~. + log.alpha.group)
-# alpha_nd2_right_config_session <- update(alpha_nd2_right_log.alpha.group, .~. + 
-#                                            configuration:session)
-# alpha_nd2_right_session_log.alpha.group <- update(alpha_nd2_right_config_session, .~. + 
-#                                                     session:log.alpha.group)
-# alpha_nd2_right_config_log.alpha.group <- update(alpha_nd2_right_session_log.alpha.group, .~. + 
-#                                                    configuration:log.alpha.group)
-# alpha_nd2_right_lme <- update(alpha_nd2_right_config_log.alpha.group, .~. + 
-#                                 configuration:session:log.alpha.group)
-# anova(alpha_nd2_right_baseline, alpha_nd2_right_config, alpha_nd2_right_session, 
-#       alpha_nd2_right_log.alpha.group, 
-#       alpha_nd2_right_config_session, alpha_nd2_right_session_log.alpha.group, 
-#       alpha_nd2_right_config_log.alpha.group, 
-#       alpha_nd2_right_lme)
-# 
-# # 7.3 Nd2 right
-# log.alpha.nd2.right.line <- ggplot(rep_data_long2, aes(x = log.alpha.group, y = right.nd2, 
-#                                                        colour = configuration)) + 
-#   stat_summary(fun.y = mean, geom = "point") + 
-#   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-#   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-#   facet_grid(.~session) +
-#   labs(title = "Nd2 right x log alpha group", x = "log alpha group", 
-#        y = "Nd2 right amplitude", 
-#        colour = "configuration")
 
 # 4. Create Median split groups based on alpha power
 # 4.1. Square, session 1
@@ -717,11 +630,109 @@ anova(alpha_N1_baseline, alpha_N1_config,
       alpha_N1_alpha.group,
       alpha_N1_lme)
 
+t.test(ses1.data)
+
 # 3.4.2. Nd2 RL
 alpha.N1.ses1 <- ggplot(ses1.data, aes(x = alpha.group, y = N1, 
                                            colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
   labs(title = "N1 x alpha group", x = "alpha.group", y = "N1 amplitude", 
        colour = "configuration")
+
+
+
+
+
+
+
+
+
+# # 4. Median split analysis of ERPs x log alpha
+# # 4.1. Build groups based on median-split of log of alpha power
+# low.log.alpha.group <- rep_data4[which(rep_data4$mean.log.alpha < 
+#                                          median(rep_data4$mean.log.alpha)),]$Subject
+# high.log.alpha.group <- rep_data4[which(rep_data4$mean.log.alpha > 
+#                                           median(rep_data4$mean.log.alpha)),]$Subject
+# 
+# 
+# # 4.2. Create factor for median split group
+# rep_data4$log.alpha.group <- numeric(nrow(rep_data4))
+# rep_data4[which(rep_data4$Subject %in% 
+#                   low.log.alpha.group),]$log.alpha.group <- 'low.log.alpha'
+# rep_data4[which(rep_data4$Subject %in% 
+#                   high.log.alpha.group),]$log.alpha.group <- 'high.log.alpha.'
+# rep_data4$log.alpha.group <- factor(rep_data4$log.alpha.group)
+# 
+# # 4.3. Append to long data frame
+# rep_data_long2$log.alpha.group <- rep(rep_data4$log.alpha.group, 4)
+# 
+# # 4.4. ANOVAs
+# # 4.4.1. Nd2 (VAN) left
+# contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+# contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+# contrasts(rep_data_long2$log.alpha.group) <- c(-1, 1) # setting contrasts for log.alpha.group
+# alpha_nd2_left_baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
+#                                data = rep_data_long2, method = "ML") #baseline
+# alpha_nd2_left_config <- update(alpha_nd2_left_baseline, .~. + configuration)
+# alpha_nd2_left_session <- update(alpha_nd2_left_config, .~. + session)
+# alpha_nd2_left_log.alpha.group <- update(alpha_nd2_left_session, .~. + log.alpha.group)
+# alpha_nd2_left_config_session <- update(alpha_nd2_left_log.alpha.group, .~. + 
+#                                           configuration:session)
+# alpha_nd2_left_session_log.alpha.group <- update(alpha_nd2_left_config_session, .~. + 
+#                                                    session:log.alpha.group)
+# alpha_nd2_left_config_log.alpha.group <- update(alpha_nd2_left_session_log.alpha.group, .~. + 
+#                                                   configuration:log.alpha.group)
+# alpha_nd2_left_lme <- update(alpha_nd2_left_config_log.alpha.group, .~. + 
+#                                configuration:session:log.alpha.group)
+# anova(alpha_nd2_left_baseline, alpha_nd2_left_config, alpha_nd2_left_session, 
+#       alpha_nd2_left_log.alpha.group, 
+#       alpha_nd2_left_config_session, alpha_nd2_left_session_log.alpha.group, 
+#       alpha_nd2_left_config_log.alpha.group, 
+#       alpha_nd2_left_lme)
+# 
+# # 4.4.2. Nd2 left - session
+# log.alpha.nd2.left.line <- ggplot(rep_data_long2, aes(x = log.alpha.group, y = left.nd2, 
+#                                                       colour = configuration)) + 
+#   stat_summary(fun.y = mean, geom = "point") + 
+#   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+#   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+#   facet_grid(.~session) +
+#   labs(title = "Nd2 left x log alpha group", x = "log alpha group", 
+#        y = "Nd2 left amplitude", 
+#        colour = "configuration")
+# 
+# # 4.4.3. Nd2 (VAN) right
+# contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
+# contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
+# contrasts(rep_data_long2$log.alpha.group) <- c(-1, 1) # setting contrasts for log.alpha.group
+# alpha_nd2_right_baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
+#                                 data = rep_data_long2, method = "ML") #baseline
+# alpha_nd2_right_config <- update(alpha_nd2_right_baseline, .~. + configuration)
+# alpha_nd2_right_session <- update(alpha_nd2_right_config, .~. + session)
+# alpha_nd2_right_log.alpha.group <- update(alpha_nd2_right_session, .~. + log.alpha.group)
+# alpha_nd2_right_config_session <- update(alpha_nd2_right_log.alpha.group, .~. + 
+#                                            configuration:session)
+# alpha_nd2_right_session_log.alpha.group <- update(alpha_nd2_right_config_session, .~. + 
+#                                                     session:log.alpha.group)
+# alpha_nd2_right_config_log.alpha.group <- update(alpha_nd2_right_session_log.alpha.group, .~. + 
+#                                                    configuration:log.alpha.group)
+# alpha_nd2_right_lme <- update(alpha_nd2_right_config_log.alpha.group, .~. + 
+#                                 configuration:session:log.alpha.group)
+# anova(alpha_nd2_right_baseline, alpha_nd2_right_config, alpha_nd2_right_session, 
+#       alpha_nd2_right_log.alpha.group, 
+#       alpha_nd2_right_config_session, alpha_nd2_right_session_log.alpha.group, 
+#       alpha_nd2_right_config_log.alpha.group, 
+#       alpha_nd2_right_lme)
+# 
+# # 7.3 Nd2 right
+# log.alpha.nd2.right.line <- ggplot(rep_data_long2, aes(x = log.alpha.group, y = right.nd2, 
+#                                                        colour = configuration)) + 
+#   stat_summary(fun.y = mean, geom = "point") + 
+#   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+#   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+#   facet_grid(.~session) +
+#   labs(title = "Nd2 right x log alpha group", x = "log alpha group", 
+#        y = "Nd2 right amplitude", 
+#        colour = "configuration")
