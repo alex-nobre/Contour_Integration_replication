@@ -1,12 +1,31 @@
-library(pastecs)
-library(ggplot2)
-library(nlme)
-library(lme4)
-library(gridExtra)
+# Data import packages
+library(xlsx)
+# Data manipulation packages
 library(outliers)
+library(dplyr)
+library(tidyr)
+library(reshape2)
+# Plotting packages
 library(lattice)
+library(ggplot2)
+library(gridExtra)
+library(GGally)
+# Analysis packages
+library(polycor)
+library(nlme)
+library(gmodels)
+library(lme4)
+library(ggm)
+library(pastecs)
 library(car)
 library(effsize)
+library(multcomp)
+# Psychophysics packages
+library(quickpsy)
+library(MPDiR)
+library(psyphy)
+# Data report packages
+library(knitr)
 
 #--------------------------------Prepare data-----------------------------------
 # 1. Subsets
@@ -196,21 +215,25 @@ C1.line <- ggplot(rep_data_long2, aes(x = group.original, y = C1,
   labs(title = "C1 mean aplitude", x = "session", 
        y = "C1 mean amplitude", colour = "configuration")
 
-# ANOVA
+# Set contrasts for ANOVA
 contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
 contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
 contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
+contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
+
+
+# ANOVA
 C1_baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration/session, 
                     data = rep_data_long2, method = "ML") #baseline
 C1_config <- update(C1_baseline, .~. + configuration)
 C1_session <- update(C1_config, .~. + session)
-C1_group <- update(C1_session, .~. + group)
-C1_config_session <- update(C1_group, .~. + configuration:session)
-C1_session_group <- update(C1_config_session, .~. + session:group)
-C1_config_group <- update(C1_session_group, .~. + configuration:group)
-C1_lme <- update(C1_config_group, .~. + configuration:session:group)
-anova(C1_baseline, C1_config, C1_session, C1_group, C1_config_session,
-      C1_session_group, C1_config_group, C1_lme)
+C1_group.original <- update(C1_session, .~. + group.original)
+C1_config_session <- update(C1_group.original, .~. + configuration:session)
+C1_session_group.original <- update(C1_config_session, .~. + session:group.original)
+C1_config_group.original <- update(C1_session_group.original, .~. + configuration:group.original)
+C1_lme <- update(C1_config_group.original, .~. + configuration:session:group.original)
+anova(C1_baseline, C1_config, C1_session, C1_group.original, C1_config_session,
+      C1_session_group.original, C1_config_group.original, C1_lme)
 
 # 8.2. P1
 # Line plot
@@ -224,20 +247,17 @@ P1.line <- ggplot(rep_data_long2, aes(x = group.original, y = P1,
        y = "P1 mean amplitude", colour = "configuration")
 
 # ANOVA
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # set contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # set contrasts for session
-contrasts(rep_data_long2$group) <- c(-1, 1) # set contrasts for group
 P1_baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/session, 
                                  data = rep_data_long2, method = "ML") #baseline
 P1_config <- update(P1_baseline, .~. + configuration)
 P1_session <- update(P1_config, .~. + session)
-P1_group <- update(P1_session, .~. + group)
-P1_config_session <- update(P1_group, .~. + configuration:session)
-P1_session_group <- update(P1_config_session, .~. + session:group)
-P1_config_group <- update(P1_session_group, .~. + configuration:group)
-P1_lme <- update(P1_config_group, .~. + configuration:session:group)
-anova(P1_baseline, P1_config, P1_session, P1_group, 
-      P1_config_session, P1_session_group, P1_config_group, 
+P1_group.original <- update(P1_session, .~. + group.original)
+P1_config_session <- update(P1_group.original, .~. + configuration:session)
+P1_session_group.original <- update(P1_config_session, .~. + session:group.original)
+P1_config_group.original <- update(P1_session_group.original, .~. + configuration:group.original)
+P1_lme <- update(P1_config_group.original, .~. + configuration:session:group.original)
+anova(P1_baseline, P1_config, P1_session, P1_group.original, 
+      P1_config_session, P1_session_group.original, P1_config_group.original, 
       P1_lme)
 summary(P1_lme)
 
@@ -252,9 +272,6 @@ N1.line <- ggplot(rep_data_long2, aes(x = group.original, y = N1,
   labs(title = "N1 mean amplitude", x = " session", y = "N1 mean amplitude", 
        colour = "configuration")
 # ANOVA
-contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
-contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
 N1_baseline <- lme(N1_occ ~ 1, random = ~1|subject/configuration/session, 
                            data = ROImap_data_long, method = "ML") #baseline
 N1_config <- update(N1_baseline, .~. + configuration)
@@ -283,9 +300,6 @@ nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1,
 nd1.line
 dev.off()
 # ANOVA
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
 nd1_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
                     data = rep_data_long2, method = "ML") #baseline
 nd1_config <- update(nd1_baseline, .~. + configuration)
@@ -301,9 +315,6 @@ anova(nd1_baseline, nd1_config, nd1_session, nd1_group.original, nd1_config_sess
 summary(nd1_lme)
 
 # 8.5. Nd2 (VAN) left
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
 nd2_left_baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                          data = rep_data_long2, method = "ML") #baseline
 nd2_left_config <- update(nd2_left_baseline, .~. + configuration)
@@ -319,9 +330,6 @@ anova(nd2_left_baseline, nd2_left_config, nd2_left_session, nd2_left_group.origi
 summary(nd2_left_lme)
 
 # 8.6. Nd2 (VAN) right
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
 nd2_right_baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                           data = rep_data_long2, method = "ML") #baseline
 nd2_right_config <- update(nd2_right_baseline, .~. + configuration)
@@ -435,3 +443,4 @@ rep_data_long9 <- subset(rep_data_long8, group == "aware")
 t.test(occ ~ group, data = rep_data_long7, paired = FALSE)
 t.test(left ~ session, data = rep_data_long9, paired = TRUE)
 t.test(right ~ session, data = rep_data_long9, paired = TRUE)
+

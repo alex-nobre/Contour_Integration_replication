@@ -3,12 +3,13 @@ library(xlsx)
 # Data manipulation packages
 library(outliers)
 library(dplyr)
+library(tidyr)
+library(reshape2)
 # Plotting packages
 library(lattice)
 library(ggplot2)
 library(gridExtra)
 library(GGally)
-library(corrplot)
 # Analysis packages
 library(polycor)
 library(nlme)
@@ -18,6 +19,7 @@ library(ggm)
 library(pastecs)
 library(car)
 library(effsize)
+library(multcomp)
 # Psychophysics packages
 library(quickpsy)
 library(MPDiR)
