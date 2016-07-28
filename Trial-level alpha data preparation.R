@@ -440,3 +440,40 @@ rep_data3$high.alpha.RL.nd2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means,
 rep_data3$high.alpha.N2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 12))
 rep_data3$high.alpha.P3.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 13))
 rep_data3$high.alpha.LP.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 14))
+
+
+
+rep_data_alpha <- reshape(rep_data3, varying = 4:ncol(rep_data3), sep = "_", 
+                         direction = "long", 
+                         new.row.names = NULL)
+rep_data_alpha[,ncol(rep_data_alpha)]<- NULL
+names(rep_data_alpha)[names(rep_data_alpha) == "time"] <- "session"
+rep_data_alpha2 <- rep_data_alpha %>%
+  unite(sqr,contains("sqr")) %>%
+  unite(rand,contains("rand")) %>%
+  gather(configuration,values,sqr:rand) %>%
+  separate(values,c("low.alpha.C1","low.alpha.P1","low.alpha.N1","low.alpha.occ.nd1",
+                    "low.alpha.occ.nd2","low.alpha.left.nd1","low.alpha.left.nd2",
+                    "low.alpha.right.nd1","low.alpha.right.nd2","low.alpha.RL.nd1",
+                    "low.alpha.RL.nd2","low.alpha.N2","low.alpha.P3","low.alpha.LP",
+                    "high.alpha.C1","high.alpha.P1","high.alpha.N1","high.alpha.occ.nd1",
+                    "high.alpha.occ.nd2","high.alpha.left.nd1","high.alpha.left.nd2",
+                    "high.alpha.right.nd1","high.alpha.right.nd2","high.alpha.RL.nd1",
+                    "high.alpha.RL.nd2","high.alpha.N2","high.alpha.P3","high.alpha.LP"),
+           sep = "_",
+           convert = TRUE)
+
+rep_data_alpha3 <- rep_data_alpha2 %>%
+  unite(low.alpha,contains("low.alpha")) %>%
+  unite(high.alpha,contains("high.alpha")) %>%
+  gather(alpha.power,values,low.alpha:high.alpha) %>%
+  separate(values,c("C1","P1","N1","occ.nd1","occ.nd2","left.nd1","left.nd2",
+                    "right.nd1","right.nd2","RL.nd1","RL.nd2","N2","P3","LP"),
+           sep = "_",
+           convert = TRUE)
+
+rep_data_alpha3$group <- factor(rep_data_alpha3$group)
+rep_data_alpha3$group.original <- factor(rep_data_alpha3$group.original)
+rep_data_alpha3$session <- factor(rep_data_alpha3$session)
+rep_data_alpha3$configuration <- factor(rep_data_alpha3$configuration)
+rep_data_alpha3$alpha.power <- factor(rep_data_alpha3$alpha.power)

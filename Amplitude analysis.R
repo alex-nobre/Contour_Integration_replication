@@ -311,7 +311,6 @@ nd1_config_group.original <- update(nd1_session_group.original, .~. + configurat
 nd1_lme <- update(nd1_config_group.original, .~. + configuration:session:group.original)
 anova(nd1_baseline, nd1_config, nd1_session, nd1_group.original, nd1_config_session,
       nd1_session_group.original, nd1_config_group.original, nd1_lme)
-
 summary(nd1_lme)
 
 # 8.5. Nd2 (VAN) left

@@ -33,28 +33,29 @@ library(knitr)
 # 1.4. Nd1 (P2)
 # Line plot
 jpeg(file = "./Plots/Pitts ROIs/nd1line.jpeg")
-low.alpha.nd1.line <- ggplot(rep_data_long3, aes(x = group.original, y = low.alpha.occ.nd1, 
+alpha.nd1.line <- ggplot(rep_data_alpha3, aes(x = alpha.power, y = occ.nd1, 
                                        colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
   facet_grid(.~session) +
-  labs(title = "Low alpha Nd1 mean amplitude", x = "group", y = "Nd1 mean amplitude", 
+  labs(title = "Nd1 mean amplitude", x = "group", y = "Nd1 mean amplitude", 
        colour = "configuration")
 nd1.line
 dev.off()
 
 # ANOVA
-nd1_baseline <- lme(low.alpha.occ.nd1 ~ 1, random = ~1|Subject/configuration, 
-                    data = rep_data_long2, method = "ML") #baseline
+nd1_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session/alpha.power, 
+                    data = rep_data_alpha3, method = "ML") #baseline
 nd1_config <- update(nd1_baseline, .~. + configuration)
-nd1_group.original <- update(nd1_session, .~. + group.original)
-nd1_config_session <- update(nd1_group.original, .~. + configuration:session)
-nd1_session_group.original <- update(nd1_config_session, .~. + session:group.original)
-nd1_config_group.original <- update(nd1_session_group.original, .~. + configuration:group.original)
-nd1_lme <- update(nd1_config_group.original, .~. + configuration:session:group.original)
-anova(nd1_baseline, nd1_config, nd1_session, nd1_group.original, nd1_config_session,
-      nd1_session_group.original, nd1_config_group.original, nd1_lme)
+nd1_session <- update(nd1_config, .~. + session)
+nd1_alpha.power <- update(nd1_session, .~. + alpha.power)
+nd1_config_session <- update(nd1_alpha.power, .~. + configuration:session)
+nd1_session_alpha.power <- update(nd1_config_session, .~. + session:alpha.power)
+nd1_config_alpha.power <- update(nd1_session_alpha.power, .~. + configuration:alpha.power)
+nd1_lme <- update(nd1_config_alpha.power, .~. + configuration:session:alpha.power)
+anova(nd1_baseline, nd1_config, nd1_session, nd1_alpha.power, nd1_config_session,
+      nd1_session_alpha.power, nd1_config_alpha.power, nd1_lme)
 summary(nd1_lme)
 
 
