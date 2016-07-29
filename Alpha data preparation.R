@@ -58,27 +58,27 @@ rand1.mean.alpha <- sapply(rand1.alpha, mean)
 rand2.mean.alpha <- sapply(rand2.alpha, mean)
 
 # 5. Add to long data frame
-rep_data_long2$alpha <- numeric(nrow(rep_data_long2))
-rep_data_long2[rep_data_long2$configuration == 'sqr' & 
-                      rep_data_long2$session == 1,]$alpha <- sqr1.mean.alpha
-rep_data_long2[rep_data_long2$configuration == 'sqr' & 
-                 rep_data_long2$session == 2,]$alpha <- sqr2.mean.alpha
-rep_data_long2[rep_data_long2$configuration == 'rand' & 
-                 rep_data_long2$session == 1,]$alpha <- rand1.mean.alpha
-rep_data_long2[rep_data_long2$configuration == 'rand' & 
-                 rep_data_long2$session == 2,]$alpha <- rand2.mean.alpha
+rep_data_long3$alpha <- numeric(nrow(rep_data_long3))
+rep_data_long3[rep_data_long3$configuration == 'sqr' & 
+                      rep_data_long3$session == 1,]$alpha <- sqr1.mean.alpha
+rep_data_long3[rep_data_long3$configuration == 'sqr' & 
+                 rep_data_long3$session == 2,]$alpha <- sqr2.mean.alpha
+rep_data_long3[rep_data_long3$configuration == 'rand' & 
+                 rep_data_long3$session == 1,]$alpha <- rand1.mean.alpha
+rep_data_long3[rep_data_long3$configuration == 'rand' & 
+                 rep_data_long3$session == 2,]$alpha <- rand2.mean.alpha
 
 
 # 6. Compute log
-rep_data_long2$log.alpha <- log(rep_data_long2$alpha)
+rep_data_long3$log.alpha <- log(rep_data_long3$alpha)
 
 # 7. Add to wide data frame
-rep_data4$alpha.sqr.1 <- sqr1.mean.alpha
-rep_data4$alpha.sqr.2 <- sqr2.mean.alpha
-rep_data4$alpha.rand.1 <- rand1.mean.alpha
-rep_data4$alpha.rand.2 <- rand2.mean.alpha
+questionnaire.ERPs$alpha.sqr.1 <- sqr1.mean.alpha
+questionnaire.ERPs$alpha.sqr.2 <- sqr2.mean.alpha
+questionnaire.ERPs$alpha.rand.1 <- rand1.mean.alpha
+questionnaire.ERPs$alpha.rand.2 <- rand2.mean.alpha
 # Compute means across conditions
-rep_data4$mean.alpha <- rowMeans(rep_data4[,124:127])
+questionnaire.ERPs$mean.alpha <- rowMeans(questionnaire.ERPs[,252:255])
 
 # 8. Compute log
 rep_data4$log.alpha.sqr.1 <- log(rep_data4$alpha.sqr.1)
@@ -110,3 +110,24 @@ rep_data2[which(rep_data2$Subject %in%
 rep_data2[which(rep_data2$Subject %in% 
                   high.alpha.group),]$alpha.group <- 'high.alpha'
 rep_data2$alpha.group <- factor(rep_data2$alpha.group)
+
+# 10. behav
+# 10.1. Build groups based on median-split of alpha power
+low.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$mean.alpha < 
+                                     median(questionnaire.ERPs$mean.alpha)),]$Subject
+high.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$mean.alpha > 
+                                      median(questionnaire.ERPs$mean.alpha)),]$Subject
+
+low.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$alpha.sqr.1 < 
+                                              median(questionnaire.ERPs$alpha.sqr.1)),]$Subject
+high.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$alpha.sqr.1 > 
+                                               median(questionnaire.ERPs$alpha.sqr.1)),]$Subject
+
+# 10.2. Create factor for median split group
+questionnaire.ERPs$alpha.group <- numeric(nrow(questionnaire.ERPs))
+questionnaire.ERPs[which(questionnaire.ERPs$Subject %in% 
+                  low.alpha.group),]$alpha.group <- 'low.alpha'
+questionnaire.ERPs[which(questionnaire.ERPs$Subject %in% 
+                  high.alpha.group),]$alpha.group <- 'high.alpha'
+questionnaire.ERPs$alpha.group <- factor(questionnaire.ERPs$alpha.group)
+

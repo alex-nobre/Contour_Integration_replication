@@ -216,10 +216,10 @@ C1.line <- ggplot(rep_data_long2, aes(x = group.original, y = C1,
        y = "C1 mean amplitude", colour = "configuration")
 
 # Set contrasts for ANOVA
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group) <- c(-1, 1) # setting contrasts for group
-contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
+contrasts(rep_data_long3$configuration) <- c(-1, 1) # setting contrasts for config
+contrasts(rep_data_long3$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_long3$group) <- c(-1, 1) # setting contrasts for group
+contrasts(rep_data_long3$group.original) <- c(-1, 1) # setting contrasts for group.original
 
 
 # ANOVA
@@ -381,14 +381,11 @@ anova(N2_baseline, N2_config, N2_session, N2_group,
 summary(N2_lme)
 
 # 8.8. LP
-contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
-contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
-LP_baseline <- lme(LP_central ~ 1, random = ~1|subject/configuration/session, 
-                               data = ROImap_data_long, method = "ML") #baseline
+LP_baseline <- lme(LP ~ 1, random = ~1|Subject/configuration/session, 
+                               data = rep_data_long3, method = "ML") #baseline
 LP_config <- update(LP_baseline, .~. + configuration)
 LP_session <- update(LP_config, .~. + session)
-LP_group <- update(LP_session, .~. + group)
+LP_group <- update(LP_session, .~. + group.original)
 LP_config_session <- update(LP_group, .~. + configuration:session)
 LP_session_group <- update(LP_config_session, .~. + session:group)
 LP_config_group <- update(LP_session_group, .~. + configuration:group)
@@ -396,6 +393,10 @@ LP_lme <- update(LP_config_group, .~. + configuration:session:group)
 anova(LP_baseline, LP_config, LP_session, LP_group, 
       LP_config_session, LP_session_group, LP_config_group, 
       LP_lme)
+
+by(rep_data_long3$LP, rep_data_long3$configuration, 
+   stat.desc, basic = FALSE)
+
 summary(LP_lme)
 
 #---------------------------------------MANOVA------------------------------------------

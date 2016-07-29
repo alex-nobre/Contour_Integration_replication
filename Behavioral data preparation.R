@@ -63,155 +63,6 @@ behav_ses_2 <- list.files('./Data/Data_Psychopy', pattern = "Implicit segregatio
 behav_ses_3 <- list.files('./Data/Data_Psychopy', pattern = "Implicit segregation IB_.*\\_3")
 
 #-------------------------Compute Psychophysical measures----------------------------
-# 0. Compute accuracy
-# 1.1. Functions to read files and accuracy
-# 1.1.1. Sessions 1 & 2 (task: dim disc detection)
-# 1.1.1.1. Square and random configurations
-# Accuracy square
-compute.accuracy.sqr <- function(behav.file) {
-  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-                          header = TRUE, sep = "\t", skip = 12, 
-                          row.names = NULL)
-  colnames(subj.data)[5] <- "target.presence"
-  target.trials.sqr <- subset(subj.data, target.presence == 1 & Configuration == 1)
-  accuracy.sqr <- as.vector(target.trials.sqr$correct)
-}
-
-# Accuracy random
-compute.accuracy.rand <- function(behav.file) {
-  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-                          header = TRUE, sep = "\t", skip = 12, 
-                          row.names = NULL)
-  colnames(subj.data)[5] <- "target.presence"
-  target.trials.rand <- subset(subj.data, target.presence == 1 & Configuration == 0)
-  accuracy.rand <- as.vector(target.trials.rand$correct)
-}
-
-# 1.1.1.2. Both configs
-# Accuracy both conditions
-compute.accuracy <- function(behav.file) {
-  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-                          header = TRUE, sep = "\t", skip = 12, 
-                          row.names = NULL)
-  colnames(subj.data)[5] <- "target.presence"
-  target.trials <- subset(subj.data, target.presence == 1)
-  accuracy <- as.vector(target.trials$correct)
-}
-
-# # 1.1.2. Session 3 (task: diamond detection)
-compute.accuracy.ses3 <- function(behav.file) {
-  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-                          header = TRUE, sep = "\t", skip = 12, 
-                          row.names = NULL)
-  colnames(subj.data)[5] <- "target.presence"
-  diamond.trials <- subset(subj.data, Configuration == 2)
-  accuracy.ses3 <- as.vector(diamond.trials$correct)
-}
-
-# 1.2. Extract intensities for each subject by session and configuration
-# 1.2.1. Square
-accuracies.sqr.1 <- lapply(behav_ses_1, compute.accuracy.sqr)
-accuracies.sqr.2 <- lapply(behav_ses_2, compute.accuracy.sqr)
-accuracies.sqr.3 <- lapply(behav_ses_3, compute.accuracy.sqr)
-# 1.2.1. Random
-accuracies.rand.1 <- lapply(behav_ses_1, compute.accuracy.rand)
-accuracies.rand.2 <- lapply(behav_ses_2, compute.accuracy.rand)
-accuracies.rand.3 <- lapply(behav_ses_3, compute.accuracy.rand)
-# 1.2.1. Both configurations
-accuracies.1 <- lapply(behav_ses_1, compute.accuracy)
-accuracies.2 <- lapply(behav_ses_2, compute.accuracy)
-accuracies.3 <- lapply(behav_ses_3, compute.accuracy)
-
-
-# for (i in 1:32) {
-#   accuracies.1[i] <- compute.accuracy(behav_ses_1[[i]])
-# }
-
-# accuracies.sub1 <- compute.accuracy(behav_ses_1[[1]])
-# accuracies.sub2 <- compute.accuracy(behav_ses_1[[2]])
-# accuracies.sub3 <- compute.accuracy(behav_ses_1[[3]])
-# accuracies.sub4 <- compute.accuracy(behav_ses_1[[4]])
-# accuracies.sub5 <- compute.accuracy(behav_ses_1[[5]])
-# accuracies.sub6 <- compute.accuracy(behav_ses_1[[6]])
-# accuracies.sub7 <- compute.accuracy(behav_ses_1[[7]])
-# accuracies.sub8 <- compute.accuracy(behav_ses_1[[8]])
-# accuracies.sub9 <- compute.accuracy(behav_ses_1[[9]])
-# accuracies.sub10 <- compute.accuracy(behav_ses_1[[10]])
-# accuracies.sub11 <- compute.accuracy(behav_ses_1[[11]])
-# accuracies.sub12 <- compute.accuracy(behav_ses_1[[12]])
-# accuracies.sub13 <- compute.accuracy(behav_ses_1[[13]])
-# accuracies.sub14 <- compute.accuracy(behav_ses_1[[14]])
-# accuracies.sub15 <- compute.accuracy(behav_ses_1[[15]])
-# accuracies.sub16 <- compute.accuracy(behav_ses_1[[16]])
-# accuracies.sub17 <- compute.accuracy(behav_ses_1[[17]])
-# accuracies.sub18 <- compute.accuracy(behav_ses_1[[18]])
-# accuracies.sub19 <- compute.accuracy(behav_ses_1[[19]])
-# accuracies.sub20 <- compute.accuracy(behav_ses_1[[20]])
-# accuracies.sub21 <- compute.accuracy(behav_ses_1[[21]])
-# accuracies.sub22 <- compute.accuracy(behav_ses_1[[22]])
-# accuracies.sub23 <- compute.accuracy(behav_ses_1[[23]])
-# accuracies.sub24 <- compute.accuracy(behav_ses_1[[24]])
-# accuracies.sub25 <- compute.accuracy(behav_ses_1[[25]])
-# accuracies.sub26 <- compute.accuracy(behav_ses_1[[26]])
-# accuracies.sub27 <- compute.accuracy(behav_ses_1[[27]])
-# accuracies.sub28 <- compute.accuracy(behav_ses_1[[28]])
-# accuracies.sub29 <- compute.accuracy(behav_ses_1[[29]])
-# accuracies.sub30 <- compute.accuracy(behav_ses_1[[30]])
-# accuracies.sub31 <- compute.accuracy(behav_ses_1[[31]])
-# accuracies.sub32 <- compute.accuracy(behav_ses_1[[32]])
-# 
-# accuracies.1 <- c(accuracies.sub1, accuracies.sub2, accuracies.sub3, accuracies.sub4,
-#                   accuracies.sub5, accuracies.sub6, accuracies.sub7, accuracies.sub8,
-#                   accuracies.sub9, accuracies.sub10, accuracies.sub11, accuracies.sub12,
-#                   accuracies.sub13, accuracies.sub14, accuracies.sub15, accuracies.sub16,
-#                   accuracies.sub17, accuracies.sub18, accuracies.sub19, accuracies.sub20,
-#                   accuracies.sub21, accuracies.sub22, accuracies.sub23, accuracies.sub24,
-#                   accuracies.sub25, accuracies.sub26, accuracies.sub27, accuracies.sub28,
-#                   accuracies.sub29, accuracies.sub30, accuracies.sub31, accuracies.sub32)
-# 
-# intensities.sub1 <- extract.intensities(behav_ses_1[[1]])
-# intensities.sub2 <- extract.intensities(behav_ses_1[[2]])
-# intensities.sub3 <- extract.intensities(behav_ses_1[[3]])
-# intensities.sub4 <- extract.intensities(behav_ses_1[[4]])
-# intensities.sub5 <- extract.intensities(behav_ses_1[[5]])
-# intensities.sub6 <- extract.intensities(behav_ses_1[[6]])
-# intensities.sub7 <- extract.intensities(behav_ses_1[[7]])
-# intensities.sub8 <- extract.intensities(behav_ses_1[[8]])
-# intensities.sub9 <- extract.intensities(behav_ses_1[[9]])
-# intensities.sub10 <- extract.intensities(behav_ses_1[[10]])
-# intensities.sub11 <- extract.intensities(behav_ses_1[[11]])
-# intensities.sub12 <- extract.intensities(behav_ses_1[[12]])
-# intensities.sub13 <- extract.intensities(behav_ses_1[[13]])
-# intensities.sub14 <- extract.intensities(behav_ses_1[[14]])
-# intensities.sub15 <- extract.intensities(behav_ses_1[[15]])
-# intensities.sub16 <- extract.intensities(behav_ses_1[[16]])
-# intensities.sub17 <- extract.intensities(behav_ses_1[[17]])
-# intensities.sub18 <- extract.intensities(behav_ses_1[[18]])
-# intensities.sub19 <- extract.intensities(behav_ses_1[[19]])
-# intensities.sub20 <- extract.intensities(behav_ses_1[[20]])
-# intensities.sub21 <- extract.intensities(behav_ses_1[[21]])
-# intensities.sub22 <- extract.intensities(behav_ses_1[[22]])
-# intensities.sub23 <- extract.intensities(behav_ses_1[[23]])
-# intensities.sub24 <- extract.intensities(behav_ses_1[[24]])
-# intensities.sub25 <- extract.intensities(behav_ses_1[[25]])
-# intensities.sub26 <- extract.intensities(behav_ses_1[[26]])
-# intensities.sub27 <- extract.intensities(behav_ses_1[[27]])
-# intensities.sub28 <- extract.intensities(behav_ses_1[[28]])
-# intensities.sub29 <- extract.intensities(behav_ses_1[[29]])
-# intensities.sub30 <- extract.intensities(behav_ses_1[[30]])
-# intensities.sub31 <- extract.intensities(behav_ses_1[[31]])
-# intensities.sub32 <- extract.intensities(behav_ses_1[[32]])
-# 
-# intensities.1 <- c(intensities.sub1, intensities.sub2, intensities.sub3, intensities.sub4,
-#                   intensities.sub5, intensities.sub6, intensities.sub7, intensities.sub8,
-#                   intensities.sub9, intensities.sub10, intensities.sub11, intensities.sub12,
-#                   intensities.sub13, intensities.sub14, intensities.sub15, intensities.sub16,
-#                   intensities.sub17, intensities.sub18, intensities.sub19, intensities.sub20,
-#                   intensities.sub21, intensities.sub22, intensities.sub23, intensities.sub24,
-#                   intensities.sub25, intensities.sub26, intensities.sub27, intensities.sub28,
-#                   intensities.sub29, intensities.sub30, intensities.sub31, intensities.sub32)
-#testAcc <- c(accuracies.sub1, accuracies.sub2, accuracies.sub3)
-
 # 1. Compute d'
 # 1.1. Functions to read files and accuracy and compute proportion of hits & false alarms 
 # in both configs
@@ -495,38 +346,38 @@ extract.intensities.rand <- function(behav.file) {
   intensities.rand <- 1 - decrement.rand
 }
 
-# 3.2. Functions to extract intensity values by block
-# 3.2.1. Function to extract intensities of a block
-block.intensities <- function(x) {
-  return(as.vector(x$Decrement))
-}
-
-# 3.2.2. Function to extract intensities of whole session, separated per block
-session.intensities <- function(behav.file) {
-  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-                          header = TRUE, sep = "\t", skip = 12, row.names = NULL)
-  colnames(subj.data)[5] <- "target.presence"
-  target.trials <- subset(subj.data, target.presence == 1)
-  block0 <- subset(target.trials, Block == 0)
-  block1 <- subset(target.trials, Block == 1)
-  block2 <- subset(target.trials, Block == 2)
-  block3 <- subset(target.trials, Block == 3)
-  block4 <- subset(target.trials, Block == 4)
-  block5 <- subset(target.trials, Block == 5)
-  block6 <- subset(target.trials, Block == 6)
-  block7 <- subset(target.trials, Block == 7)
-  block8 <- subset(target.trials, Block == 8)
-  block9 <- subset(target.trials, Block == 9)
-  list.blocks <- list(block0, block1, block2, block3, block4, block5, block6,
-                      block7, block8, block9)
-  # Call function defined above
-  decrements <- lapply(list.blocks, block.intensities)
-  intensities <- mapply('-', 1, decrements)
-}
-
-# 3.2.3. Extract block intensities for all subjects
-blockintensities.1 <- lapply(behav_ses_1, session.intensities)
-blockintensities.2 <- lapply(behav_ses_2, session.intensities)
+# # 3.2. Functions to extract intensity values by block
+# # 3.2.1. Function to extract intensities of a block
+# block.intensities <- function(x) {
+#   return(as.vector(x$Decrement))
+# }
+# 
+# # 3.2.2. Function to extract intensities of whole session, separated per block
+# session.intensities <- function(behav.file) {
+#   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
+#                           header = TRUE, sep = "\t", skip = 12, row.names = NULL)
+#   colnames(subj.data)[5] <- "target.presence"
+#   target.trials <- subset(subj.data, target.presence == 1)
+#   block0 <- subset(target.trials, Block == 0)
+#   block1 <- subset(target.trials, Block == 1)
+#   block2 <- subset(target.trials, Block == 2)
+#   block3 <- subset(target.trials, Block == 3)
+#   block4 <- subset(target.trials, Block == 4)
+#   block5 <- subset(target.trials, Block == 5)
+#   block6 <- subset(target.trials, Block == 6)
+#   block7 <- subset(target.trials, Block == 7)
+#   block8 <- subset(target.trials, Block == 8)
+#   block9 <- subset(target.trials, Block == 9)
+#   list.blocks <- list(block0, block1, block2, block3, block4, block5, block6,
+#                       block7, block8, block9)
+#   # Call function defined above
+#   decrements <- lapply(list.blocks, block.intensities)
+#   intensities <- mapply('-', 1, decrements)
+# }
+# 
+# # 3.2.3. Extract block intensities for all subjects
+# blockintensities.1 <- lapply(behav_ses_1, session.intensities)
+# blockintensities.2 <- lapply(behav_ses_2, session.intensities)
 
 # 3.3. Extract intensities for each subject by session and configuration
 # 3.3.1. Square
@@ -558,21 +409,21 @@ threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
 
 # 4. Prepare data frame
 # 4.1. Bind dprime values to data frame
-rep_data3 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
+rep_data4 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
                    ses.rand.dprime_2, ses.dprime_1, ses.dprime_2)
 # 4.2. Bind RT values to data frame
-rep_data4 <- cbind(rep_data3, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.sqr.3, 
+rep_data5 <- cbind(rep_data4, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.sqr.3, 
                    RT.mean.rand.1, RT.mean.rand.2, RT.mean.rand.3, RT.mean.1, 
                    RT.mean.2, RT.mean.3)
 
 # 4.3. Bind session threshold, proportion correct, intensities per trial and 
 # accuracy values per trial to data frame
 # 4.3.1. Thresholds
-rep_data4 <- cbind(rep_data4, threshold.sqr_1, threshold.sqr_2, threshold.rand_1, 
+rep_data5 <- cbind(rep_data5, threshold.sqr_1, threshold.sqr_2, threshold.rand_1, 
                    threshold.rand_2, threshold.1, threshold.2)
 
 # 4.3.2. Proportion correct, hits, misses, false alarms and correct rejections
-rep_data4 <- cbind(rep_data4, ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
+rep_data5 <- cbind(rep_data5, ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
                    ses2.Ph, ses3.Ph, ses1.Pfa.sqr, ses2.Pfa.sqr, ses1.Pfa.rand, 
                    ses2.Pfa.rand, ses1.Pfa, ses2.Pfa, ses3.Pfa, ses1.Pm.sqr, 
                    ses2.Pm.sqr, ses1.Pm.rand, ses2.Pm.rand, ses1.Pm, ses2.Pm,
@@ -580,30 +431,30 @@ rep_data4 <- cbind(rep_data4, ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.ra
                    ses1.Pcr, ses2.Pcr, ses3.Pcr, ses1.Pc.sqr, ses2.Pc.sqr, 
                    ses1.Pc.rand, ses2.Pc.rand, ses1.Pc, ses2.Pc, ses3.Pc)
 
-# 4.3.3. Intensities
-# 4.3.3.1. Both configurations
-rep_data4$intensities.1 <- intensities.1
-rep_data4$intensities.2 <- intensities.2
-# 4.3.3.2. Square
-rep_data4$intensities.sqr.1 <- intensities.sqr.1
-rep_data4$intensities.sqr.2 <- intensities.sqr.2
-# 4.3.3.3. Random
-rep_data4$intensities.rand.1 <- intensities.rand.1
-rep_data4$intensities.rand.2 <- intensities.rand.2
-
-# 4.3.4. Accuracies
-# 4.3.4.1. Both configurations
-rep_data4$accuracies.1 <- accuracies.1
-rep_data4$accuracies.2 <- accuracies.2
-# 4.3.4.2. Square
-rep_data4$accuracies.sqr.1 <- accuracies.sqr.1
-rep_data4$accuracies.sqr.2 <- accuracies.sqr.2
-# 4.3.4.3. Random
-rep_data4$accuracies.rand.1 <- accuracies.rand.1
-rep_data4$accuracies.rand.2 <- accuracies.rand.2
+# # 4.3.3. Intensities
+# # 4.3.3.1. Both configurations
+# rep_data4$intensities.1 <- intensities.1
+# rep_data4$intensities.2 <- intensities.2
+# # 4.3.3.2. Square
+# rep_data4$intensities.sqr.1 <- intensities.sqr.1
+# rep_data4$intensities.sqr.2 <- intensities.sqr.2
+# # 4.3.3.3. Random
+# rep_data4$intensities.rand.1 <- intensities.rand.1
+# rep_data4$intensities.rand.2 <- intensities.rand.2
+# 
+# # 4.3.4. Accuracies
+# # 4.3.4.1. Both configurations
+# rep_data4$accuracies.1 <- accuracies.1
+# rep_data4$accuracies.2 <- accuracies.2
+# # 4.3.4.2. Square
+# rep_data4$accuracies.sqr.1 <- accuracies.sqr.1
+# rep_data4$accuracies.sqr.2 <- accuracies.sqr.2
+# # 4.3.4.3. Random
+# rep_data4$accuracies.rand.1 <- accuracies.rand.1
+# rep_data4$accuracies.rand.2 <- accuracies.rand.2
 
 # 4.4. Bind questionnaire data to experiment data
-questionnaire.ERPs <- cbind(rep_data4, questionnaire.ses1, questionnaire.ses2)
+questionnaire.ERPs <- cbind(rep_data5, questionnaire.ses1, questionnaire.ses2)
 
 # 4.5. Coerce groups as factors
 questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)

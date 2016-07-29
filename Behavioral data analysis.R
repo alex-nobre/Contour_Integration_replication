@@ -30,12 +30,7 @@ library(knitr)
 # 0. Save graphical defaults
 defaults <- par()
 
-
 #---------------------------Psychophysical analysis-------------------------
-# 0. Subsets
-aware <- subset(questionnaire.ERPs, group.original == 'aware')
-unaware <- subset(questionnaire.ERPs, group.original == 'unaware')
-
 # 1.RT
 # 1.1. Descriptives
 summary(rep_data4$RT.mean.1)
