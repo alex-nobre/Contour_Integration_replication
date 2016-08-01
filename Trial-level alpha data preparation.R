@@ -40,7 +40,7 @@ list_fnames <- c(sqr1.trialERP.files, sqr2.trialERP.files, rand1.trialERP.files,
                  rand2.trialERP.files)
 
 #------------------------------------Functions-------------------------------------
-SEG.LENGTH <- 175 # number of time points in each segment 
+SEG.LENGTH <- 175 # number of time points in each segment
 
 # 2. Function to extract ERPs from a single segment in BVA export file
 trial.ERPs <- function(ERP.data) {
@@ -86,13 +86,14 @@ subject.trialERPs <- function(trialERPs.file) {
   trial.number <- 0 # keeps track of number of trials already computed in file
   trials.list <- list() #list to store data for subject
   while (number.lines > 0) {
-    linespan <- trial.number * SEG.LENGTH + (1:SEG.LENGTH)
-    segment <- trialERPs.data[linespan,]
-    segment <- segment - colMeans(segment)
-    trial.data <- trial.ERPs(segment)
+    linespan <- trial.number * SEG.LENGTH + (1:SEG.LENGTH) #lines for current segment
+    segment <- trialERPs.data[linespan,]  #select lines
+    baseline.value <- colMeans(segment[1:25,]) #mean of baseline interval
+    segment <- sweep(segment, 2, baseline.value, "-") #baseline correction
+    trial.data <- trial.ERPs(segment) #apply function in 2. to current segment
     trial.number <- trial.number + 1
-    trials.list[[trial.number]] <- trial.data
-    number.lines <- number.lines - SEG.LENGTH
+    trials.list[[trial.number]] <- trial.data #append to data list
+    number.lines <- number.lines - SEG.LENGTH #subtract n of lines read from total
   }
   return(trials.list)
 }

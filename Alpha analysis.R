@@ -641,9 +641,9 @@ alpha.N1.ses1 <- ggplot(ses1.data, aes(x = alpha.group, y = N1,
 
 
 # 4. Regression
-alpha.conf.lm <- lm(conf.4.ses1 ~ alpha.sqr.1, 
-                    data = questionnaire.ERPs)
+# Linear model
+alpha.right.nd2.lm <- lm(right.nd2 ~ log.alpha, 
+                    data = rep_data_long3)
 
-t.test(conf.4.ses1 ~ alpha.group, data = questionnaire.ERPs)
-
+summary(alpha.right.nd2.lm)
 plot(questionnaire.ERPs$alpha.group)
