@@ -32,10 +32,14 @@ library(knitr)
 #----------------------------------------------------------------------------------------
 # 1. Import list of files
 # Import file names in working directory
-sqr1.trialERP.files <- list.files('./Data/Data_BVA', pattern = "1_All ROIS Alpha Sqr")
-sqr2.trialERP.files <- list.files('./Data/Data_BVA', pattern = "2_All ROIS Alpha Sqr")
-rand1.trialERP.files <- list.files('./Data/Data_BVA', pattern = "1_All ROIS Alpha Rand")
-rand2.trialERP.files <- list.files('./Data/Data_BVA', pattern = "2_All ROIS Alpha Rand")
+sqr1.trialERP.files <- list.files('./Data/Data_BVA', 
+                                  pattern = "1_All ROIS Alpha Sqr")
+sqr2.trialERP.files <- list.files('./Data/Data_BVA', 
+                                  pattern = "2_All ROIS Alpha Sqr")
+rand1.trialERP.files <- list.files('./Data/Data_BVA', 
+                                   pattern = "1_All ROIS Alpha Rand")
+rand2.trialERP.files <- list.files('./Data/Data_BVA', 
+                                   pattern = "2_All ROIS Alpha Rand")
 # Concatenate all lists in a single list
 list_fnames <- c(sqr1.trialERP.files, sqr2.trialERP.files, rand1.trialERP.files, 
                  rand2.trialERP.files)
@@ -79,7 +83,7 @@ trial.ERPs <- function(ERP.data) {
 }
 
 
-# 3. Function to extract all trial ERPs in a single subject
+# 3. Function to extract all single-trial ERPs in a single subject
 subject.trialERPs <- function(trialERPs.file) {
   trialERPs.data <- read.delim(paste('./Data/Data_BVA/', trialERPs.file, sep = ""), 
                                sep = " ", dec = ",", header = TRUE)
@@ -91,7 +95,7 @@ subject.trialERPs <- function(trialERPs.file) {
     segment <- trialERPs.data[linespan,]  #select lines
     baseline.value <- colMeans(segment[1:25,]) #mean of baseline interval
     segment <- sweep(segment, 2, baseline.value, "-") #baseline correction
-    trial.data <- trial.ERPs(segment) #apply function in 2. to current segment
+    trial.data <- trial.ERPs(segment) #apply trial.ERPs to current segment
     trial.number <- trial.number + 1
     trials.list[[trial.number]] <- trial.data #append to data list
     number.lines <- number.lines - SEG.LENGTH #subtract n of lines read from total

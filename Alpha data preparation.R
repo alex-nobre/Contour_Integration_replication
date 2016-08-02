@@ -30,10 +30,14 @@ library(knitr)
 
 # 1. Import list of files
 # Import file names in working directory
-sqr1.alpha.files <- list.files('./Data/Data_BVA', pattern = "1_Alpha ROI Sqr_FFTBandExport_pre")
-sqr2.alpha.files <- list.files('./Data/Data_BVA', pattern = "2_Alpha ROI Sqr_FFTBandExport_pre")
-rand1.alpha.files <- list.files('./Data/Data_BVA', pattern = "1_Alpha ROI Rand_FFTBandExport_pre")
-rand2.alpha.files <- list.files('./Data/Data_BVA', pattern = "2_Alpha ROI Rand_FFTBandExport_pre")
+sqr1.alpha.files <- list.files('./Data/Data_BVA', 
+                               pattern = "1_Alpha ROI Sqr_FFTBandExport_pre")
+sqr2.alpha.files <- list.files('./Data/Data_BVA', 
+                               pattern = "2_Alpha ROI Sqr_FFTBandExport_pre")
+rand1.alpha.files <- list.files('./Data/Data_BVA', 
+                                pattern = "1_Alpha ROI Rand_FFTBandExport_pre")
+rand2.alpha.files <- list.files('./Data/Data_BVA', 
+                                pattern = "2_Alpha ROI Rand_FFTBandExport_pre")
 # Concatenate all lists in a single list
 list_fnames <- c(sqr1.alpha.files, sqr2.alpha.files, rand1.alpha.files, 
                  rand2.alpha.files)
@@ -58,6 +62,7 @@ rand1.mean.alpha <- sapply(rand1.alpha, mean)
 rand2.mean.alpha <- sapply(rand2.alpha, mean)
 
 # 5. Add to long data frame
+# 5.1. Raw alpha values
 rep_data_long3$alpha <- numeric(nrow(rep_data_long3))
 rep_data_long3[rep_data_long3$configuration == 'sqr' & 
                       rep_data_long3$session == 1,]$alpha <- sqr1.mean.alpha
@@ -67,29 +72,27 @@ rep_data_long3[rep_data_long3$configuration == 'rand' &
                  rep_data_long3$session == 1,]$alpha <- rand1.mean.alpha
 rep_data_long3[rep_data_long3$configuration == 'rand' & 
                  rep_data_long3$session == 2,]$alpha <- rand2.mean.alpha
-
-
-# 6. Compute log
+# 5.2. Log alpha values
 rep_data_long3$log.alpha <- log(rep_data_long3$alpha)
 
-# 7. Add to wide data frame
+# 6. Add to wide data frame
+# 6.1. Raw alpha values by condition 
 questionnaire.ERPs$alpha.sqr.1 <- sqr1.mean.alpha
 questionnaire.ERPs$alpha.sqr.2 <- sqr2.mean.alpha
 questionnaire.ERPs$alpha.rand.1 <- rand1.mean.alpha
 questionnaire.ERPs$alpha.rand.2 <- rand2.mean.alpha
-# Compute means across conditions
+# 6.2. Compute means of raw alpha across conditions
 questionnaire.ERPs$mean.alpha <- 
   rowMeans(questionnaire.ERPs[,which(colnames(questionnaire.ERPs) == 
                                        'alpha.sqr.1'): 
                                 which(colnames(questionnaire.ERPs) == 
                                         'alpha.rand.2')])
-
-# 8. Compute log
+# 6.3 Log alpha values by condition
 questionnaire.ERPs$log.alpha.sqr.1 <- log(questionnaire.ERPs$alpha.sqr.1)
 questionnaire.ERPs$log.alpha.sqr.2 <- log(questionnaire.ERPs$alpha.sqr.2)
 questionnaire.ERPs$log.alpha.rand.1 <- log(questionnaire.ERPs$alpha.rand.1)
 questionnaire.ERPs$log.alpha.rand.2 <- log(questionnaire.ERPs$alpha.rand.2)
-# Compute means across conditions
+# 6.2. Compute means of log alpha across conditions
 questionnaire.ERPs$mean.log.alpha <- 
   rowMeans(questionnaire.ERPs[,which(colnames(questionnaire.ERPs) == 
                                        'log.alpha.sqr.1'): 
@@ -97,8 +100,8 @@ questionnaire.ERPs$mean.log.alpha <-
                                         'log.alpha.rand.2')])
 
 
-# 9. Dataset with behvaioral data
-# 9.1. Build groups based on median-split of alpha power
+# 7. Build groups based on median-split of alpha power in wide data frame
+# 7.1. Create groups vectors
 low.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$mean.alpha < 
                                      median(questionnaire.ERPs$mean.alpha)),]$Subject
 high.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$mean.alpha > 
@@ -108,8 +111,7 @@ high.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$mean.alpha >
 #                                               median(questionnaire.ERPs$alpha.sqr.1)),]$Subject
 # high.alpha.group <- questionnaire.ERPs[which(questionnaire.ERPs$alpha.sqr.1 > 
 #                                                median(questionnaire.ERPs$alpha.sqr.1)),]$Subject
-
-# 9.2. Create factor for median split group
+# 7.2. Create factor for median split group
 questionnaire.ERPs$alpha.group <- numeric(nrow(questionnaire.ERPs))
 questionnaire.ERPs[which(questionnaire.ERPs$Subject %in% 
                   low.alpha.group),]$alpha.group <- 'low.alpha'
@@ -117,27 +119,28 @@ questionnaire.ERPs[which(questionnaire.ERPs$Subject %in%
                   high.alpha.group),]$alpha.group <- 'high.alpha'
 questionnaire.ERPs$alpha.group <- factor(questionnaire.ERPs$alpha.group)
 
+# 8. Append meadian-split-based group to long data frame
+rep_data_long3$alpha.group <- rep(questionnaire.ERPs$alpha.group, 4)
 
-
-#-----------------------Dataset without behavioral responses-----------
-# 10. Append to dataset without behavioral responses
-rep_data2$alpha.sqr.1 <- sqr1.mean.alpha
-rep_data2$alpha.sqr.2 <- sqr2.mean.alpha
-rep_data2$alpha.rand.1 <- rand1.mean.alpha
-rep_data2$alpha.rand.2 <- rand2.mean.alpha
-# Compute means across conditions
-rep_data2$mean.alpha <- rowMeans(rep_data2[,56:59])
-
-# 10.1. Build groups based on median-split of alpha power
-low.alpha.group <- rep_data2[which(rep_data2$mean.alpha < 
-                                     median(rep_data2$mean.alpha)),]$Subject
-high.alpha.group <- rep_data2[which(rep_data2$mean.alpha > 
-                                      median(rep_data2$mean.alpha)),]$Subject
-
-# 10.2. Create factor for median split group
-rep_data2$alpha.group <- numeric(nrow(rep_data2))
-rep_data2[which(rep_data2$Subject %in% 
-                  low.alpha.group),]$alpha.group <- 'low.alpha'
-rep_data2[which(rep_data2$Subject %in% 
-                  high.alpha.group),]$alpha.group <- 'high.alpha'
-rep_data2$alpha.group <- factor(rep_data2$alpha.group)
+# #-----------------------Dataset without behavioral responses-----------
+# # 10. Append to dataset without behavioral responses
+# rep_data2$alpha.sqr.1 <- sqr1.mean.alpha
+# rep_data2$alpha.sqr.2 <- sqr2.mean.alpha
+# rep_data2$alpha.rand.1 <- rand1.mean.alpha
+# rep_data2$alpha.rand.2 <- rand2.mean.alpha
+# # Compute means across conditions
+# rep_data2$mean.alpha <- rowMeans(rep_data2[,56:59])
+# 
+# # 10.1. Build groups based on median-split of alpha power
+# low.alpha.group <- rep_data2[which(rep_data2$mean.alpha < 
+#                                      median(rep_data2$mean.alpha)),]$Subject
+# high.alpha.group <- rep_data2[which(rep_data2$mean.alpha > 
+#                                       median(rep_data2$mean.alpha)),]$Subject
+# 
+# # 10.2. Create factor for median split group
+# rep_data2$alpha.group <- numeric(nrow(rep_data2))
+# rep_data2[which(rep_data2$Subject %in% 
+#                   low.alpha.group),]$alpha.group <- 'low.alpha'
+# rep_data2[which(rep_data2$Subject %in% 
+#                   high.alpha.group),]$alpha.group <- 'high.alpha'
+# rep_data2$alpha.group <- factor(rep_data2$alpha.group)

@@ -129,11 +129,13 @@ rep_data <- cbind(Subject, group, group.original, rep_data)
 # Remove subjects with too many artifacts
 row.names(rep_data) <- 1:32
 
+# reshape by session
 rep_data_long <- reshape(rep_data2, varying = 4:ncol(rep_data2), sep = "_", 
                          direction = "long", 
                          new.row.names = NULL)
-rep_data_long[,ncol(rep_data_long)]<- NULL
+rep_data_long[,ncol(rep_data_long)]<- NULL #eliminate extra column added by reshape
 names(rep_data_long)[names(rep_data_long) == "time"] <- "session"
+# reshape by configuration
 rep_data_long3 <- rep_data_long %>%
   unite(sqr,contains("sqr")) %>%
   unite(rand,contains("rand")) %>%
@@ -150,7 +152,7 @@ rep_data_long3 <- rep_data_long %>%
                     "high.alpha.RL.nd2","high.alpha.N2","high.alpha.P3","high.alpha.LP"),
            sep = "_",
            convert = TRUE)
-
+# coerce to factors
 rep_data_long3$group <- factor(rep_data_long3$group)
 rep_data_long3$group.original <- factor(rep_data_long3$group.original)
 rep_data_long3$session <- factor(rep_data_long3$session)
