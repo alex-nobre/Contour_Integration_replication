@@ -21,6 +21,7 @@ library(pastecs)
 library(car)
 library(effsize)
 library(multcomp)
+library(lsmeans)
 # Psychophysics packages
 library(quickpsy)
 library(MPDiR)

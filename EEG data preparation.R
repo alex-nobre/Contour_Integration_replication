@@ -182,11 +182,11 @@ rep_data_long3$configuration <- factor(rep_data_long3$configuration)
 # rep_data_long2$configuration[rep_data_long2$location == 4] <- "RL"
 
 # Remove redundant subject column
-rep_data_long2[,ncol(rep_data_long2)]<- NULL
-
-# Convert configuration, group and session to factors
-rep_data_long2$group <- factor(rep_data_long2$group)
-rep_data_long2$group.original <- factor(rep_data_long2$group.original)
-rep_data_long2$session <- factor(rep_data_long2$session)
-rep_data_long2$configuration <- factor(rep_data_long2$configuration)
+# rep_data_long2[,ncol(rep_data_long2)]<- NULL
+# 
+# # Convert configuration, group and session to factors
+# rep_data_long2$group <- factor(rep_data_long2$group)
+# rep_data_long2$group.original <- factor(rep_data_long2$group.original)
+# rep_data_long2$session <- factor(rep_data_long2$session)
+# rep_data_long2$configuration <- factor(rep_data_long2$configuration)
 #rep_data_long2$location <- factor(rep_data_long2$location)
