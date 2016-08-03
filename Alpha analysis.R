@@ -38,9 +38,10 @@ defaults <- par()
 
 # 1. ERPs x alpha group
 # set contrasts
-contrasts(rep_data_long3$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long3$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long3$alpha.group) <- c(-1, 1) # setting contrasts for alpha.group
+contrasts(rep_data_long3$configuration) <- c(-1, 1) # contrasts for config
+contrasts(rep_data_long3$session) <- c(-1, 1) # contrasts for session
+contrasts(rep_data_long3$alpha.group) <- c(-1, 1) # contrasts for alpha.group
+contrasts(rep_data_long3$log.alpha.group) <- c(-1, 1) # contrasts for log.alpha.group
 
 # 1.1. C1
 # 1.1.1. ANOVA
@@ -169,7 +170,7 @@ alpha.nd2.left.line
 # 1.6.1. ANOVA
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
-                               data = rep_data_long3, 
+                               data = rep_data_long3[rep_data_long3$session == 1,], 
                                method = "ML") #baseline
 alpha.right.nd2.config <- update(alpha.right.nd2.baseline, .~. + configuration)
 alpha.right.nd2.alpha.group <- update(alpha.right.nd2.config, .~. + alpha.group)
@@ -178,6 +179,8 @@ alpha.right.nd2.lme <- update(alpha.right.nd2.alpha.group, .~. +
 anova(alpha.right.nd2.baseline, alpha.right.nd2.config,
       alpha.right.nd2.alpha.group, 
       alpha.right.nd2.lme)
+
+summary(alpha.right.nd2.lme)
 
 
 # 1.6.2. Post-hocs

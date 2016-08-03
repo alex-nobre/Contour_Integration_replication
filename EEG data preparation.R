@@ -129,6 +129,7 @@ rep_data <- cbind(Subject, group, group.original, rep_data)
 # Remove subjects with too many artifacts
 row.names(rep_data) <- 1:32
 
+#--------------------------------Convert to long-----------------------------------
 # reshape by session
 rep_data_long <- reshape(rep_data2, varying = 4:ncol(rep_data2), sep = "_", 
                          direction = "long", 

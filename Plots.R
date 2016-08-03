@@ -173,20 +173,20 @@ rand3.points.P3 <- lapply(rand3_fnames_P3, eeg.P3.points)
 
 # Coerce lists to data frames
 sqr1.points.C1.dat <- data.frame(matrix(unlist(sqr1.points.C1), 
-                                     nrow = length(sqr1.points.C1), byrow = T))
+                                        nrow = length(sqr1.points.C1), byrow = T))
 sqr1.points.P1.dat <- data.frame(matrix(unlist(sqr1.points.P1), 
                                         nrow = length(sqr1.points.P1), byrow = T))
 sqr1.points.N1.dat <- data.frame(matrix(unlist(sqr1.points.N1), 
                                         nrow = length(sqr1.points.N1), byrow = T))
 sqr1.points.Occ.dat <- data.frame(matrix(unlist(sqr1.points.Occ), 
-                                        nrow = length(sqr1.points.Occ), byrow = T))
+                                         nrow = length(sqr1.points.Occ), byrow = T))
 sqr1.points.Left.dat <- data.frame(matrix(unlist(sqr1.points.Left), 
-                                        nrow = length(sqr1.points.Left), byrow = T))
+                                          nrow = length(sqr1.points.Left), byrow = T))
 sqr1.points.Right.dat <- data.frame(matrix(unlist(sqr1.points.Right), 
-                                        nrow = length(sqr1.points.Right), byrow = T))
+                                           nrow = length(sqr1.points.Right), byrow = T))
 sqr1.points.Right_Left.dat <- data.frame(matrix(unlist(sqr1.points.Right_Left), 
-                                        nrow = length(sqr1.points.Right_Left), 
-                                        byrow = T))
+                                                nrow = length(sqr1.points.Right_Left), 
+                                                byrow = T))
 sqr1.points.N2.dat <- data.frame(matrix(unlist(sqr1.points.N2), 
                                         nrow = length(sqr1.points.N2), byrow = T))
 sqr1.points.LP.dat <- data.frame(matrix(unlist(sqr1.points.LP), 
@@ -211,43 +211,43 @@ sqr2.points.N2.dat <- data.frame(matrix(unlist(sqr2.points.N2),
 sqr2.points.LP.dat <- data.frame(matrix(unlist(sqr2.points.LP), 
                                         nrow = length(sqr2.points.LP), byrow = T))
 rand1.points.C1.dat <- data.frame(matrix(unlist(rand1.points.C1), 
-                                        nrow = length(rand1.points.C1), byrow = T))
+                                         nrow = length(rand1.points.C1), byrow = T))
 rand1.points.P1.dat <- data.frame(matrix(unlist(rand1.points.P1), 
-                                        nrow = length(rand1.points.P1), byrow = T))
+                                         nrow = length(rand1.points.P1), byrow = T))
 rand1.points.N1.dat <- data.frame(matrix(unlist(rand1.points.N1), 
-                                        nrow = length(rand1.points.N1), byrow = T))
+                                         nrow = length(rand1.points.N1), byrow = T))
 rand1.points.Occ.dat <- data.frame(matrix(unlist(rand1.points.Occ), 
-                                         nrow = length(rand1.points.Occ), byrow = T))
+                                          nrow = length(rand1.points.Occ), byrow = T))
 rand1.points.Left.dat <- data.frame(matrix(unlist(rand1.points.Left), 
-                                          nrow = length(rand1.points.Left), byrow = T))
+                                           nrow = length(rand1.points.Left), byrow = T))
 rand1.points.Right.dat <- data.frame(matrix(unlist(rand1.points.Right), 
-                                           nrow = length(rand1.points.Right), byrow = T))
+                                            nrow = length(rand1.points.Right), byrow = T))
 rand1.points.Right_Left.dat <- data.frame(matrix(unlist(rand1.points.Right_Left), 
-                                                nrow = length(rand1.points.Right_Left), 
-                                                byrow = T))
+                                                 nrow = length(rand1.points.Right_Left), 
+                                                 byrow = T))
 rand1.points.N2.dat <- data.frame(matrix(unlist(rand1.points.N2), 
-                                        nrow = length(rand1.points.N2), byrow = T))
+                                         nrow = length(rand1.points.N2), byrow = T))
 rand1.points.LP.dat <- data.frame(matrix(unlist(rand1.points.LP), 
-                                        nrow = length(rand1.points.LP), byrow = T))
+                                         nrow = length(rand1.points.LP), byrow = T))
 rand2.points.C1.dat <- data.frame(matrix(unlist(rand2.points.C1), 
-                                        nrow = length(rand2.points.C1), byrow = T))
+                                         nrow = length(rand2.points.C1), byrow = T))
 rand2.points.P1.dat <- data.frame(matrix(unlist(rand2.points.P1), 
-                                        nrow = length(rand2.points.P1), byrow = T))
+                                         nrow = length(rand2.points.P1), byrow = T))
 rand2.points.N1.dat <- data.frame(matrix(unlist(rand2.points.N1), 
-                                        nrow = length(rand2.points.N1), byrow = T))
+                                         nrow = length(rand2.points.N1), byrow = T))
 rand2.points.Occ.dat <- data.frame(matrix(unlist(rand2.points.Occ), 
-                                         nrow = length(rand2.points.Occ), byrow = T))
+                                          nrow = length(rand2.points.Occ), byrow = T))
 rand2.points.Left.dat <- data.frame(matrix(unlist(rand2.points.Left), 
-                                          nrow = length(rand2.points.Left), byrow = T))
+                                           nrow = length(rand2.points.Left), byrow = T))
 rand2.points.Right.dat <- data.frame(matrix(unlist(rand2.points.Right), 
-                                           nrow = length(rand2.points.Right), byrow = T))
+                                            nrow = length(rand2.points.Right), byrow = T))
 rand2.points.Right_Left.dat <- data.frame(matrix(unlist(rand2.points.Right_Left), 
-                                                nrow = length(rand2.points.Right_Left), 
-                                                byrow = T))
+                                                 nrow = length(rand2.points.Right_Left), 
+                                                 byrow = T))
 rand2.points.N2.dat <- data.frame(matrix(unlist(rand2.points.N2), 
-                                        nrow = length(rand2.points.N2), byrow = T))
+                                         nrow = length(rand2.points.N2), byrow = T))
 rand2.points.LP.dat <- data.frame(matrix(unlist(rand2.points.LP), 
-                                        nrow = length(rand2.points.LP), byrow = T))
+                                         nrow = length(rand2.points.LP), byrow = T))
 
 
 sqr3.points.P3.dat <- data.frame(matrix(unlist(sqr3.points.P3), 
