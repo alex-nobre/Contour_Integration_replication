@@ -33,20 +33,23 @@ library(knitr)
 
 # 2. ANOVAs
 # 2.1. Set contrasts
-contrasts(rep_data_alpha3$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_alpha3$alpha.power) <- c(-1, 1) # setting contrasts for alpha.power
-contrasts(rep_data_alpha3$session) <- c(-1, 1) # setting contrasts for session
+contrasts(rep_data_alpha3$configuration) <- c(-1, 1) # contrasts for config
+contrasts(rep_data_alpha3$alpha.power) <- c(-1, 1) # contrasts for alpha.power
+contrasts(rep_data_alpha3$alpha.group) <- c(-1, 1) # contrasts for alpha.group
+contrasts(rep_data_alpha3$session) <- c(-1, 1) # contrasts for session
 rep_data_alpha3$Subject <- factor(rep_data_alpha3$Subject)
 
 # 2.2. C1
 # 2.2.1. ANOVA
 alpha.C1.baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration/alpha.power, 
-                         data = rep_data_alpha3, method = "ML") #baseline
+                         data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                         method = "ML") #baseline
 alpha.C1.config <- update(alpha.C1.baseline, .~. + configuration)
 alpha.C1.alpha.power <- update(alpha.C1.config, .~. + alpha.power)
 alpha.C1.lme <- update(alpha.C1.alpha.power, .~. + configuration:alpha.power)
 anova(alpha.C1.baseline, alpha.C1.config, alpha.C1.alpha.power,
       alpha.C1.lme)
+
 # 2.2.2. Line plot
 alpha.C1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
                         aes(x = alpha.power, y = C1, 
@@ -61,12 +64,14 @@ alpha.C1.line
 # 2.3. P1
 # 2.3.1. ANOVA
 alpha.P1.baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/alpha.power, 
-                         data = rep_data_alpha3, method = "ML") #baseline
+                         data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                         method = "ML") #baseline
 alpha.P1.config <- update(alpha.P1.baseline, .~. + configuration)
 alpha.P1.alpha.power <- update(alpha.P1.config, .~. + alpha.power)
 alpha.P1.lme <- update(alpha.P1.alpha.power, .~. + configuration:alpha.power)
 anova(alpha.P1.baseline, alpha.P1.config, alpha.P1.alpha.power,
       alpha.P1.lme)
+
 # 2.3.2. Line plot
 alpha.P1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
                         aes(x = alpha.power, y = P1, 
@@ -88,6 +93,7 @@ alpha.N1.alpha.power <- update(alpha.N1.config, .~. + alpha.power)
 alpha.N1.lme <- update(alpha.N1.alpha.power, .~. + configuration:alpha.power)
 anova(alpha.N1.baseline, alpha.N1.config, alpha.N1.alpha.power,
       alpha.N1.lme)
+
 # 2.4.2. Line plot
 alpha.N1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
                          aes(x = alpha.power, y = N1, 
@@ -110,7 +116,7 @@ anova(alpha.nd1.baseline, alpha.nd1.config, alpha.nd1.alpha.power,
       alpha.nd1.lme)
 
 # 2.5.1. Post-hocs
-alpha.nd1.lme <- lme(occ.nd1 ~ configuration * alpha.power, 
+alpha.nd1.lme <- lme(occ.nd1 ~ configuration * alpha.power * alpha.group, 
                      random = ~1|Subject/configuration/alpha.power, 
                      data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                      method = "ML")
@@ -161,6 +167,7 @@ alpha.nd1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
+  facet_grid(.~alpha.group)
   labs(title = "Nd1 mean amplitude", x = "alpha power", y = "Nd1 mean amplitude", 
        colour = "configuration")
 alpha.nd1.line
@@ -180,7 +187,7 @@ anova(alpha.left.nd2.baseline, alpha.left.nd2.config, alpha.left.nd2.alpha.power
       alpha.left.nd2.lme)
 
 # 2.6.2. Post-hocs
-alpha.left.nd2.model <- lme(left.nd2 ~ configuration * alpha.power, 
+alpha.left.nd2.lme<- lme(left.nd2 ~ configuration * alpha.power * alpha.group, 
                        random = ~1|Subject/configuration/alpha.power, 
                        data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                        method = "ML")
@@ -195,6 +202,7 @@ alpha.left.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
+  facet_grid(.~alpha.group) +
   labs(title = "Left Nd2 mean amplitude", x = "alpha power", 
        y = "Left Nd2 mean amplitude", 
        colour = "configuration")
@@ -204,7 +212,7 @@ alpha.left.nd2.line
 # 2.7.1. ANOVA
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                 random = ~1|Subject/configuration/alpha.power, 
-                          data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                                data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                           method = "ML") #baseline
 alpha.right.nd2.config <- update(alpha.right.nd2.baseline, .~. + configuration)
 alpha.right.nd2.alpha.power <- update(alpha.right.nd2.config, .~. + alpha.power)
@@ -212,10 +220,11 @@ alpha.right.nd2.lme <- update(alpha.right.nd2.alpha.power, .~. +
                                 configuration:alpha.power)
 anova(alpha.right.nd2.baseline, alpha.right.nd2.config, alpha.right.nd2.alpha.power,
       alpha.right.nd2.lme)
+
 summary(alpha.right.nd2.lme)
 
 # 2.7.2. Post-hocs
-alpha.right.nd2.model <- lme(right.nd2 ~ configuration * alpha.power, 
+alpha.right.nd2.lme <- lme(right.nd2 ~ configuration * alpha.power * alpha.group, 
                             random = ~1|Subject/configuration/alpha.power, 
                             data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                             method = "ML")
@@ -230,6 +239,7 @@ alpha.right.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
+  facet_grid(.~alpha.group) +
   labs(title = "Right Nd2 mean amplitude", x = "alpha power",
        y = "Left Nd2 mean amplitude", 
        colour = "configuration")
@@ -249,7 +259,35 @@ anova(alpha.RL.nd2.baseline, alpha.RL.nd2.config, alpha.RL.nd2.alpha.power,
       alpha.RL.nd2.lme)
 
 # 2.8.2. Post-hocs
+
+alpha.RL.nd2.lme <- lme(RL.nd2 ~ configuration * alpha.power, 
+                           random = ~1|Subject/configuration/alpha.power, 
+                           data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                           method = "ML")
+anova(alpha.RL.nd2.lme)
+
 lsmeans(alpha.RL.nd2.lme, pairwise ~ configuration | alpha.power)
+
+# using multcomp
+# 1.
+# compute means for all combinations
+tmp <- expand.grid(configuration = unique(rep_data_alpha3$configuration),
+                   alpha.power = unique(rep_data_alpha3$alpha.power))
+x <- model.matrix(~ configuration * alpha.power, data = tmp)
+glht(alpha.RL.nd2.lme, linfct = x)
+
+# construct contrast matrix
+Tukey <- contrMat(table(rep_data_alpha3$configuration), "Tukey")
+K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+rownames(K1) <- paste(levels(rep_data_alpha3$alpha.power)[1], rownames(K1), 
+                      sep = ":")
+K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
+rownames(K2) <- paste(levels(rep_data_alpha3$alpha.power)[2], rownames(K2), 
+                      sep = ":")
+K <- rbind(K1, K2)
+colnames(K) <- c(colnames(Tukey), colnames(Tukey))
+#test
+summary(glht(alpha.RL.nd2.lme, linfct = K %*% x))
 
 # 2.8.3. Plots
 alpha.RL.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -379,7 +417,7 @@ anova(alpha.right.nd2.baseline, alpha.right.nd2.config, alpha.right.nd2.session,
 rep_data_alpha3[rep_data_alpha3$session == 1,] %>%
    gather(occ.nd1, left.nd2, right.nd2, RL.nd2, 
           key = "var", value = "value") %>% 
-  ggplot(aes(x = alpha.power, y = value, color = configuration)) +
+  ggplot(aes(x = alpha.power, y = value, color = configuration, shape = alpha.group)) +
   stat_summary(fun.y = mean, geom = "point") +
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +

@@ -61,6 +61,7 @@ sqr2.mean.alpha <- sapply(sqr2.alpha, mean)
 rand1.mean.alpha <- sapply(rand1.alpha, mean)
 rand2.mean.alpha <- sapply(rand2.alpha, mean)
 
+#---------------------------------Add to data frames------------------------------------
 # 5. Add to long data frame
 # 5.1. Raw alpha values
 rep_data_long3$alpha <- numeric(nrow(rep_data_long3))
@@ -121,6 +122,9 @@ questionnaire.ERPs$alpha.group <- factor(questionnaire.ERPs$alpha.group)
 
 # 8. Append meadian-split-based group to long data frame
 rep_data_long3$alpha.group <- rep(questionnaire.ERPs$alpha.group, 4)
+
+rep_data_alpha3$alpha.group <- factor(rep(as.vector(rep_data_long3$alpha.group), 2))
+levels(rep_data_alpha3$alpha.group) <- c("high alpha group", "low alpha group")
 
 # #-----------------------Dataset without behavioral responses-----------
 # # 10. Append to dataset without behavioral responses

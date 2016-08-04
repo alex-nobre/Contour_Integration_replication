@@ -44,6 +44,7 @@ session_2 <- subset(rep_data_long2, session == 2)
 
 #---------------------------Exploratory data analysis---------------------------
 defaults <- par() #save graphical parameters defaults
+
 # 2. Compute variances and means
 by(rep_data_long2[,6:8], list(rep_data_long2$configuration, 
                               rep_data_long2$session, rep_data_long2$group.original), 
@@ -58,144 +59,37 @@ normality.test <- function(data, variable, color) {
 }
 
 # 3.2. Compute normality and plot qqplot for all dependent variables
-normal.tests <- mapply(normality.test, rep_data_long2[,6:18], 
-                       colnames(rep_data_long2[,6:18]), 1:ncol(rep_data_long2[,6:18]))
+par(mfrow = c(3,3))
+normal.tests <- mapply(normality.test, rep_data_long3[,c(6:9,12,14,16:18)], 
+                       colnames(rep_data_long3[,c(6:9,12,14,16:18)]), 
+                       1:ncol(rep_data_long3[,c(6:9,12,14,16:18)]))
+par(mfrow = c(1,1))
 
 # 3.3. Plot histograms
 # 5 Histograms for normality checks
 # 5.1. Nd1
-hist(rep_data_long2$occ.nd1, col = 3, prob = T)
-lines(density(rep_data_long2$occ), col = 2)
+hist(rep_data_long3$occ.nd1, col = 3, prob = T)
+lines(density(rep_data_long3$occ.nd1), col = 2)
 # 5.2. Nd2 left
 par(mfrow = c(1,2))
-hist(rep_data_long2$left.nd2, main = "left nd2 mean amplitude", ylim = c(0, 0.5),
+hist(rep_data_long3$left.nd2, main = "left nd2 mean amplitude", ylim = c(0, 0.5),
      xlab = "amplitude", col = 2, prob = T)
-lines(density(rep_data_long2$left.nd2), col = 4, lwd = 3)
+lines(density(rep_data_long3$left.nd2), col = 4, lwd = 3)
 # 5.3. Nd2 right
-hist(rep_data_long2$right.nd2, main = "Right nd2 mean amplitude", ylim = c(0, 0.5),
+hist(rep_data_long3$right.nd2, main = "Right nd2 mean amplitude", ylim = c(0, 0.5),
      xlab = "amplitude", col = 3, prob = T)
-lines(density(rep_data_long2$right.nd2), col = 9, lwd = 3)
+lines(density(rep_data_long3$right.nd2), col = 9, lwd = 3)
 par(mfrow = c(1,1))
 
-# 4. Plot variances and means
-# 4.1.1 P1 means x configuration
-ROImap_sqr_dat$P1.means <- rowMeans(ROImap_sqr_dat[,c(3,12)])
-ROImap_rand_dat$P1.means <- rowMeans(ROImap_rand_dat[,c(3,12)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P1.means, ylab = "mean nd2 P1 amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "P1 amplitudes", ylim =c(-5.5, 3.0))
-points(ROImap_rand_dat$subject, ROImap_rand_dat$P1.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$P1.means), col = "red")
-abline(h=mean(ROImap_rand_dat$P1.means), col = "blue")
-
-# 4.1.2 N1 means x configuration
-ROImap_sqr_dat$N1.means <- rowMeans(ROImap_sqr_dat[,c(4,13)])
-ROImap_rand_dat$N1.means <- rowMeans(ROImap_rand_dat[,c(4,13)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N1.means, ylab = "mean nd2 N1 amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "N1 amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$N1.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$N1.means), col = "red")
-abline(h=mean(ROImap_rand_dat$N1.means), col = "blue")
-
-# 4.1.3 Occ_nd1 means x configuration
-ROImap_sqr_dat$P2_right.means <- rowMeans(ROImap_sqr_dat[,c(5,14)])
-ROImap_rand_dat$P2_right.means <- rowMeans(ROImap_rand_dat[,c(5,14)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P2_right.means, ylab = "mean nd2 P2_right amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "P2_right amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$P2_right.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$P2_right.means), col = "red")
-abline(h=mean(ROImap_rand_dat$P2_right.means), col = "blue")
-
-# 4.1.4 Occ_nd2 means x configuration
-ROImap_sqr_dat$P2_anterior.means <- rowMeans(ROImap_sqr_dat[,c(6,15)])
-ROImap_rand_dat$P2_anterior.means <- rowMeans(ROImap_rand_dat[,c(6,15)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P2_anterior.means, ylab = "mean nd2 P2_anterior amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "P2_anterior amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$P2_anterior.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$P2_anterior.means), col = "red")
-abline(h=mean(ROImap_rand_dat$P2_anterior.means), col = "blue")
-
-# 4.1.5 N2 means x configuration
-ROImap_sqr_dat$N2_occ.means <- rowMeans(ROImap_sqr_dat[,c(7,16)])
-ROImap_rand_dat$N2_occ.means <- rowMeans(ROImap_rand_dat[,c(7,16)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N2_occ.means, ylab = "mean nd2 N2_occ amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "N2_occ amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$N2_occ.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$N2_occ.means), col = "red")
-abline(h=mean(ROImap_rand_dat$N2_occ.means), col = "blue")
-
-# 4.1.7 LP means x configuration
-ROImap_sqr_dat$LP_anterior.means <- rowMeans(ROImap_sqr_dat[,c(9,18)])
-ROImap_rand_dat$LP_anterior.means <- rowMeans(ROImap_rand_dat[,c(9,18)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$LP_anterior.means, ylab = "mean nd2 LP_anterior amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "LP_anterior amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$LP_anterior.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$LP_anterior.means), col = "red")
-abline(h=mean(ROImap_rand_dat$LP_anterior.means), col = "blue")
-
-# 4.2.Multipanel plots with lines
-xyplot(N1_occ ~ subject | group * session, groups = configuration, col = c("red", "blue"), 
-       data = ROImap_data_long, auto.key = T, type = "smooth")
-# panel = function(...){
-#   panel.xyplot(...)
-#   panel.loess(lwd=1,groups = configuration,...)
-# })
-
-
-# 7.3 Nd2 left - session
-nd2_left_line_session <- ggplot(rep_data_long2, aes(x = group, y = left, 
-                                                    colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "Left average reference", x = "group", y = "Nd2 left amplitude", 
-       colour = "configuration")
-
-# 7.5 Nd2 right - session
-nd2_right_line_session <- ggplot(rep_data_long2, aes(x = group, y = right, 
-                                                     colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "Right average reference", x = "group", y = "Nd2 right amplitude", 
-       colour = "configuration")
-
-# 6.5. 280-360 - session
-nd2_N2_occ_line_session <- ggplot(ROImap_data_long, aes(x = session, y = N2_occ, 
-                                                        colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~group.original) +
-  labs(title = "N2 average reference", x = " session", y = "Nd2 N2 amplitude", 
-       colour = "configuration")
-
-# 6.7 Nd2 LP_central - session
-nd2_LP_central_line_session <- ggplot(ROImap_data_long, aes(x = session, y = LP_central, 
-                                                            colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~group.original) +
-  labs(title = "LP central average reference", x = " session", y = "LP 
-       amplitude", colour = "configuration")
 
 #----------------------------------Linear model---------------------------------
-# 8. Mixed model
-ses1_subset <- subset(rep_data_long2, session == 1)
-ses2_subset <- subset(rep_data_long2, session == 2)
+contrasts(rep_data_long3$configuration) <- c(-1, 1) # contrasts for config
+contrasts(rep_data_long3$session) <- c(-1, 1) # contrasts for session
+contrasts(rep_data_long3$group.original) <- c(-1, 1) # contrasts for group.original
+contrasts(rep_data_long3$group) <- c(-1, 1) # contrasts for group
 
-contrasts(ses2_subset$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(ses2_subset$group) <- c(-1, 1) # setting contrasts for group
-nd1_baseline <- lme(occ ~ 1, random = ~1|Subject/configuration, 
-                    data = ses2_subset, method = "ML") #baseline
-nd1_config <- update(nd1_baseline, .~. + configuration)
-anova(nd1_baseline, nd1_config)
-summary(nd1_lme)
-
-# 8.1. C1
-# Scatterplot
+# 4.1. C1
+# 4.1.1. Scatterplot
 plot(1:18, rep_data4[rep_data4$group.original == "aware",]$C1.sqr_1, 
      ylab = "mean C1 amplitude", xlab = "subjects", pch = 20, col = "red", 
      main = "C1 amplitudes")
@@ -205,8 +99,23 @@ abline(h=mean(rep_data4[rep_data4$group.original == "aware",]$C1.sqr_1),
        col = "red")
 abline(h=mean(rep_data4[rep_data4$group.original == "unaware",]$C1.sqr_1), 
        col = "blue")
-# Line plot
-C1.line <- ggplot(rep_data_long2, aes(x = group.original, y = C1, 
+
+# 4.1.2. ANOVA
+C1.baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration/session, 
+                    data = rep_data_long3, method = "ML") #baseline
+C1.config <- update(C1.baseline, .~. + configuration)
+C1.session <- update(C1.config, .~. + session)
+C1.group.original <- update(C1.session, .~. + group.original)
+C1.config.session <- update(C1.group.original, .~. + configuration:session)
+C1.session.group.original <- update(C1.config.session, .~. + session:group.original)
+C1.config.group.original <- update(C1.session.group.original, .~. + 
+                                     configuration:group.original)
+C1.lme <- update(C1.config.group.original, .~. + configuration:session:group.original)
+anova(C1.baseline, C1.config, C1.session, C1.group.original, C1.config.session,
+      C1.session.group.original, C1.config.group.original, C1.lme)
+
+# 4.1.3. Line plot
+C1.line <- ggplot(rep_data_long3, aes(x = group.original, y = C1, 
                                       colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
@@ -214,56 +123,75 @@ C1.line <- ggplot(rep_data_long2, aes(x = group.original, y = C1,
   facet_grid(.~session) +
   labs(title = "C1 mean aplitude", x = "session", 
        y = "C1 mean amplitude", colour = "configuration")
+C1.line
 
-# Set contrasts for ANOVA
-contrasts(rep_data_long3$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long3$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long3$group) <- c(-1, 1) # setting contrasts for group
-contrasts(rep_data_long3$group.original) <- c(-1, 1) # setting contrasts for group.original
+# 4.2. P1
+# 4.2.1. Scatterplot
+ROImap_sqr_dat$P1.means <- rowMeans(ROImap_sqr_dat[,c(3,12)])
+ROImap_rand_dat$P1.means <- rowMeans(ROImap_rand_dat[,c(3,12)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P1.means, ylab = "mean nd2 P1 amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "P1 amplitudes", ylim =c(-5.5, 3.0))
+points(ROImap_rand_dat$subject, ROImap_rand_dat$P1.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$P1.means), col = "red")
+abline(h=mean(ROImap_rand_dat$P1.means), col = "blue")
 
+# 4.2.2. ANOVA
+P1.baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/session, 
+                                 data = rep_data_long3, method = "ML") #baseline
+P1.config <- update(P1.baseline, .~. + configuration)
+P1.session <- update(P1.config, .~. + session)
+P1.group.original <- update(P1.session, .~. + group.original)
+P1.config.session <- update(P1.group.original, .~. + configuration:session)
+P1.session.group.original <- update(P1.config.session, .~. + session:group.original)
+P1.config.group.original <- update(P1.session.group.original, .~. + 
+                                     configuration:group.original)
+P1.lme <- update(P1.config.group.original, .~. + configuration:session:group.original)
+anova(P1.baseline, P1.config, P1.session, P1.group.original, 
+      P1.config.session, P1.session.group.original, P1.config.group.original, 
+      P1.lme)
 
-# ANOVA
-C1_baseline <- lme(C1 ~ 1, random = ~1|Subject/configuration/session, 
-                    data = rep_data_long2, method = "ML") #baseline
-C1_config <- update(C1_baseline, .~. + configuration)
-C1_session <- update(C1_config, .~. + session)
-C1_group.original <- update(C1_session, .~. + group.original)
-C1_config_session <- update(C1_group.original, .~. + configuration:session)
-C1_session_group.original <- update(C1_config_session, .~. + session:group.original)
-C1_config_group.original <- update(C1_session_group.original, .~. + configuration:group.original)
-C1_lme <- update(C1_config_group.original, .~. + configuration:session:group.original)
-anova(C1_baseline, C1_config, C1_session, C1_group.original, C1_config_session,
-      C1_session_group.original, C1_config_group.original, C1_lme)
+summary(P1.lme)
 
-# 8.2. P1
-# Line plot
-P1.line <- ggplot(rep_data_long2, aes(x = group.original, y = P1, 
-                                        colour = configuration)) + 
+# 4.2.3. Line plot
+P1.line <- ggplot(rep_data_long3, aes(x = group.original, y = P1, 
+                                      colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
   facet_grid(.~session) +
   labs(title = "P1 mean amplitude", x = "session", 
        y = "P1 mean amplitude", colour = "configuration")
+P1.line
 
-# ANOVA
-P1_baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/session, 
-                                 data = rep_data_long2, method = "ML") #baseline
-P1_config <- update(P1_baseline, .~. + configuration)
-P1_session <- update(P1_config, .~. + session)
-P1_group.original <- update(P1_session, .~. + group.original)
-P1_config_session <- update(P1_group.original, .~. + configuration:session)
-P1_session_group.original <- update(P1_config_session, .~. + session:group.original)
-P1_config_group.original <- update(P1_session_group.original, .~. + configuration:group.original)
-P1_lme <- update(P1_config_group.original, .~. + configuration:session:group.original)
-anova(P1_baseline, P1_config, P1_session, P1_group.original, 
-      P1_config_session, P1_session_group.original, P1_config_group.original, 
-      P1_lme)
-summary(P1_lme)
+# 4.3. N1
+# 4.3.1. Scatterplot
+ROImap_sqr_dat$N1.means <- rowMeans(ROImap_sqr_dat[,c(4,13)])
+ROImap_rand_dat$N1.means <- rowMeans(ROImap_rand_dat[,c(4,13)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N1.means, ylab = "mean nd2 N1 amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "N1 amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$N1.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$N1.means), col = "red")
+abline(h=mean(ROImap_rand_dat$N1.means), col = "blue")
 
-# 8.3. N1
-# Line plot
-N1.line <- ggplot(rep_data_long2, aes(x = group.original, y = N1, 
+# 4.3.2. ANOVA
+N1.baseline <- lme(N1 ~ 1, random = ~1|Subject/configuration/session, 
+                           data = rep_data_long3, method = "ML") #baseline
+N1.config <- update(N1.baseline, .~. + configuration)
+N1.session <- update(N1.config, .~. + session)
+N1.group.original <- update(N1.session, .~. + group.original)
+N1.config.session <- update(N1.group.original, .~. + configuration:session)
+N1.session.group.original <- update(N1.config.session, .~. + session:group.original)
+N1.config.group.original <- update(N1.session.group.original, .~. + 
+                                     configuration:group.original)
+N1.lme <- update(N1.config.group.original, .~. + configuration:session:group.original)
+anova(N1.baseline, N1.config, N1.session, N1.group.original, 
+      N1.config.session, N1.session.group.original, N1.config.group.original, 
+      N1.lme)
+
+summary(N1.lme)
+
+# 4.3.3. Line plot
+N1.line <- ggplot(rep_data_long3, aes(x = group.original, y = N1, 
                                       colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
@@ -271,26 +199,40 @@ N1.line <- ggplot(rep_data_long2, aes(x = group.original, y = N1,
   facet_grid(.~session) +
   labs(title = "N1 mean amplitude", x = " session", y = "N1 mean amplitude", 
        colour = "configuration")
-# ANOVA
-N1_baseline <- lme(N1_occ ~ 1, random = ~1|subject/configuration/session, 
-                           data = ROImap_data_long, method = "ML") #baseline
-N1_config <- update(N1_baseline, .~. + configuration)
-N1_session <- update(N1_config, .~. + session)
-N1_group <- update(N1_session, .~. + group)
-N1_config_session <- update(N1_group, .~. + configuration:session)
-N1_session_group <- update(N1_config_session, .~. + session:group)
-N1_config_group <- update(N1_session_group, .~. + configuration:group)
-N1_lme <- update(N1_config_group, .~. + configuration:session:group)
-anova(N1_baseline, N1_config, N1_session, N1_group, 
-      N1_config_session, N1_session_group, N1_config_group, 
-      N1_lme)
-summary(N1_lme)
+N1.line
 
-# 8.4. Nd1 (P2)
-# Line plot
-jpeg(file = "./Plots/Pitts ROIs/nd1line.jpeg")
+# 4.4. Nd1
+# 4.4.1. Scatterplot
+ROImap_sqr_dat$P2_right.means <- rowMeans(ROImap_sqr_dat[,c(5,14)])
+ROImap_rand_dat$P2_right.means <- rowMeans(ROImap_rand_dat[,c(5,14)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P2_right.means, ylab = "mean nd2 P2_right amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "P2_right amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$P2_right.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$P2_right.means), col = "red")
+abline(h=mean(ROImap_rand_dat$P2_right.means), col = "blue")
+
+# 4.4.2. ANOVA
+nd1.baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
+                    data = rep_data_long3, method = "ML") #baseline
+nd1.config <- update(nd1.baseline, .~. + configuration)
+nd1.session <- update(nd1.config, .~. + session)
+nd1.group.original <- update(nd1.session, .~. + group.original)
+nd1.config.session <- update(nd1.group.original, .~. + configuration:session)
+nd1.session.group.original <- update(nd1.config.session, .~. + 
+                                       session:group.original)
+nd1.config.group.original <- update(nd1.session.group.original, .~. 
+                                    + configuration:group.original)
+nd1.lme <- update(nd1.config.group.original, .~. + 
+                    configuration:session:group.original)
+anova(nd1.baseline, nd1.config, nd1.session, nd1.group.original, nd1.config.session,
+      nd1.session.group.original, nd1.config.group.original, nd1.lme)
+
+summary(nd1.lme)
+
+# 4.4.3. Line plot
+#jpeg(file = "./Plots/Pitts ROIs/nd1line.jpeg")
 nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1, 
-                                               colour = configuration)) + 
+                                       colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
@@ -298,74 +240,113 @@ nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1,
   labs(title = "Occ Nd1 mean amplitude", x = "group", y = "Occ Nd1 mean amplitude", 
        colour = "configuration")
 nd1.line
-dev.off()
-# ANOVA
-nd1_baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
-                    data = rep_data_long2, method = "ML") #baseline
-nd1_config <- update(nd1_baseline, .~. + configuration)
-nd1_session <- update(nd1_config, .~. + session)
-nd1_group.original <- update(nd1_session, .~. + group.original)
-nd1_config_session <- update(nd1_group.original, .~. + configuration:session)
-nd1_session_group.original <- update(nd1_config_session, .~. + session:group.original)
-nd1_config_group.original <- update(nd1_session_group.original, .~. + configuration:group.original)
-nd1_lme <- update(nd1_config_group.original, .~. + configuration:session:group.original)
-anova(nd1_baseline, nd1_config, nd1_session, nd1_group.original, nd1_config_session,
-      nd1_session_group.original, nd1_config_group.original, nd1_lme)
-summary(nd1_lme)
+#dev.off()
 
-# 8.5. Nd2 (VAN) left
-nd2_left_baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
-                         data = rep_data_long2, method = "ML") #baseline
-nd2_left_config <- update(nd2_left_baseline, .~. + configuration)
-nd2_left_session <- update(nd2_left_config, .~. + session)
-nd2_left_group.original <- update(nd2_left_session, .~. + group.original)
-nd2_left_config_session <- update(nd2_left_group.original, .~. + configuration:session)
-nd2_left_session_group.original <- update(nd2_left_config_session, .~. + session:group.original)
-nd2_left_config_group.original <- update(nd2_left_session_group.original, .~. + configuration:group.original)
-nd2_left_lme <- update(nd2_left_config_group.original, .~. + configuration:session:group.original)
-anova(nd2_left_baseline, nd2_left_config, nd2_left_session, nd2_left_group.original, 
-      nd2_left_config_session, nd2_left_session_group.original, nd2_left_config_group.original, 
-      nd2_left_lme)
-summary(nd2_left_lme)
+# 4.5. Nd2 (VAN) left
+# 4.5.2. ANOVA
+nd2.left.baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
+                         data = rep_data_long3, method = "ML") #baseline
+nd2.left.config <- update(nd2.left.baseline, .~. + configuration)
+nd2.left.session <- update(nd2.left.config, .~. + session)
+nd2.left.group.original <- update(nd2.left.session, .~. + group.original)
+nd2.left.config.session <- update(nd2.left.group.original, .~. + 
+                                    configuration:session)
+nd2.left.session.group.original <- update(nd2.left.config.session, .~. + 
+                                            session:group.original)
+nd2.left.config.group.original <- update(nd2.left.session.group.original, .~. + 
+                                           configuration:group.original)
+nd2.left.lme <- update(nd2.left.config.group.original, .~. + 
+                         configuration:session:group.original)
+anova(nd2.left.baseline, nd2.left.config, nd2.left.session, nd2.left.group.original, 
+      nd2.left.config.session, nd2.left.session.group.original, nd2.left.config.group.original, 
+      nd2.left.lme)
 
-# 8.6. Nd2 (VAN) right
-nd2_right_baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
-                          data = rep_data_long2, method = "ML") #baseline
-nd2_right_config <- update(nd2_right_baseline, .~. + configuration)
-nd2_right_session <- update(nd2_right_config, .~. + session)
-nd2_right_group.original <- update(nd2_right_session, .~. + group.original)
-nd2_right_config_session <- update(nd2_right_group.original, .~. + configuration:session)
-nd2_right_session_group.original <- update(nd2_right_config_session, .~. + session:group.original)
-nd2_right_config_group.original <- update(nd2_right_session_group.original, .~. + configuration:group.original)
-nd2_right_lme <- update(nd2_right_config_group.original, .~. + configuration:session:group.original)
-anova(nd2_right_baseline, nd2_right_config, nd2_right_session, nd2_right_group.original, 
-      nd2_right_config_session, nd2_right_session_group.original, nd2_right_config_group.original, 
-      nd2_right_lme)
-summary(nd2_right_lme)
-t.test(C1 ~ configuration, data = rep_data_long2, paired = TRUE)
+summary(nd2.left.lme)
+
+# 4.5.3. Line plot
+nd2_left_line_session <- ggplot(rep_data_long2, aes(x = group, y = left, 
+                                                    colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "Left average reference", x = "group", y = "Nd2 left amplitude", 
+       colour = "configuration")
+
+# 4.6. Nd2 right
+# 4.6.2. ANOVA 
+nd2.right.baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
+                          data = rep_data_long3, method = "ML") #baseline
+nd2.right.config <- update(nd2.right.baseline, .~. + configuration)
+nd2.right.session <- update(nd2.right.config, .~. + session)
+nd2.right.group.original <- update(nd2.right.session, .~. + group.original)
+nd2.right.config.session <- update(nd2.right.group.original, .~. + 
+                                     configuration:session)
+nd2.right.session.group.original <- update(nd2.right.config.session, .~. + 
+                                             session:group.original)
+nd2.right.config.group.original <- update(nd2.right.session.group.original, .~. + 
+                                            configuration:group.original)
+nd2.right.lme <- update(nd2.right.config.group.original, .~. + 
+                          configuration:session:group.original)
+anova(nd2.right.baseline, nd2.right.config, nd2.right.session, 
+      nd2.right.group.original, 
+      nd2.right.config.session, nd2.right.session.group.original, 
+      nd2.right.config.group.original, 
+      nd2.right.lme)
+
+summary(nd2.right.lme)
+
+# 4.6.3. Test normality of residuals
+qqnorm(nd2.right.lme, grid = T, ~ranef(., level = 2))
+hist((resid(nd2.right.lme) - mean(resid(nd2.right.lme))) / sd(resid(nd2.right.lme)), 
+     freq = FALSE); curve(dnorm, add = TRUE)
+plot.lme(nd2.right.lme)
+
+# 4.6.4. Line plot
+nd2_right_line_session <- ggplot(rep_data_long2, aes(x = group, y = right, 
+                                                     colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "Right average reference", x = "group", y = "Nd2 right amplitude", 
+       colour = "configuration")
+
  
-# 8.6. Nd2 (VAN) right-left
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
-nd2_right_baseline <- lme(right ~ 1, random = ~1|Subject/configuration/session, 
-                          data = rep_data_long2, method = "ML") #baseline
-nd2_right_config <- update(nd2_right_baseline, .~. + configuration)
-nd2_right_session <- update(nd2_right_config, .~. + session)
-nd2_right_group.original <- update(nd2_right_session, .~. + group.original)
-nd2_right_config_session <- update(nd2_right_group.original, .~. + configuration:session)
-nd2_right_session_group.original <- update(nd2_right_config_session, .~. + session:group.original)
-nd2_right_config_group.original <- update(nd2_right_session_group.original, .~. + configuration:group.original)
-nd2_right_lme <- update(nd2_right_config_group.original, .~. + configuration:session:group.original)
-anova(nd2_right_baseline, nd2_right_config, nd2_right_session, nd2_right_group.original, 
-      nd2_right_config_session, nd2_right_session_group.original, nd2_right_config_group.original, 
-      nd2_right_lme)
-summary(nd2_right_lme)
+# 4.7. Nd2 right-left
+# 4.7.2. ANOVA
+RL.nd2.baseline <- lme(RL.nd2 ~ 1, random = ~1|Subject/configuration/session, 
+                          data = rep_data_long3, method = "ML") #baseline
+RL.nd2.config <- update(RL.nd2.baseline, .~. + configuration)
+RL.nd2.session <- update(RL.nd2.config, .~. + session)
+RL.nd2.group.original <- update(RL.nd2.session, .~. + group.original)
+RL.nd2.config.session <- update(RL.nd2.group.original, .~. + 
+                                     configuration:session)
+RL.nd2.session.group.original <- update(RL.nd2.config.session, .~. + 
+                                             session:group.original)
+RL.nd2.config.group.original <- update(RL.nd2.session.group.original, .~. + 
+                                            configuration:group.original)
+RL.nd2.lme <- update(RL.nd2.config.group.original, .~. + 
+                          configuration:session:group.original)
+anova(RL.nd2.baseline, RL.nd2.config, RL.nd2.session, 
+      RL.nd2.group.original, 
+      RL.nd2.config.session, RL.nd2.session.group.original, 
+      RL.nd2.config.group.original, 
+      RL.nd2.lme)
 
-# 8.7. N2
-contrasts(ROImap_data_long$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(ROImap_data_long$session) <- c(-1, 1) # setting contrasts for session
-contrasts(ROImap_data_long$group) <- c(-1, 1) # setting contrasts for group
+summary(nd2.right.lme)
+
+# 4.8. N2
+# 4.8.1 Scatterplot
+ROImap_sqr_dat$N2_occ.means <- rowMeans(ROImap_sqr_dat[,c(7,16)])
+ROImap_rand_dat$N2_occ.means <- rowMeans(ROImap_rand_dat[,c(7,16)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N2_occ.means, ylab = "mean nd2 N2_occ amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "N2_occ amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$N2_occ.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$N2_occ.means), col = "red")
+abline(h=mean(ROImap_rand_dat$N2_occ.means), col = "blue")
+
+# 4.8.2. ANOVA
 N2_baseline <- lme(N2_occ ~ 1, random = ~1|subject/configuration/session, 
                            data = ROImap_data_long, method = "ML") #baseline
 N2_config <- update(N2_baseline, .~. + configuration)
@@ -380,67 +361,58 @@ anova(N2_baseline, N2_config, N2_session, N2_group,
       N2_lme)
 summary(N2_lme)
 
-# 8.8. LP
-LP_baseline <- lme(LP ~ 1, random = ~1|Subject/configuration/session, 
-                               data = rep_data_long3, method = "ML") #baseline
-LP_config <- update(LP_baseline, .~. + configuration)
-LP_session <- update(LP_config, .~. + session)
-LP_group <- update(LP_session, .~. + group.original)
-LP_config_session <- update(LP_group, .~. + configuration:session)
-LP_session_group <- update(LP_config_session, .~. + session:group)
-LP_config_group <- update(LP_session_group, .~. + configuration:group)
-LP_lme <- update(LP_config_group, .~. + configuration:session:group)
-anova(LP_baseline, LP_config, LP_session, LP_group, 
-      LP_config_session, LP_session_group, LP_config_group, 
-      LP_lme)
+# 4.8.3. Line plot
+nd2_N2_occ_line_session <- ggplot(ROImap_data_long, aes(x = session, y = N2_occ, 
+                                                        colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~group.original) +
+  labs(title = "N2 average reference", x = " session", y = "Nd2 N2 amplitude", 
+       colour = "configuration")
 
-by(rep_data_long3$LP, rep_data_long3$configuration, 
-   stat.desc, basic = FALSE)
+# 4.9. LP
+# 4.9.1. Scatterplot
+ROImap_sqr_dat$LP_anterior.means <- rowMeans(ROImap_sqr_dat[,c(9,18)])
+ROImap_rand_dat$LP_anterior.means <- rowMeans(ROImap_rand_dat[,c(9,18)])
+plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$LP_anterior.means, ylab = "mean nd2 LP_anterior amplitude", 
+     xlab = "subjects", pch = 20, col = "red", main = "LP_anterior amplitudes")
+points(ROImap_rand_dat$subject, ROImap_rand_dat$LP_anterior.means, pch = 20, col = "blue")
+abline(h=mean(ROImap_sqr_dat$LP_anterior.means), col = "red")
+abline(h=mean(ROImap_rand_dat$LP_anterior.means), col = "blue")
+
+# 4.9.2. ANOVA
+LP.baseline <- lme(LP ~ 1, random = ~1|Subject/configuration/session, 
+                               data = rep_data_long3, method = "ML") #baseline
+LP.config <- update(LP.baseline, .~. + configuration)
+LP.session <- update(LP.config, .~. + session)
+LP.group.original <- update(LP.session, .~. + group.original)
+LP.config.session <- update(LP.group.original, .~. + configuration:session)
+LP.session.group.original <- update(LP.config.session, .~. + session:group.original)
+LP.config.group.original <- update(LP.session.group.original, .~. + 
+                                     configuration:group.original)
+LP.lme <- update(LP.config.group.original, .~. + configuration:session:group.original)
+anova(LP.baseline, LP.config, LP.session, LP.group.original, 
+      LP.config.session, LP.session.group.original, LP.config.group.original, 
+      LP.lme)
 
 summary(LP_lme)
 
-#---------------------------------------MANOVA------------------------------------------
+# # 4.9.3. Line plot
+LP.line <- ggplot(rep_data_long3, aes(x = group.original, y = LP, 
+                                      colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  facet_grid(.~session) +
+  labs(title = "LP central", x = " group.original", y = "LP 
+       amplitude", colour = "configuration")
+LP.line
 
-
-# 10. Assumption checking
-par(mfrow = c(2,2))
-plot(nd1_config)
-qqnorm(nd1_config)
-par <- par(defaults)
-
-# 9. Pairwise comparisons for each session and group separately
-# Subset groups
-aware_subset <- subset(rep_data2, group == "aware")
-unaware_subset <- subset(rep_data2, group == "unaware")
-# Occ (Nd1)
-t.test(aware_subset$occ.sqr_1, aware_subset$occ.rand_1, paired = TRUE)
-t.test(aware_subset$occ.sqr_2, aware_subset$occ.rand_2, paired = TRUE)
-t.test(unaware_subset$occ.sqr_1, unaware_subset$occ.rand_1, paired = TRUE)
-t.test(unaware_subset$occ.sqr_2, unaware_subset$occ.rand_2, paired = TRUE)
-# left (Nd2)
-t.test(aware_subset$left.sqr_1, aware_subset$left.rand_1, paired = TRUE)
-t.test(aware_subset$left.sqr_2, aware_subset$left.rand_2, paired = TRUE)
-t.test(unaware_subset$left.sqr_1, unaware_subset$left.rand_1, paired = TRUE)
-t.test(unaware_subset$left.sqr_2, unaware_subset$left.rand_2, paired = TRUE)
-# right (Nd2)
-t.test(aware_subset$right.sqr_1, aware_subset$right.rand_1, paired = TRUE)
-t.test(aware_subset$right.sqr_2, aware_subset$right.rand_2, paired = TRUE)
-t.test(unaware_subset$right.sqr_1, unaware_subset$right.rand_1, paired = TRUE)
-t.test(unaware_subset$right.sqr_2, unaware_subset$right.rand_2, paired = TRUE)
-
-# 9.2. Differences in occ between groups for session 1
-rep_data_long6 <- subset(rep_data_long2, configuration == "sqr")
-rep_data_long7 <- subset(rep_data_long6, session == 1)
-t.test(occ ~ group, data = rep_data_long7, paired = FALSE)
-
-# 9.3 Differences in left & right between groups for session 1
-t.test(left ~ group, data = rep_data_long7, paired = FALSE)
-t.test(right ~ group, data = rep_data_long7, paired = FALSE)
-
-# O.o
-rep_data_long8 <- subset(rep_data_long2, configuration == "rand")
-rep_data_long9 <- subset(rep_data_long8, group == "aware")
-t.test(occ ~ group, data = rep_data_long7, paired = FALSE)
-t.test(left ~ session, data = rep_data_long9, paired = TRUE)
-t.test(right ~ session, data = rep_data_long9, paired = TRUE)
+# Location test
+nd2.lme <- lme(alpha ~ configuration * session * group.original * location, 
+                           random = ~1|Subject/configuration/location, 
+                           data = rep_data_long2, 
+                           method = "ML")
+anova(nd2.lme)
 

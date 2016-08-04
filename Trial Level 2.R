@@ -63,7 +63,7 @@ eeg.segments <- function(ERP.data) {
 }
 
 
-# 4. Function to extract all single-trial ERPs in a single subject
+# 3. Function to extract all single-trial ERPs in a single subject
 subject.trialERPs <- function(trialERPs.file) {
   trialERPs.data <- read.delim(paste('./Data/Data_BVA/', trialERPs.file, sep = ""), 
                                sep = " ", dec = ",", header = TRUE)
@@ -82,7 +82,7 @@ subject.trialERPs <- function(trialERPs.file) {
 }
 
 #-------------------------Extract time point values and averaging----------------------
-# 5. Function to split time point values by ROI for each segment in each subject
+# 4. Function to split time point values by ROI for each segment in each subject
 split.segments.roi <- function(segment.erps) {
   C1 <- lapply(segment.erps, "[[", 1)
   P1 <- lapply(segment.erps, "[[", 2)
@@ -97,54 +97,46 @@ split.segments.roi <- function(segment.erps) {
   segments.by.ROIs <- list(C1, P1, N1, occ, left, right, right.left, N2, P3, LP)
 }
 
-# 6. Function for averaging
+# 5. Function for averaging
 average.segments <- function(subj.segments) {
   segments.by.roi <- split.segments.roi(subj.segments)
   points.averages.rois <- lapply(lapply(segments.by.roi, function(l)do.call(rbind, l)), 
                                  colMeans)
 }
-
-# 7. Extract, split and average segments for each subject in each condition
-sqr1.averages <- lapply(sqr1.trialERP.files, average.segments)
-sqr2.averages <- lapply(sqr2.trialERP.files, average.segments)
-rand1.averages <- lapply(rand1.trialERP.files, average.segments)
-rand2.averages <- lapply(rand2.trialERP.files, average.segments)
-
-
-
+ 
 #--------------------------------Extract trial-level ERPs---------------------------
-# 4. Apply function to all subjects in a condition
+# 6. Apply segment extraction function to all subjects in a condition
 sqr1.trial.dat <- lapply(sqr1.trialERP.files, subject.trialERPs)
 sqr2.trial.dat <- lapply(sqr2.trialERP.files, subject.trialERPs)
 rand1.trial.dat <- lapply(rand1.trialERP.files, subject.trialERPs)
 rand2.trial.dat <- lapply(rand2.trialERP.files, subject.trialERPs)
 
-# 8. Function to get indices for ERP trials from alpha median split in a single subject
+# 7. Function to get indices for ERP trials from alpha median split in a single subject
 alpha.median.index <- function(alpha.trials) {
   low.alpha.trials <- which(alpha.trials < median(alpha.trials))
   high.alpha.trials <- which(alpha.trials > median(alpha.trials))
   return(list(low.alpha.trials, high.alpha.trials))
 }
 
-# 9. Apply to alpha files lists
+# 8. Apply to alpha files lists
 sqr1.alpha.indices <- lapply(sqr1.alpha, alpha.median.index)
 sqr2.alpha.indices <- lapply(sqr2.alpha, alpha.median.index)
 rand1.alpha.indices <- lapply(rand1.alpha, alpha.median.index)
 rand2.alpha.indices <- lapply(rand2.alpha, alpha.median.index)
 
-# 7. Split segments according to alpha median split for each subject
-# 7.1. functions to apply to a list, taking as arguments a list (i.e. subject) 
+# 9. Split segments according to alpha median split for each subject
+# 9.1. functions to apply to a list, taking as arguments a list (i.e. subject) 
 # of numeric vectors (segments) composed of ROI values, and a list of indices, 
 # outputting segments split in two lists
-# 7.1.1. segments in low-alpha trials
+# 9.1.1. segments in low-alpha trials
 split.low.segments <- function(segments.list, indices.list) {
   low.alpha.segments <- segments.list[indices.list[[1]]]
 }
-# 7.1.2. segments in high-alpha trials
+# 9.1.2. segments in high-alpha trials
 split.high.segments <- function(segments.list, indices.list) {
   high.alpha.segments <- segments.list[indices.list[[2]]]
 }
-# 7.3. Apply functions to trials lists
+# 9.3. Apply functions to trials lists
 # Square, session 1
 low.alpha.segments.sqr1 <- mapply(split.low.segments, sqr1.trial.dat, sqr1.alpha.indices)
 high.alpha.segments.sqr1 <- mapply(split.high.segments, sqr1.trial.dat, sqr1.alpha.indices)
@@ -158,31 +150,18 @@ high.alpha.segments.rand1 <- mapply(split.high.segments, rand1.trial.dat, rand1.
 low.alpha.segments.rand2 <- mapply(split.low.segments, rand2.trial.dat, rand2.alpha.indices)
 high.alpha.segments.rand2 <- mapply(split.high.segments, rand2.trial.dat, rand2.alpha.indices)
 
-# # Split segments by ROI for each subject
-# # Square, session 1
-# low.alpha.segments.sqr1.roi <- lapply(low.alpha.segments.sqr1, split.segments.roi)
-# high.alpha.segments.sqr1.roi <- lapply(high.alpha.segments.sqr1, split.segments.roi)
-# # Square, session 2
-# low.alpha.segments.sqr2.roi <- lapply(low.alpha.segments.sqr2, split.segments.roi)
-# high.alpha.segments.sqr2.roi <- lapply(high.alpha.segments.sqr2, split.segments.roi)
-# # Random, session 1
-# low.alpha.segments.rand1.roi <- lapply(low.alpha.segments.rand1, split.segments.roi)
-# high.alpha.segments.rand1.roi <- lapply(high.alpha.segments.rand1, split.segments.roi)
-# # Random, session 1
-# low.alpha.segments.rand2.roi <- lapply(low.alpha.segments.rand2, split.segments.roi)
-# high.alpha.segments.rand2.roi <- lapply(high.alpha.segments.rand2, split.segments.roi)
 
-# Split segments by ROI for each subject and average
-# Square, session 1
+# 10. Split segments by ROI for each subject and average
+# 10.1. Square, session 1
 low.alpha.segments.sqr1.average <- lapply(low.alpha.segments.sqr1, average.segments)
 high.alpha.segments.sqr1.average <- lapply(high.alpha.segments.sqr1, average.segments)
-# Square, session 2
+# 10.2. Square, session 2
 low.alpha.segments.sqr2.average <- lapply(low.alpha.segments.sqr2, average.segments)
 high.alpha.segments.sqr2.average <- lapply(high.alpha.segments.sqr2, average.segments)
-# Random, session 1
+# 10.3. Random, session 1
 low.alpha.segments.rand1.average <- lapply(low.alpha.segments.rand1, average.segments)
 high.alpha.segments.rand1.average <- lapply(high.alpha.segments.rand1, average.segments)
-# Random, session 1
+# 10.4. Random, session 1
 low.alpha.segments.rand2.average <- lapply(low.alpha.segments.rand2, average.segments)
 high.alpha.segments.rand2.average <- lapply(high.alpha.segments.rand2, average.segments)
 
@@ -227,178 +206,165 @@ high.alpha.segments.rand2.corrected <- lapply(high.alpha.segments.rand2.average,
 # 8. Split ERPs by ROI for each subject
 # 8.1. Function to get ERPs by ROIs for each segment
 split.trialERPs.roi <- function(segment.erps) {
-  C1 <- unlist(lapply(segment.erps, "[[", 1))
-  P1 <- unlist(lapply(segment.erps, "[[", 2))
-  N1 <- unlist(lapply(segment.erps, "[[", 3))
-  occ.window_1 <- unlist(lapply(segment.erps, "[[", 4))
-  occ.window_2 <- unlist(lapply(segment.erps, "[[", 5))
-  left.window_1 <- unlist(lapply(segment.erps, "[[", 6))
-  left.window_2 <- unlist(lapply(segment.erps, "[[", 7))
-  right.window_1 <- unlist(lapply(segment.erps, "[[", 8))
-  right.window_2 <- unlist(lapply(segment.erps, "[[", 9))
-  right.left.window_1 <- unlist(lapply(segment.erps, "[[", 10))
-  right.left.window_2 <- unlist(lapply(segment.erps, "[[",11))
-  N2 <- unlist(lapply(segment.erps, "[[", 12))
-  P3 <- unlist(lapply(segment.erps, "[[", 13))
-  LP <- unlist(lapply(segment.erps, "[[", 14))
-  trials.by.ROIs <- list(C1, P1, N1, occ.window_1, occ.window_2, left.window_1, 
-                         left.window_2, right.window_1, right.window_2, 
+  C1 <- unlist(lapply(segment.erps, "[", 1))
+  P1 <- unlist(lapply(segment.erps, "[", 2))
+  N1 <- unlist(lapply(segment.erps, "[", 3))
+  occ.window_1 <- unlist(lapply(segment.erps, "[", 4))
+  occ.window_2 <- unlist(lapply(segment.erps, "[", 5))
+  left.window_1 <- unlist(lapply(segment.erps, "[", 6))
+  left.window_2 <- unlist(lapply(segment.erps, "[", 7))
+  right.window_1 <- unlist(lapply(segment.erps, "[", 8))
+  right.window_2 <- unlist(lapply(segment.erps, "[", 9))
+  right.left.window_1 <- unlist(lapply(segment.erps, "[", 10))
+  right.left.window_2 <- unlist(lapply(segment.erps, "[",11))
+  N2 <- unlist(lapply(segment.erps, "[", 12))
+  P3 <- unlist(lapply(segment.erps, "[", 13))
+  LP <- unlist(lapply(segment.erps, "[", 14))
+  trials.by.ROIs <- list(C1, P1, N1, occ.window_1, occ.window_2, left.window_1,
+                         left.window_2, right.window_1, right.window_2,
                          right.left.window_1, right.left.window_2, N2, P3, LP)
 }
 
 # 8.2. Apply function to list of all subjects, by configuration, session and alpha power
 # 8.2.1. Square, session 1
-low.alpha.ROIs.sqr1 <- lapply(low.alpha.segments.sqr1.corrected, split.trialERPs.roi)
-high.alpha.ROIs.sqr1 <- lapply(high.alpha.segments.sqr1.corrected, split.trialERPs.roi)
+low.alpha.ROIs.sqr1 <- split.trialERPs.roi(low.alpha.segments.sqr1.corrected)
+high.alpha.ROIs.sqr1 <- split.trialERPs.roi(high.alpha.segments.sqr1.corrected)
 # 8.2.2. Square, session 2
-low.alpha.ROIs.sqr2 <- lapply(low.alpha.segments.sqr2.corrected, split.trialERPs.roi)
-high.alpha.ROIs.sqr2 <- lapply(high.alpha.segments.sqr2.corrected, split.trialERPs.roi)
+low.alpha.ROIs.sqr2 <- split.trialERPs.roi(low.alpha.segments.sqr2.corrected)
+high.alpha.ROIs.sqr2 <- split.trialERPs.roi(high.alpha.segments.sqr2.corrected)
 # 8.2.3. Random, session 1
-low.alpha.ROIs.rand1 <- lapply(low.alpha.segments.rand1.corrected, split.trialERPs.roi)
-high.alpha.ROIs.rand1 <- lapply(high.alpha.segments.rand1.corrected, split.trialERPs.roi)
+low.alpha.ROIs.rand1 <- split.trialERPs.roi(low.alpha.segments.rand1.corrected)
+high.alpha.ROIs.rand1 <- split.trialERPs.roi(high.alpha.segments.rand1.corrected)
 # 8.2.4. Random, session 2
-low.alpha.ROIs.rand2 <- lapply(low.alpha.segments.rand2.corrected, split.trialERPs.roi)
-high.alpha.ROIs.rand2 <- lapply(high.alpha.segments.rand2.corrected, split.trialERPs.roi)
+low.alpha.ROIs.rand2 <- split.trialERPs.roi(low.alpha.segments.rand2.corrected)
+high.alpha.ROIs.rand2 <- split.trialERPs.roi(high.alpha.segments.rand2.corrected)
 
-# 9. Compute means
-# 8.2.1. Square, session 1
-low.alpha.ROIs.sqr1.means <- lapply(low.alpha.ROIs.sqr1, function (x) {lapply(x, mean)})
-high.alpha.ROIs.sqr1.means <- lapply(high.alpha.ROIs.sqr1, function (x) {lapply(x, mean)})
-# 8.2.2. Square, session 2
-low.alpha.ROIs.sqr2.means <- lapply(low.alpha.ROIs.sqr2, function (x) {lapply(x, mean)})
-high.alpha.ROIs.sqr2.means <- lapply(high.alpha.ROIs.sqr2, function (x) {lapply(x, mean)})
-# 8.2.3. Random, session 1
-low.alpha.ROIs.rand1.means <- lapply(low.alpha.ROIs.rand1, function (x) {lapply(x, mean)})
-high.alpha.ROIs.rand1.means <- lapply(high.alpha.ROIs.rand1, function (x) {lapply(x, mean)})
-# 8.2.4. Random, session 2
-low.alpha.ROIs.rand2.means <- lapply(low.alpha.ROIs.rand2, function (x) {lapply(x, mean)})
-high.alpha.ROIs.rand2.means <- lapply(high.alpha.ROIs.rand2, function (x) {lapply(x, mean)})
 
 # 10. Append to data frame with average ERPs
 rep_data2 <- rep_data
 # 10.1 Low alpha
 # 10.1.1. Square, session 1
-rep_data2$low.alpha.C1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 1))
-rep_data2$low.alpha.P1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 2))
-rep_data2$low.alpha.N1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 3))
-rep_data2$low.alpha.occ.nd1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 4))
-rep_data2$low.alpha.occ.nd2.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 5))
-rep_data2$low.alpha.left.nd1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 6))
-rep_data2$low.alpha.left.nd2.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 7))
-rep_data2$low.alpha.right.nd1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 8))
-rep_data2$low.alpha.right.nd2.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 9))
-rep_data2$low.alpha.RL.nd1.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 10))
-rep_data2$low.alpha.RL.nd2.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 11))
-rep_data2$low.alpha.N2.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 12))
-rep_data2$low.alpha.P3.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 13))
-rep_data2$low.alpha.LP.sqr_1 <- unlist(lapply(low.alpha.ROIs.sqr1.means, "[[", 14))
+rep_data2$low.alpha.C1.sqr_1 <- low.alpha.ROIs.sqr1[[1]]
+rep_data2$low.alpha.P1.sqr_1 <- low.alpha.ROIs.sqr1[[2]]
+rep_data2$low.alpha.N1.sqr_1 <- low.alpha.ROIs.sqr1[[3]]
+rep_data2$low.alpha.occ.nd1.sqr_1 <- low.alpha.ROIs.sqr1[[4]]
+rep_data2$low.alpha.occ.nd2.sqr_1 <- low.alpha.ROIs.sqr1[[5]]
+rep_data2$low.alpha.left.nd1.sqr_1 <- low.alpha.ROIs.sqr1[[6]]
+rep_data2$low.alpha.left.nd2.sqr_1 <- low.alpha.ROIs.sqr1[[7]]
+rep_data2$low.alpha.right.nd1.sqr_1 <- low.alpha.ROIs.sqr1[[8]]
+rep_data2$low.alpha.right.nd2.sqr_1 <- low.alpha.ROIs.sqr1[[9]]
+rep_data2$low.alpha.RL.nd1.sqr_1 <- low.alpha.ROIs.sqr1[[10]]
+rep_data2$low.alpha.RL.nd2.sqr_1 <- low.alpha.ROIs.sqr1[[11]]
+rep_data2$low.alpha.N2.sqr_1 <- low.alpha.ROIs.sqr1[[12]]
+rep_data2$low.alpha.P3.sqr_1 <- low.alpha.ROIs.sqr1[[13]]
+rep_data2$low.alpha.LP.sqr_1 <- low.alpha.ROIs.sqr1[[14]]
 # 10.1.2. Square, session 2
-rep_data2$low.alpha.C1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 1))
-rep_data2$low.alpha.P1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 2))
-rep_data2$low.alpha.N1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 3))
-rep_data2$low.alpha.occ.nd1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 4))
-rep_data2$low.alpha.occ.nd2.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 5))
-rep_data2$low.alpha.left.nd1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 6))
-rep_data2$low.alpha.left.nd2.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 7))
-rep_data2$low.alpha.right.nd1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 8))
-rep_data2$low.alpha.right.nd2.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 9))
-rep_data2$low.alpha.RL.nd1.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 10))
-rep_data2$low.alpha.RL.nd2.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 11))
-rep_data2$low.alpha.N2.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 12))
-rep_data2$low.alpha.P3.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 13))
-rep_data2$low.alpha.LP.sqr_2 <- unlist(lapply(low.alpha.ROIs.sqr2.means, "[[", 14))
+rep_data2$low.alpha.C1.sqr_2 <- low.alpha.ROIs.sqr2[[1]]
+rep_data2$low.alpha.P1.sqr_2 <- low.alpha.ROIs.sqr2[[2]]
+rep_data2$low.alpha.N1.sqr_2 <- low.alpha.ROIs.sqr2[[3]]
+rep_data2$low.alpha.occ.nd1.sqr_2 <- low.alpha.ROIs.sqr2[[4]]
+rep_data2$low.alpha.occ.nd2.sqr_2 <- low.alpha.ROIs.sqr2[[5]]
+rep_data2$low.alpha.left.nd1.sqr_2 <- low.alpha.ROIs.sqr2[[6]]
+rep_data2$low.alpha.left.nd2.sqr_2 <- low.alpha.ROIs.sqr2[[7]]
+rep_data2$low.alpha.right.nd1.sqr_2 <- low.alpha.ROIs.sqr2[[8]]
+rep_data2$low.alpha.right.nd2.sqr_2 <- low.alpha.ROIs.sqr2[[9]]
+rep_data2$low.alpha.RL.nd1.sqr_2 <- low.alpha.ROIs.sqr2[[10]]
+rep_data2$low.alpha.RL.nd2.sqr_2 <- low.alpha.ROIs.sqr2[[11]]
+rep_data2$low.alpha.N2.sqr_2 <- low.alpha.ROIs.sqr2[[12]]
+rep_data2$low.alpha.P3.sqr_2 <- low.alpha.ROIs.sqr2[[13]]
+rep_data2$low.alpha.LP.sqr_2 <- low.alpha.ROIs.sqr2[[14]]
 # 10.1.3. Random, session 1
-rep_data2$low.alpha.C1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 1))
-rep_data2$low.alpha.P1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 2))
-rep_data2$low.alpha.N1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 3))
-rep_data2$low.alpha.occ.nd1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 4))
-rep_data2$low.alpha.occ.nd2.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 5))
-rep_data2$low.alpha.left.nd1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 6))
-rep_data2$low.alpha.left.nd2.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 7))
-rep_data2$low.alpha.right.nd1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 8))
-rep_data2$low.alpha.right.nd2.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 9))
-rep_data2$low.alpha.RL.nd1.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 10))
-rep_data2$low.alpha.RL.nd2.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 11))
-rep_data2$low.alpha.N2.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 12))
-rep_data2$low.alpha.P3.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 13))
-rep_data2$low.alpha.LP.rand_1 <- unlist(lapply(low.alpha.ROIs.rand1.means, "[[", 14))
+rep_data2$low.alpha.C1.rand_1 <- low.alpha.ROIs.rand1[[1]]
+rep_data2$low.alpha.P1.rand_1 <- low.alpha.ROIs.rand1[[2]]
+rep_data2$low.alpha.N1.rand_1 <- low.alpha.ROIs.rand1[[3]]
+rep_data2$low.alpha.occ.nd1.rand_1 <- low.alpha.ROIs.rand1[[4]]
+rep_data2$low.alpha.occ.nd2.rand_1 <- low.alpha.ROIs.rand1[[5]]
+rep_data2$low.alpha.left.nd1.rand_1 <- low.alpha.ROIs.rand1[[6]]
+rep_data2$low.alpha.left.nd2.rand_1 <- low.alpha.ROIs.rand1[[7]]
+rep_data2$low.alpha.right.nd1.rand_1 <- low.alpha.ROIs.rand1[[8]]
+rep_data2$low.alpha.right.nd2.rand_1 <- low.alpha.ROIs.rand1[[9]]
+rep_data2$low.alpha.RL.nd1.rand_1 <- low.alpha.ROIs.rand1[[10]]
+rep_data2$low.alpha.RL.nd2.rand_1 <- low.alpha.ROIs.rand1[[11]]
+rep_data2$low.alpha.N2.rand_1 <- low.alpha.ROIs.rand1[[12]]
+rep_data2$low.alpha.P3.rand_1 <- low.alpha.ROIs.rand1[[13]]
+rep_data2$low.alpha.LP.rand_1 <- low.alpha.ROIs.rand1[[14]]
 # 10.1.4. Random, session 2
-rep_data2$low.alpha.C1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 1))
-rep_data2$low.alpha.P1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 2))
-rep_data2$low.alpha.N1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 3))
-rep_data2$low.alpha.occ.nd1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 4))
-rep_data2$low.alpha.occ.nd2.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 5))
-rep_data2$low.alpha.left.nd1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 6))
-rep_data2$low.alpha.left.nd2.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 7))
-rep_data2$low.alpha.right.nd1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 8))
-rep_data2$low.alpha.right.nd2.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 9))
-rep_data2$low.alpha.RL.nd1.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 10))
-rep_data2$low.alpha.RL.nd2.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 11))
-rep_data2$low.alpha.N2.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 12))
-rep_data2$low.alpha.P3.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 13))
-rep_data2$low.alpha.LP.rand_2 <- unlist(lapply(low.alpha.ROIs.rand2.means, "[[", 14))
+rep_data2$low.alpha.C1.rand_2 <- low.alpha.ROIs.rand2[[1]]
+rep_data2$low.alpha.P1.rand_2 <- low.alpha.ROIs.rand2[[2]]
+rep_data2$low.alpha.N1.rand_2 <- low.alpha.ROIs.rand2[[3]]
+rep_data2$low.alpha.occ.nd1.rand_2 <- low.alpha.ROIs.rand2[[4]]
+rep_data2$low.alpha.occ.nd2.rand_2 <- low.alpha.ROIs.rand2[[5]]
+rep_data2$low.alpha.left.nd1.rand_2 <- low.alpha.ROIs.rand2[[6]]
+rep_data2$low.alpha.left.nd2.rand_2 <- low.alpha.ROIs.rand2[[7]]
+rep_data2$low.alpha.right.nd1.rand_2 <- low.alpha.ROIs.rand2[[8]]
+rep_data2$low.alpha.right.nd2.rand_2 <- low.alpha.ROIs.rand2[[9]]
+rep_data2$low.alpha.RL.nd1.rand_2 <- low.alpha.ROIs.rand2[[10]]
+rep_data2$low.alpha.RL.nd2.rand_2 <- low.alpha.ROIs.rand2[[11]]
+rep_data2$low.alpha.N2.rand_2 <- low.alpha.ROIs.rand2[[12]]
+rep_data2$low.alpha.P3.rand_2 <- low.alpha.ROIs.rand2[[13]]
+rep_data2$low.alpha.LP.rand_2 <- low.alpha.ROIs.rand2[[14]]
 
 # 10.2. High alpha
 # 10.2.1. Square, session 1
-rep_data2$high.alpha.C1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 1))
-rep_data2$high.alpha.P1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 2))
-rep_data2$high.alpha.N1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 3))
-rep_data2$high.alpha.occ.nd1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 4))
-rep_data2$high.alpha.occ.nd2.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 5))
-rep_data2$high.alpha.left.nd1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 6))
-rep_data2$high.alpha.left.nd2.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 7))
-rep_data2$high.alpha.right.nd1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 8))
-rep_data2$high.alpha.right.nd2.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 9))
-rep_data2$high.alpha.RL.nd1.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 10))
-rep_data2$high.alpha.RL.nd2.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 11))
-rep_data2$high.alpha.N2.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 12))
-rep_data2$high.alpha.P3.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 13))
-rep_data2$high.alpha.LP.sqr_1 <- unlist(lapply(high.alpha.ROIs.sqr1.means, "[[", 14))
+rep_data2$high.alpha.C1.sqr_1 <- high.alpha.ROIs.sqr1[[1]]
+rep_data2$high.alpha.P1.sqr_1 <- high.alpha.ROIs.sqr1[[2]]
+rep_data2$high.alpha.N1.sqr_1 <- high.alpha.ROIs.sqr1[[3]]
+rep_data2$high.alpha.occ.nd1.sqr_1 <- high.alpha.ROIs.sqr1[[4]]
+rep_data2$high.alpha.occ.nd2.sqr_1 <- high.alpha.ROIs.sqr1[[5]]
+rep_data2$high.alpha.left.nd1.sqr_1 <- high.alpha.ROIs.sqr1[[6]]
+rep_data2$high.alpha.left.nd2.sqr_1 <- high.alpha.ROIs.sqr1[[7]]
+rep_data2$high.alpha.right.nd1.sqr_1 <- high.alpha.ROIs.sqr1[[8]]
+rep_data2$high.alpha.right.nd2.sqr_1 <- high.alpha.ROIs.sqr1[[9]]
+rep_data2$high.alpha.RL.nd1.sqr_1 <- high.alpha.ROIs.sqr1[[10]]
+rep_data2$high.alpha.RL.nd2.sqr_1 <- high.alpha.ROIs.sqr1[[11]]
+rep_data2$high.alpha.N2.sqr_1 <- high.alpha.ROIs.sqr1[[12]]
+rep_data2$high.alpha.P3.sqr_1 <- high.alpha.ROIs.sqr1[[13]]
+rep_data2$high.alpha.LP.sqr_1 <- high.alpha.ROIs.sqr1[[14]]
 # 10.2.2. Square, session 2
-rep_data2$high.alpha.C1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 1))
-rep_data2$high.alpha.P1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 2))
-rep_data2$high.alpha.N1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 3))
-rep_data2$high.alpha.occ.nd1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 4))
-rep_data2$high.alpha.occ.nd2.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 5))
-rep_data2$high.alpha.left.nd1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 6))
-rep_data2$high.alpha.left.nd2.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 7))
-rep_data2$high.alpha.right.nd1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 8))
-rep_data2$high.alpha.right.nd2.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 9))
-rep_data2$high.alpha.RL.nd1.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 10))
-rep_data2$high.alpha.RL.nd2.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 11))
-rep_data2$high.alpha.N2.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 12))
-rep_data2$high.alpha.P3.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 13))
-rep_data2$high.alpha.LP.sqr_2 <- unlist(lapply(high.alpha.ROIs.sqr2.means, "[[", 14))
+rep_data2$high.alpha.C1.sqr_2 <- high.alpha.ROIs.sqr2[[1]]
+rep_data2$high.alpha.P1.sqr_2 <- high.alpha.ROIs.sqr2[[2]]
+rep_data2$high.alpha.N1.sqr_2 <- high.alpha.ROIs.sqr2[[3]]
+rep_data2$high.alpha.occ.nd1.sqr_2 <- high.alpha.ROIs.sqr2[[4]]
+rep_data2$high.alpha.occ.nd2.sqr_2 <- high.alpha.ROIs.sqr2[[5]]
+rep_data2$high.alpha.left.nd1.sqr_2 <- high.alpha.ROIs.sqr2[[6]]
+rep_data2$high.alpha.left.nd2.sqr_2 <- high.alpha.ROIs.sqr2[[7]]
+rep_data2$high.alpha.right.nd1.sqr_2 <- high.alpha.ROIs.sqr2[[8]]
+rep_data2$high.alpha.right.nd2.sqr_2 <- high.alpha.ROIs.sqr2[[9]]
+rep_data2$high.alpha.RL.nd1.sqr_2 <- high.alpha.ROIs.sqr2[[10]]
+rep_data2$high.alpha.RL.nd2.sqr_2 <- high.alpha.ROIs.sqr2[[11]]
+rep_data2$high.alpha.N2.sqr_2 <- high.alpha.ROIs.sqr2[[12]]
+rep_data2$high.alpha.P3.sqr_2 <- high.alpha.ROIs.sqr2[[13]]
+rep_data2$high.alpha.LP.sqr_2 <- high.alpha.ROIs.sqr2[[14]]
 # 10.2.3. Random, session 1
-rep_data2$high.alpha.C1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 1))
-rep_data2$high.alpha.P1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 2))
-rep_data2$high.alpha.N1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 3))
-rep_data2$high.alpha.occ.nd1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 4))
-rep_data2$high.alpha.occ.nd2.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 5))
-rep_data2$high.alpha.left.nd1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 6))
-rep_data2$high.alpha.left.nd2.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 7))
-rep_data2$high.alpha.right.nd1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 8))
-rep_data2$high.alpha.right.nd2.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 9))
-rep_data2$high.alpha.RL.nd1.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 10))
-rep_data2$high.alpha.RL.nd2.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 11))
-rep_data2$high.alpha.N2.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 12))
-rep_data2$high.alpha.P3.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 13))
-rep_data2$high.alpha.LP.rand_1 <- unlist(lapply(high.alpha.ROIs.rand1.means, "[[", 14))
+rep_data2$high.alpha.C1.rand_1 <- high.alpha.ROIs.rand1[[1]]
+rep_data2$high.alpha.P1.rand_1 <- high.alpha.ROIs.rand1[[2]]
+rep_data2$high.alpha.N1.rand_1 <- high.alpha.ROIs.rand1[[3]]
+rep_data2$high.alpha.occ.nd1.rand_1 <- high.alpha.ROIs.rand1[[4]]
+rep_data2$high.alpha.occ.nd2.rand_1 <- high.alpha.ROIs.rand1[[5]]
+rep_data2$high.alpha.left.nd1.rand_1 <- high.alpha.ROIs.rand1[[6]]
+rep_data2$high.alpha.left.nd2.rand_1 <- high.alpha.ROIs.rand1[[7]]
+rep_data2$high.alpha.right.nd1.rand_1 <- high.alpha.ROIs.rand1[[8]]
+rep_data2$high.alpha.right.nd2.rand_1 <- high.alpha.ROIs.rand1[[9]]
+rep_data2$high.alpha.RL.nd1.rand_1 <- high.alpha.ROIs.rand1[[10]]
+rep_data2$high.alpha.RL.nd2.rand_1 <- high.alpha.ROIs.rand1[[11]]
+rep_data2$high.alpha.N2.rand_1 <- high.alpha.ROIs.rand1[[12]]
+rep_data2$high.alpha.P3.rand_1 <- high.alpha.ROIs.rand1[[13]]
+rep_data2$high.alpha.LP.rand_1 <- high.alpha.ROIs.rand1[[14]]
 # 10.2.4. Random, session 2
-rep_data2$high.alpha.C1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 1))
-rep_data2$high.alpha.P1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 2))
-rep_data2$high.alpha.N1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 3))
-rep_data2$high.alpha.occ.nd1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 4))
-rep_data2$high.alpha.occ.nd2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 5))
-rep_data2$high.alpha.left.nd1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 6))
-rep_data2$high.alpha.left.nd2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 7))
-rep_data2$high.alpha.right.nd1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 8))
-rep_data2$high.alpha.right.nd2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 9))
-rep_data2$high.alpha.RL.nd1.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 10))
-rep_data2$high.alpha.RL.nd2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 11))
-rep_data2$high.alpha.N2.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 12))
-rep_data2$high.alpha.P3.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 13))
-rep_data2$high.alpha.LP.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[", 14))
+rep_data2$high.alpha.C1.rand_2 <- high.alpha.ROIs.rand2[[1]]
+rep_data2$high.alpha.P1.rand_2 <- high.alpha.ROIs.rand2[[2]]
+rep_data2$high.alpha.N1.rand_2 <- high.alpha.ROIs.rand2[[3]]
+rep_data2$high.alpha.occ.nd1.rand_2 <- high.alpha.ROIs.rand2[[4]]
+rep_data2$high.alpha.occ.nd2.rand_2 <- high.alpha.ROIs.rand2[[5]]
+rep_data2$high.alpha.left.nd1.rand_2 <- high.alpha.ROIs.rand2[[6]]
+rep_data2$high.alpha.left.nd2.rand_2 <- high.alpha.ROIs.rand2[[7]]
+rep_data2$high.alpha.right.nd1.rand_2 <- high.alpha.ROIs.rand2[[8]]
+rep_data2$high.alpha.right.nd2.rand_2 <- high.alpha.ROIs.rand2[[9]]
+rep_data2$high.alpha.RL.nd1.rand_2 <- high.alpha.ROIs.rand2[[10]]
+rep_data2$high.alpha.RL.nd2.rand_2 <- high.alpha.ROIs.rand2[[11]]
+rep_data2$high.alpha.N2.rand_2 <- high.alpha.ROIs.rand2[[12]]
+rep_data2$high.alpha.P3.rand_2 <- high.alpha.ROIs.rand2[[13]]
+rep_data2$high.alpha.LP.rand_2 <- high.alpha.ROIs.rand2[[14]]
 
 
 

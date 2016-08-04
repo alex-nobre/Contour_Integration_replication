@@ -21,6 +21,7 @@ library(pastecs)
 library(car)
 library(effsize)
 library(multcomp)
+library(lsmeans)
 # Psychophysics packages
 library(quickpsy)
 library(MPDiR)
@@ -160,36 +161,29 @@ rep_data_long3$session <- factor(rep_data_long3$session)
 rep_data_long3$configuration <- factor(rep_data_long3$configuration)
 
 
+rep_data_long2 <- rep_data_long3[,c(1:5,12,14,
+                                    (ncol(rep_data_long3)-2):ncol(rep_data_long3))]
 
-# # Rename columns to separate electrode location number using sep = "_"
-# names(rep_data_long)[names(rep_data_long) == "occ.nd1"] <- "nd1_1"
-# names(rep_data_long)[names(rep_data_long) == "occ.nd2"] <- "nd2_1"
-# names(rep_data_long)[names(rep_data_long) == "left.nd1"] <- "nd1_2"
-# names(rep_data_long)[names(rep_data_long) == "left.nd2"] <- "nd2_2"
-# names(rep_data_long)[names(rep_data_long) == "right.nd1"] <- "nd1_3"
-# names(rep_data_long)[names(rep_data_long) == "right.nd2"] <- "nd2_3"
-# names(rep_data_long)[names(rep_data_long) == "RL.nd1"] <- "nd1_4"
-# names(rep_data_long)[names(rep_data_long) == "RL.nd2"] <- "nd2_4"
-# # Extracts configuration number to column
-# rep_data_long2 <- reshape(rep_data_long, varying = c("nd1_1", "nd2_1",
-#                                                      "nd1_2", "nd2_2",
-#                                                      "nd1_3", "nd2_3",
-#                                                      "nd1_4", "nd2_4"),  
-#                           direction = "long", idvar = " Subject", sep = "_")
-# # Rename configuration column name
-# names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
-# # Rename configuration levels
-# rep_data_long2$configuration[rep_data_long2$location == 1] <- "occ"
-# rep_data_long2$configuration[rep_data_long2$location == 2] <- "left"
-# rep_data_long2$configuration[rep_data_long2$location == 3] <- "right"
-# rep_data_long2$configuration[rep_data_long2$location == 4] <- "RL"
+# Rename columns to separate electrode location number using sep = "_"
+names(rep_data_long2)[names(rep_data_long2) == "left.nd2"] <- "nd2_1"
+names(rep_data_long2)[names(rep_data_long2) == "right.nd2"] <- "nd2_2"
+# Extracts configuration number to column
+rep_data_long2 <- reshape(rep_data_long2, varying = c("nd2_1", "nd2_2"),
+                          direction = "long", idvar = " Subject", sep = "_")
+# Rename configuration column name
+names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
 
-# Remove redundant subject column
-# rep_data_long2[,ncol(rep_data_long2)]<- NULL
-# 
+# Rename configuration levels
+rep_data_long2$location[rep_data_long2$location == 1] <- "left"
+rep_data_long2$location[rep_data_long2$location == 2] <- "right"
+
+#Remove redundant subject column
+rep_data_long2[,ncol(rep_data_long2)]<- NULL
+ 
 # # Convert configuration, group and session to factors
-# rep_data_long2$group <- factor(rep_data_long2$group)
-# rep_data_long2$group.original <- factor(rep_data_long2$group.original)
-# rep_data_long2$session <- factor(rep_data_long2$session)
-# rep_data_long2$configuration <- factor(rep_data_long2$configuration)
-#rep_data_long2$location <- factor(rep_data_long2$location)
+rep_data_long2$group <- factor(rep_data_long2$group)
+rep_data_long2$group.original <- factor(rep_data_long2$group.original)
+rep_data_long2$session <- factor(rep_data_long2$session)
+rep_data_long2$configuration <- factor(rep_data_long2$configuration)
+rep_data_long2$location <- factor(rep_data_long2$location)
+rep_data_long2$alpha.group <- factor(rep_data_long2$alpha.group)

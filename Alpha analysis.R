@@ -41,13 +41,12 @@ defaults <- par()
 contrasts(rep_data_long3$configuration) <- c(-1, 1) # contrasts for config
 contrasts(rep_data_long3$session) <- c(-1, 1) # contrasts for session
 contrasts(rep_data_long3$alpha.group) <- c(-1, 1) # contrasts for alpha.group
-contrasts(rep_data_long3$log.alpha.group) <- c(-1, 1) # contrasts for log.alpha.group
 
 # 1.1. C1
 # 1.1.1. ANOVA
 alpha.C1.baseline <- lme(C1 ~ 1, 
                          random = ~1|Subject/configuration, 
-                         data = rep_data_long3, 
+                         data = rep_data_long3[rep_data_long3$session == 1,], 
                          method = "ML") #baseline
 alpha.C1.config <- update(alpha.C1.baseline, .~. + configuration)
 alpha.C1.alpha.group <- update(alpha.C1.config, .~. + alpha.group)
@@ -55,9 +54,8 @@ alpha.C1.lme <- update(alpha.C1.alpha.group, .~. +
                          configuration:alpha.group)
 anova(alpha.C1.baseline, alpha.C1.config, alpha.C1.alpha.group, 
       alpha.C1.lme)
-
 # 1.1.2. Line plot
-alpha.C1.line <- ggplot(rep_data_long3, 
+alpha.C1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
                         aes(x = alpha.group, y = C1, 
                             colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -71,7 +69,7 @@ alpha.C1.line
 # 1.2.1. ANOVA
 alpha.P1.baseline <- lme(P1 ~ 1, 
                          random = ~1|Subject/configuration, 
-                         data = rep_data_long3, 
+                         data = rep_data_long3[rep_data_long3$session == 1,], 
                          method = "ML") #baseline
 alpha.P1.config <- update(alpha.P1.baseline, .~. + configuration)
 alpha.P1.alpha.group <- update(alpha.P1.config, .~. + alpha.group)
@@ -81,7 +79,7 @@ anova(alpha.P1.baseline, alpha.P1.config, alpha.P1.alpha.group,
       alpha.P1.lme)
 
 # 1.2.2. Line plot
-alpha.P1.line <- ggplot(rep_data_long3, 
+alpha.P1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
                         aes(x = alpha.group, y = P1, 
                             colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -95,7 +93,7 @@ alpha.P1.line
 # 1.3.1. ANOVA
 alpha.N1.baseline <- lme(N1 ~ 1, 
                           random = ~1|Subject/configuration, 
-                          data = rep_data_long3, 
+                         rep_data_long3[rep_data_long3$session == 1,], 
                           method = "ML") #baseline
 alpha.N1.config <- update(alpha.N1.baseline, .~. + configuration)
 alpha.N1.alpha.group <- update(alpha.N1.config, .~. + alpha.group)
@@ -105,7 +103,7 @@ anova(alpha.N1.baseline, alpha.N1.config, alpha.N1.alpha.group,
       alpha.N1.lme)
 
 # 1.3.2. Line plot
-alpha.N1.line <- ggplot(rep_data_long3, 
+alpha.N1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
                          aes(x = alpha.group, y = N1, 
                              colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -140,7 +138,7 @@ alpha.nd1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,],
        colour = "configuration")
 alpha.nd1.line
 
-# 1.5. Nd2 (VAN) left
+# 1.5. Nd2 left
 # 1.5.1. ANOVA
 alpha.nd2.left.baseline <- lme(left.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
@@ -166,7 +164,7 @@ alpha.nd2.left.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,],
        colour = "configuration")
 alpha.nd2.left.line
 
-# 1.6. Nd2 (VAN) right
+# 1.6. Nd2 right
 # 1.6.1. ANOVA
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
@@ -198,7 +196,7 @@ alpha.right.nd2.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,],
        colour = "configuration")
 alpha.right.nd2.line
 
-# 1.7. Nd2 (VAN) RL
+# 1.7. Nd2 RL
 # 1.7.1. ANOVA
 alpha.nd2.RL.baseline <- lme(RL.nd2 ~ 1, 
                                 random = ~1|Subject/configuration, 
@@ -229,7 +227,7 @@ alpha.nd2.RL.line
 # 1.10.1. ANOVA
 alpha.LP.baseline <- lme(LP ~ 1, 
                              random = ~1|Subject/configuration, 
-                             data = rep_data_long3, 
+                             data = rep_data_long3[rep_data_long3$session == 1,], 
                              method = "ML") #baseline
 alpha.LP.config <- update(alpha.LP.baseline, .~. + configuration)
 alpha.LP.alpha.group <- update(alpha.LP.config, .~. + alpha.group)
