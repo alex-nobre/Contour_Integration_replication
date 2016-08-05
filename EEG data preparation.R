@@ -164,6 +164,8 @@ rep_data_long3$configuration <- factor(rep_data_long3$configuration)
 rep_data_long2 <- rep_data_long3[,c(1:5,12,14,
                                     (ncol(rep_data_long3)-2):ncol(rep_data_long3))]
 
+#--------------------------------Include location as factor--------------------------------
+
 # Rename columns to separate electrode location number using sep = "_"
 names(rep_data_long2)[names(rep_data_long2) == "left.nd2"] <- "nd2_1"
 names(rep_data_long2)[names(rep_data_long2) == "right.nd2"] <- "nd2_2"

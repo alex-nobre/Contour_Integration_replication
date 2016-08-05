@@ -165,85 +165,153 @@ high.alpha.segments.rand1.average <- lapply(high.alpha.segments.rand1, average.s
 low.alpha.segments.rand2.average <- lapply(low.alpha.segments.rand2, average.segments)
 high.alpha.segments.rand2.average <- lapply(high.alpha.segments.rand2, average.segments)
 
-# 10. Function for baseline correction and mean amplitude computation
-trial.ERPs <- function(averaged.segments) {
+# 11. Function for baseline correction and mean amplitude computation
+baseline.correction <- function(averaged.segments) {
   baseline.value <- lapply(averaged.segments, function(v) {mean(v[1:25])}) #mean of baseline interval
-  averaged.segments <- Map("-", averaged.segments, baseline.value) #baseline correction
-  mean.C1 <- mean(averaged.segments[[1]][40:50])
-  mean.P1 <- mean(averaged.segments[[2]][51:61])
-  mean.N1 <- mean(averaged.segments[[3]][62:75])
-  mean.occ_1 <- mean(averaged.segments[[4]][80:90])
-  mean.occ_2 <- mean(averaged.segments[[4]][100:110])
-  mean.left_1 <- mean(averaged.segments[[5]][80:90])
-  mean.left_2 <- mean(averaged.segments[[5]][100:110])
-  mean.right_1 <- mean(averaged.segments[[6]][80:90])
-  mean.right_2 <- mean(averaged.segments[[6]][100:110])
-  mean.right.left_1 <- mean(averaged.segments[[7]][80:90])
-  mean.right.left_2 <- mean(averaged.segments[[7]][100:110])
-  mean.N2 <- mean(averaged.segments[[8]][95:115])
-  mean.P3 <- mean(averaged.segments[[9]][112:162])
-  mean.LP <- mean(averaged.segments[[10]][130:160])
-  means.trial <- c(mean.C1, mean.P1, mean.N1, mean.occ_1, mean.occ_2, mean.left_1,
-                   mean.left_2, mean.right_1, mean.right_2, mean.right.left_1,
-                   mean.right.left_2, mean.N2, mean.P3, mean.LP)
+  averaged.segments <- Map("-", averaged.segments, 
+                           baseline.value) #baseline correction
 }
 
-# Split segments by ROI for each subject and average
-# Square, session 1
-low.alpha.segments.sqr1.corrected <- lapply(low.alpha.segments.sqr1.average, trial.ERPs)
-high.alpha.segments.sqr1.corrected <- lapply(high.alpha.segments.sqr1.average, trial.ERPs)
-# Square, session 2
-low.alpha.segments.sqr2.corrected <- lapply(low.alpha.segments.sqr2.average, trial.ERPs)
-high.alpha.segments.sqr2.corrected <- lapply(high.alpha.segments.sqr2.average, trial.ERPs)
-# Random, session 1
-low.alpha.segments.rand1.corrected <- lapply(low.alpha.segments.rand1.average, trial.ERPs)
-high.alpha.segments.rand1.corrected <- lapply(high.alpha.segments.rand1.average, trial.ERPs)
-# Random, session 1
-low.alpha.segments.rand2.corrected <- lapply(low.alpha.segments.rand2.average, trial.ERPs)
-high.alpha.segments.rand2.corrected <- lapply(high.alpha.segments.rand2.average, trial.ERPs)
+# 12. Baseline correction by session, configuration and alpha power
+# 12.1. Square, session 1
+low.alpha.segments.sqr1.corrected <- lapply(low.alpha.segments.sqr1.average, 
+                                            baseline.correction)
+high.alpha.segments.sqr1.corrected <- lapply(high.alpha.segments.sqr1.average, 
+                                             baseline.correction)
+# 12.2. Square, session 2
+low.alpha.segments.sqr2.corrected <- lapply(low.alpha.segments.sqr2.average, 
+                                            baseline.correction)
+high.alpha.segments.sqr2.corrected <- lapply(high.alpha.segments.sqr2.average, 
+                                             baseline.correction)
+# 12.3.Random, session 1
+low.alpha.segments.rand1.corrected <- lapply(low.alpha.segments.rand1.average, 
+                                             baseline.correction)
+high.alpha.segments.rand1.corrected <- lapply(high.alpha.segments.rand1.average, 
+                                              baseline.correction)
+# 12.4. Random, session 1
+low.alpha.segments.rand2.corrected <- lapply(low.alpha.segments.rand2.average, 
+                                             baseline.correction)
+high.alpha.segments.rand2.corrected <- lapply(high.alpha.segments.rand2.average, 
+                                              baseline.correction)
 
 
-# 8. Split ERPs by ROI for each subject
-# 8.1. Function to get ERPs by ROIs for each segment
-split.trialERPs.roi <- function(segment.erps) {
-  C1 <- unlist(lapply(segment.erps, "[", 1))
-  P1 <- unlist(lapply(segment.erps, "[", 2))
-  N1 <- unlist(lapply(segment.erps, "[", 3))
-  occ.window_1 <- unlist(lapply(segment.erps, "[", 4))
-  occ.window_2 <- unlist(lapply(segment.erps, "[", 5))
-  left.window_1 <- unlist(lapply(segment.erps, "[", 6))
-  left.window_2 <- unlist(lapply(segment.erps, "[", 7))
-  right.window_1 <- unlist(lapply(segment.erps, "[", 8))
-  right.window_2 <- unlist(lapply(segment.erps, "[", 9))
-  right.left.window_1 <- unlist(lapply(segment.erps, "[", 10))
-  right.left.window_2 <- unlist(lapply(segment.erps, "[",11))
-  N2 <- unlist(lapply(segment.erps, "[", 12))
-  P3 <- unlist(lapply(segment.erps, "[", 13))
-  LP <- unlist(lapply(segment.erps, "[", 14))
-  trials.by.ROIs <- list(C1, P1, N1, occ.window_1, occ.window_2, left.window_1,
-                         left.window_2, right.window_1, right.window_2,
+# 13. Function to get ERPs Group ERPs by ROI for across subjects
+split.ROIs <- function(corrected.segments) {
+  C1 <- lapply(corrected.segments, "[[", 1)
+  P1 <- lapply(corrected.segments, "[[", 2)
+  N1 <- lapply(corrected.segments, "[[", 3)
+  occ <- lapply(corrected.segments, "[[", 4)
+  left <- lapply(corrected.segments, "[[", 5)
+  right <- lapply(corrected.segments, "[[", 6)
+  right.left <- lapply(corrected.segments, "[[", 7)
+  N2 <- lapply(corrected.segments, "[[", 8)
+  P3 <- lapply(corrected.segments, "[[", 9)
+  LP <- lapply(corrected.segments, "[[", 10)
+  trials.by.ROIs <- list(C1, P1, N1, occ, left,
+                         right, right.left, N2, P3, LP)
+}
+
+# 14. Join segments by ROI
+# 14.1. Square, session 1
+low.alpha.ROIs.sqr1 <- split.ROIs(low.alpha.segments.sqr1.corrected)
+high.alpha.ROIs.sqr1 <- split.ROIs(high.alpha.segments.sqr1.corrected)
+# 14.2. Square, session 2
+low.alpha.ROIs.sqr2 <- split.ROIs(low.alpha.segments.sqr2.corrected)
+high.alpha.ROIs.sqr2 <- split.ROIs(high.alpha.segments.sqr2.corrected)
+# 14.3. Random, session 1
+low.alpha.ROIs.rand1 <- split.ROIs(low.alpha.segments.rand1.corrected)
+high.alpha.ROIs.rand1 <- split.ROIs(high.alpha.segments.rand1.corrected)
+# 14.4. Random, session 1
+low.alpha.ROIs.rand2 <- split.ROIs(low.alpha.segments.rand2.corrected)
+high.alpha.ROIs.rand2 <- split.ROIs(high.alpha.segments.rand2.corrected)
+
+# 15. Function to extract ERPs by time window
+compute.grand.average <- function(subject.averages) {
+  grand.average <- colMeans(matrix(unlist(subject.averages), 
+                                   nrow = length(subject.averages), byrow = T))
+}
+
+# 16. Join segments by ROI
+# 16.1. Square, session 1
+low.alpha.grand.averages.sqr1 <- lapply(low.alpha.ROIs.sqr1, compute.grand.average)
+high.alpha.grand.averages.sqr1 <- lapply(high.alpha.ROIs.sqr1, compute.grand.average)
+# 16.2. Square, session 2
+low.alpha.grand.averages.sqr2 <- lapply(low.alpha.ROIs.sqr2, compute.grand.average)
+high.alpha.grand.averages.sqr2 <- lapply(high.alpha.ROIs.sqr2, compute.grand.average)
+# 16.3. Random, session 1
+low.alpha.grand.averages.rand1 <- lapply(low.alpha.ROIs.rand1, compute.grand.average)
+high.alpha.grand.averages.rand1 <- lapply(high.alpha.ROIs.rand1, compute.grand.average)
+# 16.4. Random, session 1
+low.alpha.grand.averages.rand2 <- lapply(low.alpha.ROIs.rand2, compute.grand.average)
+high.alpha.grand.averages.rand2 <- lapply(high.alpha.ROIs.rand2, compute.grand.average)
+
+
+{
+  C1 <- mean(unlist(lapply(subject.average, "[", 1)))
+  P1 <- unlist(lapply(subject.average, "[", 2))
+  N1 <- unlist(lapply(subject.average, "[", 3))
+  occ.window_1 <- unlist(lapply(subject.average, "[", 4))
+  occ.window_2 <- unlist(lapply(subject.average, "[", 5))
+  left.window_1 <- unlist(lapply(subject.average, "[", 6))
+  left.window_2 <- unlist(lapply(subject.average, "[", 7))
+  right.window_1 <- unlist(lapply(subject.average, "[", 8))
+  right.window_2 <- unlist(lapply(subject.average, "[", 9))
+  right.left.window_1 <- unlist(lapply(subject.average, "[", 10))
+  right.left.window_2 <- unlist(lapply(subject.average, "[",11))
+  N2 <- unlist(lapply(subject.average, "[", 12))
+  P3 <- unlist(lapply(subject.average, "[", 13))
+  LP <- unlist(lapply(subject.average, "[", 14))
+  trials.by.ROIs <- list(C1, P1, N1, occ.window_1, occ.window_2, left.window_1, 
+                         left.window_2, right.window_1, right.window_2, 
                          right.left.window_1, right.left.window_2, N2, P3, LP)
 }
 
-# 8.2. Apply function to list of all subjects, by configuration, session and alpha power
-# 8.2.1. Square, session 1
-low.alpha.ROIs.sqr1 <- split.trialERPs.roi(low.alpha.segments.sqr1.corrected)
-high.alpha.ROIs.sqr1 <- split.trialERPs.roi(high.alpha.segments.sqr1.corrected)
-# 8.2.2. Square, session 2
-low.alpha.ROIs.sqr2 <- split.trialERPs.roi(low.alpha.segments.sqr2.corrected)
-high.alpha.ROIs.sqr2 <- split.trialERPs.roi(high.alpha.segments.sqr2.corrected)
-# 8.2.3. Random, session 1
-low.alpha.ROIs.rand1 <- split.trialERPs.roi(low.alpha.segments.rand1.corrected)
-high.alpha.ROIs.rand1 <- split.trialERPs.roi(high.alpha.segments.rand1.corrected)
-# 8.2.4. Random, session 2
-low.alpha.ROIs.rand2 <- split.trialERPs.roi(low.alpha.segments.rand2.corrected)
-high.alpha.ROIs.rand2 <- split.trialERPs.roi(high.alpha.segments.rand2.corrected)
+
+  
+# 14. Compute ERP mean amplitudes by session, configuration and alpha power
+# 14.1. Square, session 1
+low.alpha.segments.sqr1.ERPs <- lapply(low.alpha.segments.sqr1.corrected, 
+                                            trial.ERPs)
+high.alpha.segments.sqr1.ERPs <- lapply(high.alpha.segments.sqr1.corrected, 
+                                             trial.ERPs)
+# 14.2. Square, session 2
+low.alpha.segments.sqr2.ERPs <- lapply(low.alpha.segments.sqr2.corrected, 
+                                            trial.ERPs)
+high.alpha.segments.sqr2.ERPs <- lapply(high.alpha.segments.sqr2.corrected, 
+                                             trial.ERPs)
+# 14.3. Random, session 1
+low.alpha.segments.rand1.ERPs <- lapply(low.alpha.segments.rand1.corrected, 
+                                             trial.ERPs)
+high.alpha.segments.rand1.ERPs <- lapply(high.alpha.segments.rand1.corrected, 
+                                              trial.ERPs)
+# 14.4. Random, session 1
+low.alpha.segments.rand2.ERPs <- lapply(low.alpha.segments.rand2.corrected, 
+                                             trial.ERPs)
+high.alpha.segments.rand2.ERPs <- lapply(high.alpha.segments.rand2.corrected, 
+                                              trial.ERPs)
 
 
-# 10. Append to data frame with average ERPs
+
+
+# 16. Apply function to list of all subjects, by configuration, session and alpha power
+# 16.1. Square, session 1
+low.alpha.ROIs.sqr1 <- split.trialERPs.roi(low.alpha.segments.sqr1.ERPs)
+high.alpha.ROIs.sqr1 <- split.trialERPs.roi(high.alpha.segments.sqr1.ERPs)
+# 16.2. Square, session 2
+low.alpha.ROIs.sqr2 <- split.trialERPs.roi(low.alpha.segments.sqr2.ERPs)
+high.alpha.ROIs.sqr2 <- split.trialERPs.roi(high.alpha.segments.sqr2.ERPs)
+# 16.3. Random, session 1
+low.alpha.ROIs.rand1 <- split.trialERPs.roi(low.alpha.segments.rand1.ERPs)
+high.alpha.ROIs.rand1 <- split.trialERPs.roi(high.alpha.segments.rand1.ERPs)
+# 16.4. Random, session 2
+low.alpha.ROIs.rand2 <- split.trialERPs.roi(low.alpha.segments.rand2.ERPs)
+high.alpha.ROIs.rand2 <- split.trialERPs.roi(high.alpha.segments.rand2.ERPs)
+
+
+# 17. Append to data frame with average ERPs
 rep_data2 <- rep_data
-# 10.1 Low alpha
-# 10.1.1. Square, session 1
+# 17.1 Low alpha
+# 17.1.1. Square, session 1
 rep_data2$low.alpha.C1.sqr_1 <- low.alpha.ROIs.sqr1[[1]]
 rep_data2$low.alpha.P1.sqr_1 <- low.alpha.ROIs.sqr1[[2]]
 rep_data2$low.alpha.N1.sqr_1 <- low.alpha.ROIs.sqr1[[3]]
@@ -258,7 +326,7 @@ rep_data2$low.alpha.RL.nd2.sqr_1 <- low.alpha.ROIs.sqr1[[11]]
 rep_data2$low.alpha.N2.sqr_1 <- low.alpha.ROIs.sqr1[[12]]
 rep_data2$low.alpha.P3.sqr_1 <- low.alpha.ROIs.sqr1[[13]]
 rep_data2$low.alpha.LP.sqr_1 <- low.alpha.ROIs.sqr1[[14]]
-# 10.1.2. Square, session 2
+# 17.1.2. Square, session 2
 rep_data2$low.alpha.C1.sqr_2 <- low.alpha.ROIs.sqr2[[1]]
 rep_data2$low.alpha.P1.sqr_2 <- low.alpha.ROIs.sqr2[[2]]
 rep_data2$low.alpha.N1.sqr_2 <- low.alpha.ROIs.sqr2[[3]]
@@ -273,7 +341,7 @@ rep_data2$low.alpha.RL.nd2.sqr_2 <- low.alpha.ROIs.sqr2[[11]]
 rep_data2$low.alpha.N2.sqr_2 <- low.alpha.ROIs.sqr2[[12]]
 rep_data2$low.alpha.P3.sqr_2 <- low.alpha.ROIs.sqr2[[13]]
 rep_data2$low.alpha.LP.sqr_2 <- low.alpha.ROIs.sqr2[[14]]
-# 10.1.3. Random, session 1
+# 17.1.3. Random, session 1
 rep_data2$low.alpha.C1.rand_1 <- low.alpha.ROIs.rand1[[1]]
 rep_data2$low.alpha.P1.rand_1 <- low.alpha.ROIs.rand1[[2]]
 rep_data2$low.alpha.N1.rand_1 <- low.alpha.ROIs.rand1[[3]]
@@ -288,7 +356,7 @@ rep_data2$low.alpha.RL.nd2.rand_1 <- low.alpha.ROIs.rand1[[11]]
 rep_data2$low.alpha.N2.rand_1 <- low.alpha.ROIs.rand1[[12]]
 rep_data2$low.alpha.P3.rand_1 <- low.alpha.ROIs.rand1[[13]]
 rep_data2$low.alpha.LP.rand_1 <- low.alpha.ROIs.rand1[[14]]
-# 10.1.4. Random, session 2
+# 17.1.4. Random, session 2
 rep_data2$low.alpha.C1.rand_2 <- low.alpha.ROIs.rand2[[1]]
 rep_data2$low.alpha.P1.rand_2 <- low.alpha.ROIs.rand2[[2]]
 rep_data2$low.alpha.N1.rand_2 <- low.alpha.ROIs.rand2[[3]]
@@ -304,8 +372,8 @@ rep_data2$low.alpha.N2.rand_2 <- low.alpha.ROIs.rand2[[12]]
 rep_data2$low.alpha.P3.rand_2 <- low.alpha.ROIs.rand2[[13]]
 rep_data2$low.alpha.LP.rand_2 <- low.alpha.ROIs.rand2[[14]]
 
-# 10.2. High alpha
-# 10.2.1. Square, session 1
+# 17.2. High alpha
+# 17.2.1. Square, session 1
 rep_data2$high.alpha.C1.sqr_1 <- high.alpha.ROIs.sqr1[[1]]
 rep_data2$high.alpha.P1.sqr_1 <- high.alpha.ROIs.sqr1[[2]]
 rep_data2$high.alpha.N1.sqr_1 <- high.alpha.ROIs.sqr1[[3]]
@@ -320,7 +388,7 @@ rep_data2$high.alpha.RL.nd2.sqr_1 <- high.alpha.ROIs.sqr1[[11]]
 rep_data2$high.alpha.N2.sqr_1 <- high.alpha.ROIs.sqr1[[12]]
 rep_data2$high.alpha.P3.sqr_1 <- high.alpha.ROIs.sqr1[[13]]
 rep_data2$high.alpha.LP.sqr_1 <- high.alpha.ROIs.sqr1[[14]]
-# 10.2.2. Square, session 2
+# 17.2.2. Square, session 2
 rep_data2$high.alpha.C1.sqr_2 <- high.alpha.ROIs.sqr2[[1]]
 rep_data2$high.alpha.P1.sqr_2 <- high.alpha.ROIs.sqr2[[2]]
 rep_data2$high.alpha.N1.sqr_2 <- high.alpha.ROIs.sqr2[[3]]
@@ -335,7 +403,7 @@ rep_data2$high.alpha.RL.nd2.sqr_2 <- high.alpha.ROIs.sqr2[[11]]
 rep_data2$high.alpha.N2.sqr_2 <- high.alpha.ROIs.sqr2[[12]]
 rep_data2$high.alpha.P3.sqr_2 <- high.alpha.ROIs.sqr2[[13]]
 rep_data2$high.alpha.LP.sqr_2 <- high.alpha.ROIs.sqr2[[14]]
-# 10.2.3. Random, session 1
+# 17.2.3. Random, session 1
 rep_data2$high.alpha.C1.rand_1 <- high.alpha.ROIs.rand1[[1]]
 rep_data2$high.alpha.P1.rand_1 <- high.alpha.ROIs.rand1[[2]]
 rep_data2$high.alpha.N1.rand_1 <- high.alpha.ROIs.rand1[[3]]
@@ -350,7 +418,7 @@ rep_data2$high.alpha.RL.nd2.rand_1 <- high.alpha.ROIs.rand1[[11]]
 rep_data2$high.alpha.N2.rand_1 <- high.alpha.ROIs.rand1[[12]]
 rep_data2$high.alpha.P3.rand_1 <- high.alpha.ROIs.rand1[[13]]
 rep_data2$high.alpha.LP.rand_1 <- high.alpha.ROIs.rand1[[14]]
-# 10.2.4. Random, session 2
+# 17.2.4. Random, session 2
 rep_data2$high.alpha.C1.rand_2 <- high.alpha.ROIs.rand2[[1]]
 rep_data2$high.alpha.P1.rand_2 <- high.alpha.ROIs.rand2[[2]]
 rep_data2$high.alpha.N1.rand_2 <- high.alpha.ROIs.rand2[[3]]
@@ -384,4 +452,4 @@ colMeans(do.call(rbind, tsplit1[[1]]))
 # Split segments of extracted data
 sqr1.segments.by.roi <- lapply(sqr1.trial.dat, split.segments.roi)
 
-
+dev.off()

@@ -29,8 +29,76 @@ library(psyphy)
 # Data report packages
 library(knitr)
 
-#---------------------------------------------------------------------------------------
+#---------------------------Exploratory data analysis---------------------------
+defaults <- par() #save graphical parameters defaults
 
+# 1.1. Compute variances and means
+by(rep_data_alpha3[,7:20], list(rep_data_alpha3$configuration, 
+                              rep_data_alpha3$session, rep_data_alpha3$group.original), 
+   stat.desc, basic = FALSE)
+
+# 1.2. Normality tests
+# 1.2.1. Function to test normality of data
+normality.test <- function(data, variable, color) {
+  print(variable)
+  print(shapiro.test(data))
+  qqnorm(data, main = variable);qqline(data, col = color)
+}
+
+# 1.2.2. Compute normality and plot qqplot for all dependent variables
+par(mfrow = c(3,3))
+normal.tests <- mapply(normality.test, rep_data_alpha3[,c(7:10,13,15,17:20)], 
+                       colnames(rep_data_alpha3[,c(7:10,13,15,17:20)]), 
+                       1:ncol(rep_data_alpha3[,c(7:10,13,15,17:20)]))
+par(mfrow = c(1,1))
+
+# 1.3. Histograms for normality checks
+# 1.3..1. Nd1
+hist(rep_data_alpha3$occ.nd1, main = "nd1 mean amplitude", ylim = c(0, 0.25),
+     xlab = "amplitude", col = 1, prob = T)
+lines(density(rep_data_alpha3$occ.nd1), col = 2)
+# 1.3.2. Nd2 left
+par(mfrow = c(1,2))
+hist(rep_data_alpha3$left.nd2, main = "left nd2 mean amplitude", ylim = c(0, 0.5),
+     xlab = "amplitude", col = 2, prob = T)
+lines(density(rep_data_alpha3$left.nd2), col = 4, lwd = 3)
+# 1.3.3. Nd2 right
+hist(rep_data_alpha3$right.nd2, main = "Right nd2 mean amplitude", ylim = c(0, 0.5),
+     xlab = "amplitude", col = 3, prob = T)
+lines(density(rep_data_alpha3$right.nd2), col = 9, lwd = 3)
+par(mfrow = c(1,1))
+# 1.3.4. RL nd2 right
+hist(rep_data_alpha3$RL.nd2, main = "RL nd2 mean amplitude", ylim = c(0, 0.5),
+     xlab = "amplitude", col = 4, prob = T)
+lines(density(rep_data_alpha3$RL.nd2), col = 10, lwd = 3)
+
+# rep_data_alpha3$rev.RL.nd2 <- max(rep_data_alpha3$RL.nd2) - rep_data_alpha3$RL.nd2
+# 
+# hist(rep_data_alpha3$rev.RL.nd2, main = "rev RL nd2 mean amplitude", ylim = c(0, 0.5),
+#      xlab = "amplitude", col = 4, prob = T)
+# lines(density(rep_data_alpha3$rev.RL.nd2), col = 10, lwd = 3)
+# 
+# rep_data_alpha3$log.rev.RL.nd2 <- log(rep_data_alpha3$rev.RL.nd2)
+# 
+# rep_data_alpha3$sqrt.rev.RL.nd2 <- sqrt(rep_data_alpha3$rev.RL.nd2)
+# 
+# hist(rep_data_alpha3$sqrt.rev.RL.nd2, main = "sqrt rev RL nd2 mean amplitude", 
+#      ylim = c(0, 1.6),
+#      xlab = "amplitude", col = 4, prob = T)
+# lines(density(rep_data_alpha3$sqrt.rev.RL.nd2), col = 10, lwd = 3)
+# 
+# alpha.sqrt.rev.RL.nd2.baseline <- lme(sqrt.rev.RL.nd2 ~ 1, 
+#                              random = ~1|Subject/configuration/alpha.power, 
+#                              data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+#                              method = "ML") #baseline
+# alpha.sqrt.rev.RL.nd2.config <- update(alpha.sqrt.rev.RL.nd2.baseline, .~. + configuration)
+# alpha.sqrt.rev.RL.nd2.alpha.power <- update(alpha.sqrt.rev.RL.nd2.config, .~. + alpha.power)
+# alpha.sqrt.rev.RL.nd2.lme <- update(alpha.sqrt.rev.RL.nd2.alpha.power, .~. + 
+#                              configuration:alpha.power)
+# anova(alpha.sqrt.rev.RL.nd2.baseline, alpha.sqrt.rev.RL.nd2.config, alpha.sqrt.rev.RL.nd2.alpha.power,
+#       alpha.sqrt.rev.RL.nd2.lme)
+
+#-------------------------------------Tests------------------------------------
 # 2. ANOVAs
 # 2.1. Set contrasts
 contrasts(rep_data_alpha3$configuration) <- c(-1, 1) # contrasts for config
@@ -195,6 +263,9 @@ anova(alpha.left.nd2.lme)
 
 lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power)
 
+plot(lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power)$lsmeans, 
+     main = "Confidence intervals left nd2")
+
 # 2.6.3. Line plot
 alpha.left.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
                               aes(x = alpha.power, y = left.nd2, 
@@ -226,11 +297,17 @@ summary(alpha.right.nd2.lme)
 # 2.7.2. Post-hocs
 alpha.right.nd2.lme <- lme(right.nd2 ~ configuration * alpha.power * alpha.group, 
                             random = ~1|Subject/configuration/alpha.power, 
-                            data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                            data = rep_data_alpha3[rep_data_alpha3$session == 2,], 
                             method = "ML")
 anova(alpha.right.nd2.lme)
 
-lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)
+lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group * alpha.power)
+
+plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)$lsmeans, 
+     main = "Confidence intervals right nd2")
+
+plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)$contrasts, 
+     main = "Confidence intervals right nd2")
 
 # 2.7.3. Line plot
 alpha.right.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -266,7 +343,14 @@ alpha.RL.nd2.lme <- lme(RL.nd2 ~ configuration * alpha.power,
                            method = "ML")
 anova(alpha.RL.nd2.lme)
 
-lsmeans(alpha.RL.nd2.lme, pairwise ~ configuration | alpha.power)
+posthoc.alpha.RL.nd2 <- lsmeans(alpha.RL.nd2.lme, pairwise ~ 
+                                  configuration | alpha.power)
+
+plot(lsmeans(posthoc.alpha.RL.nd2$lsmeans, 
+     main = "Confidence intervals RL nd2"))
+
+qqnorm(alpha.RL.nd2.lme)
+qqline(alpha.RL.nd2.lme)
 
 # using multcomp
 # 1.
