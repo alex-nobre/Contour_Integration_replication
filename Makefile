@@ -4,16 +4,18 @@
 # Updated: 20 July 2016
 ##############################################
 
-# Key variables to define
-RDIR = .
 
-# Build datat sets
-# Averaged ERPs
+# Base ERPs
 source("./EEG data preparation.R")
+
 # Alpha power
 source("./Alpha data preparation.R")
-# Single trial ERPs
+
+# Trial-level ERPs
 source("./Trial level alpha data preparation.R")
+
 # Behavioral data
 source("./Behavioral data preparation.R")
 
+# Build dataframes
+source("./Create datasets.R")

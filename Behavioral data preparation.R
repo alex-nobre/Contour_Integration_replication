@@ -407,189 +407,138 @@ threshold.1 <- sapply(intensities.1, function(x) { return( x[length(x)] ) })
 threshold.2 <- sapply(intensities.2, function(x) { return( x[length(x)] ) })
 threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
 
-# 4. Prepare data frame
-# 4.1. Bind dprime values to data frame
-rep_data4 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
-                   ses.rand.dprime_2, ses.dprime_1, ses.dprime_2)
-# 4.2. Bind RT values to data frame
-rep_data5 <- cbind(rep_data4, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.sqr.3, 
-                   RT.mean.rand.1, RT.mean.rand.2, RT.mean.rand.3, RT.mean.1, 
-                   RT.mean.2, RT.mean.3)
-
-# 4.3. Bind session threshold, proportion correct, intensities per trial and 
-# accuracy values per trial to data frame
-# 4.3.1. Thresholds
-rep_data5 <- cbind(rep_data5, threshold.sqr_1, threshold.sqr_2, threshold.rand_1, 
-                   threshold.rand_2, threshold.1, threshold.2)
-
-# 4.3.2. Proportion correct, hits, misses, false alarms and correct rejections
-rep_data5 <- cbind(rep_data5, ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
-                   ses2.Ph, ses3.Ph, ses1.Pfa.sqr, ses2.Pfa.sqr, ses1.Pfa.rand, 
-                   ses2.Pfa.rand, ses1.Pfa, ses2.Pfa, ses3.Pfa, ses1.Pm.sqr, 
-                   ses2.Pm.sqr, ses1.Pm.rand, ses2.Pm.rand, ses1.Pm, ses2.Pm,
-                   ses3.Pm, ses1.Pcr.sqr, ses2.Pcr.sqr, ses1.Pcr.rand, ses2.Pcr.rand,
-                   ses1.Pcr, ses2.Pcr, ses3.Pcr, ses1.Pc.sqr, ses2.Pc.sqr, 
-                   ses1.Pc.rand, ses2.Pc.rand, ses1.Pc, ses2.Pc, ses3.Pc)
-
-# # 4.3.3. Intensities
-# # 4.3.3.1. Both configurations
-# rep_data4$intensities.1 <- intensities.1
-# rep_data4$intensities.2 <- intensities.2
-# # 4.3.3.2. Square
-# rep_data4$intensities.sqr.1 <- intensities.sqr.1
-# rep_data4$intensities.sqr.2 <- intensities.sqr.2
-# # 4.3.3.3. Random
-# rep_data4$intensities.rand.1 <- intensities.rand.1
-# rep_data4$intensities.rand.2 <- intensities.rand.2
 # 
-# # 4.3.4. Accuracies
-# # 4.3.4.1. Both configurations
-# rep_data4$accuracies.1 <- accuracies.1
-# rep_data4$accuracies.2 <- accuracies.2
-# # 4.3.4.2. Square
-# rep_data4$accuracies.sqr.1 <- accuracies.sqr.1
-# rep_data4$accuracies.sqr.2 <- accuracies.sqr.2
-# # 4.3.4.3. Random
-# rep_data4$accuracies.rand.1 <- accuracies.rand.1
-# rep_data4$accuracies.rand.2 <- accuracies.rand.2
-
-# 4.4. Bind questionnaire data to experiment data
-questionnaire.ERPs <- cbind(rep_data5, questionnaire.ses1, questionnaire.ses2)
-
-# 4.5. Coerce groups as factors
-questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)
-questionnaire.ERPs$group.original <- factor(questionnaire.ERPs$group.original)
-
-# 4.6.Convert from wide to long
-# Extracts session number to column
-rep_data_long <- reshape(rep_data4, varying = c("C1.sqr_1", "C1.sqr_2", "C1.rand_1",
-                                                "C1.rand_2", "P1.sqr_1", "P1.sqr_2", 
-                                                "P1.rand_1", "P1.rand_2", "N1.sqr_1", 
-                                                "N1.sqr_2", "N1.rand_1", "N1.rand_2",
-                                                "occ.sqr.nd1_1", "occ.sqr.nd2_1",
-                                                "occ.sqr.nd1_2", "occ.sqr.nd2_2",
-                                                "occ.rand.nd1_1", "occ.rand.nd2_1",
-                                                "occ.rand.nd1_2", "occ.rand.nd2_2",
-                                                "left.sqr.nd1_1", "left.sqr.nd2_1",
-                                                "left.sqr.nd1_2", "left.sqr.nd2_2",
-                                                "left.rand.nd1_1", "left.rand.nd2_1", 
-                                                "left.rand.nd1_2", "left.rand.nd2_2",
-                                                "right.sqr.nd1_1", "right.sqr.nd2_1",
-                                                "right.sqr.nd1_2", "right.sqr.nd2_2",
-                                                "right.rand.nd1_1", "right.rand.nd2_1",
-                                                "right.rand.nd1_2", "right.rand.nd2_2",
-                                                "RL.sqr.nd1_1", "RL.sqr.nd2_1", 
-                                                "RL.sqr.nd1_2", "RL.sqr.nd2_2",
-                                                "RL.rand.nd1_1", "RL.rand.nd2_1", 
-                                                "RL.rand.nd1_2", "RL.rand.nd2_2",
-                                                "N2.sqr_1", "N2.sqr_2", "N2.rand_1", 
-                                                "N2.rand_2", "LP.sqr_1", "LP.sqr_2", 
-                                                "LP.rand_1", "LP.rand_2",
-                                                "ses.sqr.dprime_1", "ses.sqr.dprime_2",
-                                                "ses.rand.dprime_1", "ses.rand.dprime_2",
-                                                "RT.sqr_1", "RT.sqr_2",
-                                                "RT.rand_1", "RT.rand_2",
-                                                "threshold.sqr_1", "threshold.sqr_2",
-                                                "threshold.rand_1", "threshold.rand_2"),  
-                         direction = "long", idvar = "Subject", sep = "_")
-# Rename session column
-names(rep_data_long)[names(rep_data_long) == "time"] <- "session"
-
-# Rename columns to separate configuration number using sep = "_"
-names(rep_data_long)[names(rep_data_long) == "C1.sqr"] <- "C1_1"
-names(rep_data_long)[names(rep_data_long) == "C1.rand"] <- "C1_2"
-names(rep_data_long)[names(rep_data_long) == "P1.sqr"] <- "P1_1"
-names(rep_data_long)[names(rep_data_long) == "P1.rand"] <- "P1_2"
-names(rep_data_long)[names(rep_data_long) == "N1.sqr"] <- "N1_1"
-names(rep_data_long)[names(rep_data_long) == "N1.rand"] <- "N1_2"
-names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd1"] <- "occ.nd1_1"
-names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd2"] <- "occ.nd2_1"
-names(rep_data_long)[names(rep_data_long) == "occ.rand.nd1"] <- "occ.nd1_2"
-names(rep_data_long)[names(rep_data_long) == "occ.rand.nd2"] <- "occ.nd2_2"
-names(rep_data_long)[names(rep_data_long) == "left.sqr.nd1"] <- "left.nd1_1"
-names(rep_data_long)[names(rep_data_long) == "left.sqr.nd2"] <- "left.nd2_1"
-names(rep_data_long)[names(rep_data_long) == "left.rand.nd1"] <- "left.nd1_2"
-names(rep_data_long)[names(rep_data_long) == "left.rand.nd2"] <- "left.nd2_2"
-names(rep_data_long)[names(rep_data_long) == "right.sqr.nd1"] <- "right.nd1_1"
-names(rep_data_long)[names(rep_data_long) == "right.sqr.nd2"] <- "right.nd2_1"
-names(rep_data_long)[names(rep_data_long) == "right.rand.nd1"] <- "right.nd1_2"
-names(rep_data_long)[names(rep_data_long) == "right.rand.nd2"] <- "right.nd2_2"
-names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd1"] <- "RL.nd1_1"
-names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd2"] <- "RL.nd2_1"
-names(rep_data_long)[names(rep_data_long) == "RL.rand.nd1"] <- "RL.nd1_2"
-names(rep_data_long)[names(rep_data_long) == "RL.rand.nd2"] <- "RL.nd2_2"
-names(rep_data_long)[names(rep_data_long) == "N2.sqr"] <- "N2_1"
-names(rep_data_long)[names(rep_data_long) == "N2.rand"] <- "N2_2"
-names(rep_data_long)[names(rep_data_long) == "LP.sqr"] <- "LP_1"
-names(rep_data_long)[names(rep_data_long) == "LP.rand"] <- "LP_2"
-names(rep_data_long)[names(rep_data_long) == "ses.sqr.dprime"] <- "ses.dprime_1"
-names(rep_data_long)[names(rep_data_long) == "ses.rand.dprime"] <- "ses.dprime_2"
-names(rep_data_long)[names(rep_data_long) == "RT.sqr"] <- "RT_1"
-names(rep_data_long)[names(rep_data_long) == "RT.rand"] <- "RT_2"
-names(rep_data_long)[names(rep_data_long) == "threshold.sqr"] <- "threshold_1"
-names(rep_data_long)[names(rep_data_long) == "threshold.rand"] <- "threshold_2"
-# Extracts configuration number to column
-rep_data_long2 <- reshape(rep_data_long, varying = c("C1_1", "C1_2", "P1_1", "P1_2",
-                                                     "N1_1", "N1_2", "occ.nd1_1", 
-                                                     "occ.nd2_1", "occ.nd1_2", 
-                                                     "occ.nd2_2", "left.nd1_1", 
-                                                     "left.nd2_1", "left.nd1_2", 
-                                                     "left.nd2_2", "right.nd1_1", 
-                                                     "right.nd2_1", "right.nd1_2", 
-                                                     "right.nd2_2", "RL.nd1_1", 
-                                                     "RL.nd2_1", "RL.nd1_2", 
-                                                     "RL.nd2_2", "N2_1", "N2_2",
-                                                     "LP_1", "LP_2",
-                                                     "ses.dprime_1", "ses.dprime_2",
-                                                     "RT_1", "RT_2",
-                                                     "threshold_1", "threshold_2"),  
-                          direction = "long", idvar = " Subject", sep = "_")
-# Rename configuration column name
-names(rep_data_long2)[names(rep_data_long2) == "time"] <- "configuration"
-# Rename configuration levels
-rep_data_long2$configuration[rep_data_long2$configuration == 1] <- "sqr"
-rep_data_long2$configuration[rep_data_long2$configuration == 2] <- "rand"
-# Rename d' column
-names(rep_data_long2)[names(rep_data_long2) == "ses.dprime"] <- "dprime"
-
-# Convert configuration, group and session to factors
-rep_data_long2$group <- factor(rep_data_long2$group)
-rep_data_long2$group.original <- factor(rep_data_long2$group.original)
-rep_data_long2$session <- factor(rep_data_long2$session)
-rep_data_long2$configuration <- factor(rep_data_long2$configuration)
-
-# 2. Compute Correlational measures
-# 2.1. Combined measure of awareness: RT x confidence ratings
-# 2.1.1. Session 1
-questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT.mean.1 * 
-  questionnaire.ERPs$conf.4.ses1
-# 2.1.2. Session 2
-questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT.mean.2 * 
-  questionnaire.ERPs$conf.4.ses2
-
-# 2.2. Combined measure of awareness: RT x threshold value
-# 2.2.1. Session 1
-questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
-  questionnaire.ERPs$conf.4.ses1
-# 2.2.1. Session 2
-questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
-  questionnaire.ERPs$conf.4.ses1
-
-# 2.2 Compute RT means across sessions
-questionnaire.ERPs$RT_1_2 <- rowMeans(questionnaire.ERPs[,19:20])
-
-# 2.3. Compute differences
-# session 1
-questionnaire.ERPs$occ_diff_1 <- questionnaire.ERPs$occ.sqr.nd1_1 - 
-  questionnaire.ERPs$occ.rand.nd1_1
-questionnaire.ERPs$left_diff_1 <- questionnaire.ERPs$left.sqr.nd2_1 - 
-  questionnaire.ERPs$left.rand.nd2_1
-questionnaire.ERPs$right_diff_1 <- questionnaire.ERPs$right.sqr.nd2_1 - 
-  questionnaire.ERPs$right.rand.nd2_1
-# session 2
-questionnaire.ERPs$occ_diff_2 <- questionnaire.ERPs$occ.sqr.nd1_2 - 
-  questionnaire.ERPs$occ.rand.nd1_2
-questionnaire.ERPs$left_diff_2 <- questionnaire.ERPs$left.sqr.nd2_2 - 
-  questionnaire.ERPs$left.rand.nd2_2
-questionnaire.ERPs$right_diff_2 <- questionnaire.ERPs$right.sqr.nd2_2 - 
-  questionnaire.ERPs$right.rand.nd2_2
+# 
+# # 4.6.Convert from wide to long
+# # Extracts session number to column
+# rep_data_long <- reshape(rep_data4, varying = c("C1.sqr_1", "C1.sqr_2", "C1.rand_1",
+#                                                 "C1.rand_2", "P1.sqr_1", "P1.sqr_2", 
+#                                                 "P1.rand_1", "P1.rand_2", "N1.sqr_1", 
+#                                                 "N1.sqr_2", "N1.rand_1", "N1.rand_2",
+#                                                 "occ.sqr.nd1_1", "occ.sqr.nd2_1",
+#                                                 "occ.sqr.nd1_2", "occ.sqr.nd2_2",
+#                                                 "occ.rand.nd1_1", "occ.rand.nd2_1",
+#                                                 "occ.rand.nd1_2", "occ.rand.nd2_2",
+#                                                 "left.sqr.nd1_1", "left.sqr.nd2_1",
+#                                                 "left.sqr.nd1_2", "left.sqr.nd2_2",
+#                                                 "left.rand.nd1_1", "left.rand.nd2_1", 
+#                                                 "left.rand.nd1_2", "left.rand.nd2_2",
+#                                                 "right.sqr.nd1_1", "right.sqr.nd2_1",
+#                                                 "right.sqr.nd1_2", "right.sqr.nd2_2",
+#                                                 "right.rand.nd1_1", "right.rand.nd2_1",
+#                                                 "right.rand.nd1_2", "right.rand.nd2_2",
+#                                                 "RL.sqr.nd1_1", "RL.sqr.nd2_1", 
+#                                                 "RL.sqr.nd1_2", "RL.sqr.nd2_2",
+#                                                 "RL.rand.nd1_1", "RL.rand.nd2_1", 
+#                                                 "RL.rand.nd1_2", "RL.rand.nd2_2",
+#                                                 "N2.sqr_1", "N2.sqr_2", "N2.rand_1", 
+#                                                 "N2.rand_2", "LP.sqr_1", "LP.sqr_2", 
+#                                                 "LP.rand_1", "LP.rand_2",
+#                                                 "ses.sqr.dprime_1", "ses.sqr.dprime_2",
+#                                                 "ses.rand.dprime_1", "ses.rand.dprime_2",
+#                                                 "RT.sqr_1", "RT.sqr_2",
+#                                                 "RT.rand_1", "RT.rand_2",
+#                                                 "threshold.sqr_1", "threshold.sqr_2",
+#                                                 "threshold.rand_1", "threshold.rand_2"),  
+#                          direction = "long", idvar = "Subject", sep = "_")
+# # Rename session column
+# names(rep_data_long)[names(rep_data_long) == "time"] <- "session"
+# 
+# # Rename columns to separate configuration number using sep = "_"
+# names(rep_data_long)[names(rep_data_long) == "C1.sqr"] <- "C1_1"
+# names(rep_data_long)[names(rep_data_long) == "C1.rand"] <- "C1_2"
+# names(rep_data_long)[names(rep_data_long) == "P1.sqr"] <- "P1_1"
+# names(rep_data_long)[names(rep_data_long) == "P1.rand"] <- "P1_2"
+# names(rep_data_long)[names(rep_data_long) == "N1.sqr"] <- "N1_1"
+# names(rep_data_long)[names(rep_data_long) == "N1.rand"] <- "N1_2"
+# names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd1"] <- "occ.nd1_1"
+# names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd2"] <- "occ.nd2_1"
+# names(rep_data_long)[names(rep_data_long) == "occ.rand.nd1"] <- "occ.nd1_2"
+# names(rep_data_long)[names(rep_data_long) == "occ.rand.nd2"] <- "occ.nd2_2"
+# names(rep_data_long)[names(rep_data_long) == "left.sqr.nd1"] <- "left.nd1_1"
+# names(rep_data_long)[names(rep_data_long) == "left.sqr.nd2"] <- "left.nd2_1"
+# names(rep_data_long)[names(rep_data_long) == "left.rand.nd1"] <- "left.nd1_2"
+# names(rep_data_long)[names(rep_data_long) == "left.rand.nd2"] <- "left.nd2_2"
+# names(rep_data_long)[names(rep_data_long) == "right.sqr.nd1"] <- "right.nd1_1"
+# names(rep_data_long)[names(rep_data_long) == "right.sqr.nd2"] <- "right.nd2_1"
+# names(rep_data_long)[names(rep_data_long) == "right.rand.nd1"] <- "right.nd1_2"
+# names(rep_data_long)[names(rep_data_long) == "right.rand.nd2"] <- "right.nd2_2"
+# names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd1"] <- "RL.nd1_1"
+# names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd2"] <- "RL.nd2_1"
+# names(rep_data_long)[names(rep_data_long) == "RL.rand.nd1"] <- "RL.nd1_2"
+# names(rep_data_long)[names(rep_data_long) == "RL.rand.nd2"] <- "RL.nd2_2"
+# names(rep_data_long)[names(rep_data_long) == "N2.sqr"] <- "N2_1"
+# names(rep_data_long)[names(rep_data_long) == "N2.rand"] <- "N2_2"
+# names(rep_data_long)[names(rep_data_long) == "LP.sqr"] <- "LP_1"
+# names(rep_data_long)[names(rep_data_long) == "LP.rand"] <- "LP_2"
+# names(rep_data_long)[names(rep_data_long) == "ses.sqr.dprime"] <- "ses.dprime_1"
+# names(rep_data_long)[names(rep_data_long) == "ses.rand.dprime"] <- "ses.dprime_2"
+# names(rep_data_long)[names(rep_data_long) == "RT.sqr"] <- "RT_1"
+# names(rep_data_long)[names(rep_data_long) == "RT.rand"] <- "RT_2"
+# names(rep_data_long)[names(rep_data_long) == "threshold.sqr"] <- "threshold_1"
+# names(rep_data_long)[names(rep_data_long) == "threshold.rand"] <- "threshold_2"
+# # Extracts configuration number to column
+# rep_data_long2 <- reshape(rep_data_long, varying = c("C1_1", "C1_2", "P1_1", "P1_2",
+#                                                      "N1_1", "N1_2", "occ.nd1_1", 
+#                                                      "occ.nd2_1", "occ.nd1_2", 
+#                                                      "occ.nd2_2", "left.nd1_1", 
+#                                                      "left.nd2_1", "left.nd1_2", 
+#                                                      "left.nd2_2", "right.nd1_1", 
+#                                                      "right.nd2_1", "right.nd1_2", 
+#                                                      "right.nd2_2", "RL.nd1_1", 
+#                                                      "RL.nd2_1", "RL.nd1_2", 
+#                                                      "RL.nd2_2", "N2_1", "N2_2",
+#                                                      "LP_1", "LP_2",
+#                                                      "ses.dprime_1", "ses.dprime_2",
+#                                                      "RT_1", "RT_2",
+#                                                      "threshold_1", "threshold_2"),  
+#                           direction = "long", idvar = " Subject", sep = "_")
+# # Rename configuration column name
+# names(rep_data_long2)[names(rep_data_long2) == "time"] <- "configuration"
+# # Rename configuration levels
+# rep_data_long2$configuration[rep_data_long2$configuration == 1] <- "sqr"
+# rep_data_long2$configuration[rep_data_long2$configuration == 2] <- "rand"
+# # Rename d' column
+# names(rep_data_long2)[names(rep_data_long2) == "ses.dprime"] <- "dprime"
+# 
+# # Convert configuration, group and session to factors
+# rep_data_long2$group <- factor(rep_data_long2$group)
+# rep_data_long2$group.original <- factor(rep_data_long2$group.original)
+# rep_data_long2$session <- factor(rep_data_long2$session)
+# rep_data_long2$configuration <- factor(rep_data_long2$configuration)
+# 
+# # 2. Compute Correlational measures
+# # 2.1. Combined measure of awareness: RT x confidence ratings
+# # 2.1.1. Session 1
+# questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT.mean.1 * 
+#   questionnaire.ERPs$conf.4.ses1
+# # 2.1.2. Session 2
+# questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT.mean.2 * 
+#   questionnaire.ERPs$conf.4.ses2
+# 
+# # 2.2. Combined measure of awareness: RT x threshold value
+# # 2.2.1. Session 1
+# questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
+#   questionnaire.ERPs$conf.4.ses1
+# # 2.2.1. Session 2
+# questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
+#   questionnaire.ERPs$conf.4.ses1
+# 
+# # 2.2 Compute RT means across sessions
+# questionnaire.ERPs$RT_1_2 <- rowMeans(questionnaire.ERPs[,19:20])
+# 
+# # 2.3. Compute differences
+# # session 1
+# questionnaire.ERPs$occ_diff_1 <- questionnaire.ERPs$occ.sqr.nd1_1 - 
+#   questionnaire.ERPs$occ.rand.nd1_1
+# questionnaire.ERPs$left_diff_1 <- questionnaire.ERPs$left.sqr.nd2_1 - 
+#   questionnaire.ERPs$left.rand.nd2_1
+# questionnaire.ERPs$right_diff_1 <- questionnaire.ERPs$right.sqr.nd2_1 - 
+#   questionnaire.ERPs$right.rand.nd2_1
+# # session 2
+# questionnaire.ERPs$occ_diff_2 <- questionnaire.ERPs$occ.sqr.nd1_2 - 
+#   questionnaire.ERPs$occ.rand.nd1_2
+# questionnaire.ERPs$left_diff_2 <- questionnaire.ERPs$left.sqr.nd2_2 - 
+#   questionnaire.ERPs$left.rand.nd2_2
+# questionnaire.ERPs$right_diff_2 <- questionnaire.ERPs$right.sqr.nd2_2 - 
+#   questionnaire.ERPs$right.rand.nd2_2
