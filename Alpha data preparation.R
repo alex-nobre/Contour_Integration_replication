@@ -27,7 +27,7 @@ library(psyphy)
 # Data report packages
 library(knitr)
 
-
+#------------------------------------------------------------------------------------------
 # 1. Import list of files
 # Import file names in working directory
 sqr1.alpha.files <- list.files('./Data/Data_BVA', 

@@ -194,26 +194,31 @@ summary(alpha.nd1.lme)
 # 2.5.2. using lsmeans
 lsmeans(alpha.nd1.lme, pairwise ~ configuration | alpha.power)
 
-# using multcomp
-# 1.
-# compute means for all combinations
-tmp <- expand.grid(configuration = unique(rep_data_alpha3$configuration),
-                   alpha.power = unique(rep_data_alpha3$alpha.power))
-x <- model.matrix(~ configuration * alpha.power, data = tmp)
-glht(alpha.nd1.lme, linfct = x)
+TukeyHSD(alpha.nd1.lme, c(
+                rep_data_alpha3[rep_data_alpha3$session == 1,]$alpha.power * 
+                  rep_data_alpha3[rep_data_alpha3$session == 1,]$configuration),
+                conf.level = 0.95)
 
-# construct contrast matrix
-Tukey <- contrMat(table(rep_data_alpha3$configuration), "Tukey")
-K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
-rownames(K1) <- paste(levels(rep_data_alpha3$alpha.power)[1], rownames(K1), 
-                      sep = ":")
-K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
-rownames(K2) <- paste(levels(rep_data_alpha3$alpha.power)[2], rownames(K2), 
-                      sep = ":")
-K <- rbind(K1, K2)
-colnames(K) <- c(colnames(Tukey), colnames(Tukey))
-#test
-summary(glht(alpha.nd1.lme, linfct = K %*% x))
+# # using multcomp
+# # 1.
+# # compute means for all combinations
+# tmp <- expand.grid(configuration = unique(rep_data_alpha3$configuration),
+#                    alpha.power = unique(rep_data_alpha3$alpha.power))
+# x <- model.matrix(~ configuration * alpha.power, data = tmp)
+# glht(alpha.nd1.lme, linfct = x)
+# 
+# # construct contrast matrix
+# Tukey <- contrMat(table(rep_data_alpha3$configuration), "Tukey")
+# K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+# rownames(K1) <- paste(levels(rep_data_alpha3$alpha.power)[1], rownames(K1), 
+#                       sep = ":")
+# K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
+# rownames(K2) <- paste(levels(rep_data_alpha3$alpha.power)[2], rownames(K2), 
+#                       sep = ":")
+# K <- rbind(K1, K2)
+# colnames(K) <- c(colnames(Tukey), colnames(Tukey))
+# #test
+# summary(glht(alpha.nd1.lme, linfct = K %*% x))
 
 
 # ANOVA TESTING
@@ -240,6 +245,9 @@ alpha.nd1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
        colour = "configuration")
 alpha.nd1.line
 
+plot(lsmeans(alpha.nd1.lme, pairwise ~ configuration | alpha.group * 
+               alpha.power)$contrasts, 
+     main = "Confidence intervals contrasts nd1")
 
 # 2.6. left nd2
 # 2.6.1. ANOVA
@@ -306,8 +314,9 @@ lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group * alpha.powe
 plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)$lsmeans, 
      main = "Confidence intervals right nd2")
 
-plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)$contrasts, 
-     main = "Confidence intervals right nd2")
+plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group * 
+               alpha.power)$contrasts, 
+     main = "Confidence intervals contrasts right nd2")
 
 # 2.7.3. Line plot
 alpha.right.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -337,7 +346,7 @@ anova(alpha.RL.nd2.baseline, alpha.RL.nd2.config, alpha.RL.nd2.alpha.power,
 
 # 2.8.2. Post-hocs
 
-alpha.RL.nd2.lme <- lme(RL.nd2 ~ configuration * alpha.power, 
+alpha.RL.nd2.lme <- lme(RL.nd2 ~ configuration * alpha.power * alpha.group, 
                            random = ~1|Subject/configuration/alpha.power, 
                            data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                            method = "ML")
@@ -348,6 +357,10 @@ posthoc.alpha.RL.nd2 <- lsmeans(alpha.RL.nd2.lme, pairwise ~
 
 plot(lsmeans(posthoc.alpha.RL.nd2$lsmeans, 
      main = "Confidence intervals RL nd2"))
+
+plot(lsmeans(alpha.RL.nd2.lme, pairwise ~ configuration | alpha.group * 
+               alpha.power)$contrasts, 
+     main = "Confidence intervals contrasts RL nd2")
 
 qqnorm(alpha.RL.nd2.lme)
 qqline(alpha.RL.nd2.lme)

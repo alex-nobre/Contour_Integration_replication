@@ -130,62 +130,28 @@ rep_data <- cbind(Subject, group, group.original, rep_data)
 # Remove subjects with too many artifacts
 row.names(rep_data) <- 1:32
 
-#--------------------------------Convert to long-----------------------------------
-# reshape by session
-rep_data_long <- reshape(rep_data2, varying = 4:ncol(rep_data2), sep = "_", 
-                         direction = "long", 
-                         new.row.names = NULL)
-rep_data_long[,ncol(rep_data_long)]<- NULL #eliminate extra column added by reshape
-names(rep_data_long)[names(rep_data_long) == "time"] <- "session"
-# reshape by configuration
-rep_data_long3 <- rep_data_long %>%
-  unite(sqr,contains("sqr")) %>%
-  unite(rand,contains("rand")) %>%
-  gather(configuration,values,sqr:rand) %>%
-  separate(values,c("C1","P1","N1","occ.nd1","occ.nd2","left.nd1","left.nd2",
-                    "right.nd1","right.nd2","RL.nd1","RL.nd2","N2","LP",
-                    "low.alpha.C1","low.alpha.P1","low.alpha.N1","low.alpha.occ.nd1",
-                    "low.alpha.occ.nd2","low.alpha.left.nd1","low.alpha.left.nd2",
-                    "low.alpha.right.nd1","low.alpha.right.nd2","low.alpha.RL.nd1",
-                    "low.alpha.RL.nd2","low.alpha.N2","low.alpha.P3","low.alpha.LP",
-                    "high.alpha.C1","high.alpha.P1","high.alpha.N1","high.alpha.occ.nd1",
-                    "high.alpha.occ.nd2","high.alpha.left.nd1","high.alpha.left.nd2",
-                    "high.alpha.right.nd1","high.alpha.right.nd2","high.alpha.RL.nd1",
-                    "high.alpha.RL.nd2","high.alpha.N2","high.alpha.P3","high.alpha.LP"),
-           sep = "_",
-           convert = TRUE)
-# coerce to factors
-rep_data_long3$group <- factor(rep_data_long3$group)
-rep_data_long3$group.original <- factor(rep_data_long3$group.original)
-rep_data_long3$session <- factor(rep_data_long3$session)
-rep_data_long3$configuration <- factor(rep_data_long3$configuration)
-
-
-rep_data_long2 <- rep_data_long3[,c(1:5,12,14,
-                                    (ncol(rep_data_long3)-2):ncol(rep_data_long3))]
-
-#--------------------------------Include location as factor--------------------------------
-
-# Rename columns to separate electrode location number using sep = "_"
-names(rep_data_long2)[names(rep_data_long2) == "left.nd2"] <- "nd2_1"
-names(rep_data_long2)[names(rep_data_long2) == "right.nd2"] <- "nd2_2"
-# Extracts configuration number to column
-rep_data_long2 <- reshape(rep_data_long2, varying = c("nd2_1", "nd2_2"),
-                          direction = "long", idvar = " Subject", sep = "_")
-# Rename configuration column name
-names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
-
-# Rename configuration levels
-rep_data_long2$location[rep_data_long2$location == 1] <- "left"
-rep_data_long2$location[rep_data_long2$location == 2] <- "right"
-
-#Remove redundant subject column
-rep_data_long2[,ncol(rep_data_long2)]<- NULL
- 
-# # Convert configuration, group and session to factors
-rep_data_long2$group <- factor(rep_data_long2$group)
-rep_data_long2$group.original <- factor(rep_data_long2$group.original)
-rep_data_long2$session <- factor(rep_data_long2$session)
-rep_data_long2$configuration <- factor(rep_data_long2$configuration)
-rep_data_long2$location <- factor(rep_data_long2$location)
-rep_data_long2$alpha.group <- factor(rep_data_long2$alpha.group)
+# #--------------------------------Include location as factor--------------------------------
+# 
+# # Rename columns to separate electrode location number using sep = "_"
+# names(rep_data_long2)[names(rep_data_long2) == "left.nd2"] <- "nd2_1"
+# names(rep_data_long2)[names(rep_data_long2) == "right.nd2"] <- "nd2_2"
+# # Extracts configuration number to column
+# rep_data_long2 <- reshape(rep_data_long2, varying = c("nd2_1", "nd2_2"),
+#                           direction = "long", idvar = " Subject", sep = "_")
+# # Rename configuration column name
+# names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
+# 
+# # Rename configuration levels
+# rep_data_long2$location[rep_data_long2$location == 1] <- "left"
+# rep_data_long2$location[rep_data_long2$location == 2] <- "right"
+# 
+# #Remove redundant subject column
+# rep_data_long2[,ncol(rep_data_long2)]<- NULL
+#  
+# # # Convert configuration, group and session to factors
+# rep_data_long2$group <- factor(rep_data_long2$group)
+# rep_data_long2$group.original <- factor(rep_data_long2$group.original)
+# rep_data_long2$session <- factor(rep_data_long2$session)
+# rep_data_long2$configuration <- factor(rep_data_long2$configuration)
+# rep_data_long2$location <- factor(rep_data_long2$location)
+# rep_data_long2$alpha.group <- factor(rep_data_long2$alpha.group)

@@ -330,3 +330,43 @@ questionnaire.ERPs$alpha.group <- factor(questionnaire.ERPs$alpha.group)
 rep_data_long3$alpha.group <- rep(questionnaire.ERPs$alpha.group, 4)
 rep_data_alpha3$alpha.group <- factor(rep(as.vector(rep_data_long3$alpha.group), 2))
 levels(rep_data_alpha3$alpha.group) <- c("high alpha group", "low alpha group")
+
+#-------------------------------Correlational measures----------------------------
+# # 9. Compute Correlational measures
+# # 9.1. Combined index of awareness: RT x confidence ratings
+# # 9.1.1. Session 1
+# questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT.mean.1 *
+#   questionnaire.ERPs$conf.4.ses1
+# # 9.1.9. Session 2
+# questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT.mean.2 *
+#   questionnaire.ERPs$conf.4.ses2
+# 
+# # 9.9. Combined index of awareness: RT x threshold value
+# # 9.9.1. Session 1
+# questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 *
+#   questionnaire.ERPs$conf.4.ses1
+# # 9.9.1. Session 2
+# questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 *
+#   questionnaire.ERPs$conf.4.ses1
+
+# 9.2 Compute RT means across sessions
+questionnaire.ERPs$RT.1.2 <- rowMeans(questionnaire.ERPs[,
+                            which(colnames(questionnaire.ERPs) == "RT.mean.1"):
+                            which(colnames(questionnaire.ERPs) == "RT.mean.2")])
+
+# 9.3. Compute differences
+# session 1
+questionnaire.ERPs$occ.diff.1 <- questionnaire.ERPs$low.alpha.occ.nd1.sqr_1 -
+  questionnaire.ERPs$low.alpha.occ.nd1.rand_1
+questionnaire.ERPs$left.diff.1 <- questionnaire.ERPs$low.alpha.left.nd2.sqr_1 -
+  questionnaire.ERPs$low.alpha.left.nd2.rand_1
+questionnaire.ERPs$right.diff.1 <- questionnaire.ERPs$low.alpha.right.nd2.sqr_1 -
+  questionnaire.ERPs$low.alpha.right.nd2.rand_1
+# session 2
+questionnaire.ERPs$occ.diff.2 <- questionnaire.ERPs$low.alpha.occ.nd1.sqr_2 -
+  questionnaire.ERPs$low.alpha.occ.nd1.rand_2
+questionnaire.ERPs$left.diff.2 <- questionnaire.ERPs$low.alpha.left.nd2.sqr_2 -
+  questionnaire.ERPs$low.alpha.left.nd2.rand_2
+questionnaire.ERPs$right.diff.2 <- questionnaire.ERPs$low.alpha.right.nd2.sqr_2 -
+  questionnaire.ERPs$low.alpha.right.nd2.rand_2
+

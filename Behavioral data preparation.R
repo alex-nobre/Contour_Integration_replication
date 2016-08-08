@@ -407,8 +407,7 @@ threshold.1 <- sapply(intensities.1, function(x) { return( x[length(x)] ) })
 threshold.2 <- sapply(intensities.2, function(x) { return( x[length(x)] ) })
 threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
 
-# 
-# 
+
 # # 4.6.Convert from wide to long
 # # Extracts session number to column
 # rep_data_long <- reshape(rep_data4, varying = c("C1.sqr_1", "C1.sqr_2", "C1.rand_1",
@@ -507,38 +506,3 @@ threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
 # rep_data_long2$session <- factor(rep_data_long2$session)
 # rep_data_long2$configuration <- factor(rep_data_long2$configuration)
 # 
-# # 2. Compute Correlational measures
-# # 2.1. Combined measure of awareness: RT x confidence ratings
-# # 2.1.1. Session 1
-# questionnaire.ERPs$aware.index.1 <- questionnaire.ERPs$RT.mean.1 * 
-#   questionnaire.ERPs$conf.4.ses1
-# # 2.1.2. Session 2
-# questionnaire.ERPs$aware.index.2 <- questionnaire.ERPs$RT.mean.2 * 
-#   questionnaire.ERPs$conf.4.ses2
-# 
-# # 2.2. Combined measure of awareness: RT x threshold value
-# # 2.2.1. Session 1
-# questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
-#   questionnaire.ERPs$conf.4.ses1
-# # 2.2.1. Session 2
-# questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 * 
-#   questionnaire.ERPs$conf.4.ses1
-# 
-# # 2.2 Compute RT means across sessions
-# questionnaire.ERPs$RT_1_2 <- rowMeans(questionnaire.ERPs[,19:20])
-# 
-# # 2.3. Compute differences
-# # session 1
-# questionnaire.ERPs$occ_diff_1 <- questionnaire.ERPs$occ.sqr.nd1_1 - 
-#   questionnaire.ERPs$occ.rand.nd1_1
-# questionnaire.ERPs$left_diff_1 <- questionnaire.ERPs$left.sqr.nd2_1 - 
-#   questionnaire.ERPs$left.rand.nd2_1
-# questionnaire.ERPs$right_diff_1 <- questionnaire.ERPs$right.sqr.nd2_1 - 
-#   questionnaire.ERPs$right.rand.nd2_1
-# # session 2
-# questionnaire.ERPs$occ_diff_2 <- questionnaire.ERPs$occ.sqr.nd1_2 - 
-#   questionnaire.ERPs$occ.rand.nd1_2
-# questionnaire.ERPs$left_diff_2 <- questionnaire.ERPs$left.sqr.nd2_2 - 
-#   questionnaire.ERPs$left.rand.nd2_2
-# questionnaire.ERPs$right_diff_2 <- questionnaire.ERPs$right.sqr.nd2_2 - 
-#   questionnaire.ERPs$right.rand.nd2_2

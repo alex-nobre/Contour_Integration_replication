@@ -33,32 +33,26 @@ defaults <- par()
 #---------------------------Psychophysical analysis-------------------------
 # 1.RT
 # 1.1. Descriptives
-summary(rep_data4$RT.mean.1)
-summary(rep_data4$RT.mean.2)
-summary(rep_data4$RT.mean.3)
+summary(questionnaire.ERPs$RT.mean.1)
+summary(questionnaire.ERPs$RT.mean.2)
+summary(questionnaire.ERPs$RT.mean.3)
 
-# 1.2. Plots
+# 1.2. Plots by session
 # 1.2.1. Scatterplot of mean RT per session
-plot(rep_data4$Subject, rep_data4$RT.mean.1, main = "RT in session 1",
+plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean.1, main = "RT in session 1",
      xlab = "RT", pch = 16, col = 6) #session 1
-plot(rep_data4$Subject, rep_data4$RT.mean.2, main = "RT in session 2",
+plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean.2, main = "RT in session 2",
      xlab = "RT", pch = 16, col = 6) #session 2
 # 1.2.2. Histograms of mean RT per session
-hist(rep_data4$RT.mean.1, main = "RT in session 1",
+hist(questionnaire.ERPs$RT.mean.1, main = "RT in session 1",
      xlab = "RT", col = 7) #session 1
-hist(rep_data4$RT.mean.2, main = "RT in session 2",
+hist(questionnaire.ERPs$RT.mean.2, main = "RT in session 2",
      xlab = "RT", col = 12) #session 2
 
-# 1.3. Compare RTs between square and random
-t.test(unaware$RT.mean.sqr.1, unaware$RT.mean.rand.1, paired = T) #unaware
-t.test(aware$RT.mean.sqr.1, aware$RT.mean.rand.1, paired = T) #aware
-t.test(questionnaire.ERPs$RT.mean.sqr.1, questionnaire.ERPs$RT.mean.rand.1, 
-       paired = T) #both groups
+# 1.3. ANOVA for Comparison of RTs between square and random
+# TODO!!!!!!!!!!!!
 
-# 1.4. ANOVA - RT for mean RT; session x configuration x group
-contrasts(rep_data_long2$configuration) <- c(-1, 1) # setting contrasts for config
-contrasts(rep_data_long2$session) <- c(-1, 1) # setting contrasts for session
-contrasts(rep_data_long2$group.original) <- c(-1, 1) # setting contrasts for group.original
+# 1.4. ANOVA - mean RT; session x configuration x group
 RT.mean.baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
                    data = rep_data_long2, method = "ML") #baseline
 RT.mean.config <- update(RT.mean.baseline, .~. + configuration)
@@ -97,10 +91,10 @@ colnames(intensities.data) <- c("block.intensities.0", "block.intensities.1",
                                 "block.intensities.8", "block.intensities.9")
 
 # Bind to dataset
-rep_data4 <- cbind(rep_data4, intensities.data)
+questionnaire.ERPs <- cbind(questionnaire.ERPs, intensities.data)
 
-rep_data4$group <- factor(rep_data4$group)
-rep_data4$group.original <- factor(rep_data4$group.original)
+questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)
+questionnaire.ERPs$group.original <- factor(questionnaire.ERPs$group.original)
 
 
 # 1.1. Function to plot intensities
@@ -122,14 +116,14 @@ par(new = FALSE)
 
 
 # 2. Plot block end intensities values
-plot(x = rep_data4$Subject, y = rep_data4$threshold.1, ylim = c(-0.5, 0.5), 
-     col = rep_data4$group.original, pch = 16, main = "Main task thresholds",
+plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$threshold.1, ylim = c(-0.5, 0.5), 
+     col = questionnaire.ERPs$group.original, pch = 16, main = "Main task thresholds",
      xlab = "Subject", ylab = "Threshold")
-legend(0, -0.2, legend = levels(rep_data4$group.original), 
+legend(0, -0.2, legend = levels(questionnaire.ERPs$group.original), 
        col = c("black", "red"),
        pch = 16)
-abline(h = mean(rep_data4[rep_data4$group.original == 'aware', ]$threshold.1))
-abline(h = mean(rep_data4[rep_data4$group.original == 'unaware', ]$threshold.1), 
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$group.original == 'aware', ]$threshold.1))
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$group.original == 'unaware', ]$threshold.1), 
        col = 'red')
 
 # Line plot
@@ -146,39 +140,39 @@ threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original,
 
 # 3. Median split analysis of ERPs
 # 3.1. Compute medians
-low.threshold.group <- rep_data4[which(rep_data4$threshold.1 < 
-                                         median(rep_data4$threshold.1)),]$Subject
-high.threshold.group <- rep_data4[which(rep_data4$threshold.1 > 
-                                          median(rep_data4$threshold.1)),]$Subject
+low.threshold.group <- questionnaire.ERPs[which(questionnaire.ERPs$threshold.1 < 
+                                         median(questionnaire.ERPs$threshold.1)),]$Subject
+high.threshold.group <- questionnaire.ERPs[which(questionnaire.ERPs$threshold.1 > 
+                                          median(questionnaire.ERPs$threshold.1)),]$Subject
 
 # 3.2. Create factor for median split group
-rep_data4$split.group <- numeric(nrow(rep_data4))
-rep_data4[which(rep_data4$Subject %in% 
+questionnaire.ERPs$split.group <- numeric(nrow(questionnaire.ERPs))
+questionnaire.ERPs[which(questionnaire.ERPs$Subject %in% 
                   low.threshold.group),]$split.group <- 'low.thresh'
-rep_data4[which(rep_data4$Subject %in% 
+questionnaire.ERPs[which(questionnaire.ERPs$Subject %in% 
                   high.threshold.group),]$split.group <- 'high.thresh'
-rep_data4$split.group <- factor(rep_data4$split.group)
+questionnaire.ERPs$split.group <- factor(questionnaire.ERPs$split.group)
 
 # 3.3. Plot - median split group x awareness group
-table(rep_data4$split.group, rep_data4$group.original)
-plot(rep_data4$split.group, rep_data4$group.original, 
+table(questionnaire.ERPs$split.group, questionnaire.ERPs$group.original)
+plot(questionnaire.ERPs$split.group, questionnaire.ERPs$group.original, 
      main = "Median split group x awareness",
      xlab = "median split group", ylab = "awareness group")
 
 # 3.4. Chi-square - median split group x awareness group
-CrossTable(rep_data4$split.group, rep_data4$group.original, fisher = TRUE,
+CrossTable(questionnaire.ERPs$split.group, questionnaire.ERPs$group.original, fisher = TRUE,
            chisq = TRUE, expected = TRUE, sresid = TRUE, format = 'SPSS')
 
 # 3.5. ERPs between median-split groups
-rep_data_long2$split.group <- numeric(nrow(rep_data_long2))
-rep_data_long2[which(rep_data_long2$Subject %in% 
+rep.data.long2$split.group <- numeric(nrow(rep.data.long2))
+rep.data.long2[which(rep.data.long2$Subject %in% 
                        low.threshold.group),]$split.group <- 'low.thresh'
-rep_data_long2[which(rep_data_long2$Subject %in% 
+rep.data.long2[which(rep.data.long2$Subject %in% 
                        high.threshold.group),]$split.group <- 'high.thresh'
-rep_data_long2$split.group <- factor(rep_data_long2$split.group)
-t.test(occ.nd1 ~ split.group, data = rep_data_long2) #nd1
-t.test(left.nd2 ~ split.group, data = rep_data_long2) #nd2 left
-t.test(left.nd2 ~ split.group, data = rep_data_long2) #nd2 right
+rep.data.long2$split.group <- factor(rep.data.long2$split.group)
+t.test(occ.nd1 ~ split.group, data = rep.data.long2) #nd1
+t.test(left.nd2 ~ split.group, data = rep.data.long2) #nd2 left
+t.test(left.nd2 ~ split.group, data = rep.data.long2) #nd2 right
 
 # 3.6. Comparison Nd2 - session x configuration x median split group
 # 3.6.1. Line plots
@@ -626,13 +620,13 @@ anova(threshold_baseline, threshold_config, threshold_session, threshold_group.o
       threshold_config_session, threshold_session_group.original, threshold_config_group.original, 
       threshold_lme)
 
+
 # 4. Thresholds.1 across conditions
 t.test(threshold.1 ~ group.original, data = questionnaire.ERPs)
 t.test(threshold.2 ~ group.original, data = questionnaire.ERPs)
 
+
 # 5. Awareness ratings between session in unaware group
-
-
 # 5.1. Compare means in awareness index
 t.test(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2, 
        paired = TRUE)
