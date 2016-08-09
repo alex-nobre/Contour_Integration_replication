@@ -432,3 +432,20 @@ rep_data_long3 %>%
   labs(title = "ERPs x alpha power", x = "mean alpha power", 
        y = "mean ERP amplitude", 
        colour = "configuration")
+
+# Correlations
+cor.test(log(questionnaire.ERPs$mean.alpha.1), questionnaire.ERPs$occ.sqr.nd1_1)
+
+plot(log(questionnaire.ERPs$mean.alpha.1), questionnaire.ERPs$occ.sqr.nd1_1)
+
+# behavioral data
+# Plot block end intensities values by awareness group
+plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$ses1.Ph, 
+     col = questionnaire.ERPs$alpha.group, pch = 16, main = "Main task thresholds",
+     xlab = "Subject", ylab = "Threshold")
+legend(0, -0.2, legend = levels(questionnaire.ERPs$alpha.group), 
+       col = c("black", "red"),
+       pch = 16)
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$alpha.group == 'high.alpha', ]$ses1.Ph))
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$alpha.group == 'low.alpha', ]$ses1.Ph), 
+       col = 'red')

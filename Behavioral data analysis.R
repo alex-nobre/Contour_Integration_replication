@@ -22,7 +22,6 @@ library(effsize)
 library(multcomp)
 # Psychophysics packages
 library(quickpsy)
-library(MPDiR)
 library(psyphy)
 # Data report packages
 library(knitr)
@@ -104,7 +103,7 @@ plot.intensities <- function(intlist, subject) {
 }
 
 # 1.2. Plot intensities for all subjects
-pdf('timeseries.pdf')
+pdf('threshold estimation.pdf')
 for (x in 1:32) {
   par(new = TRUE)
   plot(seq(1:length(intensities.1[[x]])), intensities.1[[x]], ylim = c(-0.5, 0.5),
@@ -115,7 +114,7 @@ dev.off()
 par(new = FALSE)
 
 
-# 2. Plot block end intensities values
+# 2. Plot block end intensities values by awareness group
 plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$threshold.1, ylim = c(-0.5, 0.5), 
      col = questionnaire.ERPs$group.original, pch = 16, main = "Main task thresholds",
      xlab = "Subject", ylab = "Threshold")

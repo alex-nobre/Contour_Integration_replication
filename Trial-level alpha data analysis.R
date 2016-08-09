@@ -289,9 +289,9 @@ alpha.left.nd2.line
 
 # 2.7. right nd2
 # 2.7.1. ANOVA
-alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
+alpha.right.nd2.baseline <- lme(right.nd1 ~ 1, 
                                 random = ~1|Subject/configuration/alpha.power, 
-                                data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                                data = rep_data_alpha3[rep_data_alpha3$session == 2,], 
                           method = "ML") #baseline
 alpha.right.nd2.config <- update(alpha.right.nd2.baseline, .~. + configuration)
 alpha.right.nd2.alpha.power <- update(alpha.right.nd2.config, .~. + alpha.power)
@@ -303,9 +303,9 @@ anova(alpha.right.nd2.baseline, alpha.right.nd2.config, alpha.right.nd2.alpha.po
 summary(alpha.right.nd2.lme)
 
 # 2.7.2. Post-hocs
-alpha.right.nd2.lme <- lme(right.nd2 ~ configuration * alpha.power * alpha.group, 
+alpha.right.nd2.lme <- lme(right.nd1 ~ configuration * alpha.power * alpha.group, 
                             random = ~1|Subject/configuration/alpha.power, 
-                            data = rep_data_alpha3[rep_data_alpha3$session == 2,], 
+                            data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                             method = "ML")
 anova(alpha.right.nd2.lme)
 
@@ -330,6 +330,19 @@ alpha.right.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
        y = "Left Nd2 mean amplitude", 
        colour = "configuration")
 alpha.right.nd2.line
+
+# 2.7.4 Scatterplot
+plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$low.alpha.right.nd2.sqr_1, 
+     col = "red", pch = 16, main = "Right nd2 for low alpha trials",
+     xlab = "Subject", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$low.alpha.right.nd2.rand_1,
+       col = " black", pch = 16)
+legend(0, -0.2, legend = levels(rep.data.long2$configuration), 
+       col = c("black", "red"),
+       pch = 16)
+abline(h = mean(questionnaire.ERPs$low.alpha.right.nd2.sqr_1), col = "red")
+abline(h = mean(questionnaire.ERPs$low.alpha.right.nd2.rand_1), 
+       col = 'black')
 
 # 2.8. RL nd2
 # 2.8.1. ANOVA

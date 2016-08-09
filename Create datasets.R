@@ -210,10 +210,10 @@ rep.data.long2$log.alpha <- log(rep.data.long2$alpha)
 #-----------------------Trial-level alpha power data set------------------------
 # 4. Create new data frame for analysis with alpha as factor
 # 4.1. Remove base ERPs
-rep_data2 <- rep_data2[,-c(4:55)]
+rep_data3 <- rep_data2[,-c(4:55)]
 
 # 4.2. Reshape by session
-rep_data_alpha <- reshape(rep_data2, varying = 4:ncol(rep_data2), sep = "_", 
+rep_data_alpha <- reshape(rep_data3, varying = 4:ncol(rep_data3), sep = "_", 
                           direction = "long", 
                           new.row.names = NULL)
 rep_data_alpha[,ncol(rep_data_alpha)]<- NULL
@@ -256,10 +256,14 @@ rep_data_alpha3$alpha.power <- factor(rep_data_alpha3$alpha.power)
 # 5.1. Bind dprime values to wide data frame
 rep_data4 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
                    ses.rand.dprime_2, ses.dprime_1, ses.dprime_2)
-# 5.2. Bind RT values to data frame
+# 5.2.1. Bind RT values to data frame
 rep_data5 <- cbind(rep_data4, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.sqr.3, 
                    RT.mean.rand.1, RT.mean.rand.2, RT.mean.rand.3, RT.mean.1, 
                    RT.mean.2, RT.mean.3)
+# 5.2.2. Compute RT means across sessions
+questionnaire.ERPs$RT.1.2 <- rowMeans(questionnaire.ERPs[,
+                                      which(colnames(questionnaire.ERPs) == "RT.mean.1"):
+                                      which(colnames(questionnaire.ERPs) == "RT.mean.2")])
 
 # 5.3. Bind session threshold, proportion correct to data frame
 # 5.3.1. Thresholds
@@ -293,11 +297,37 @@ questionnaire.ERPs$alpha.sqr.2 <- sqr2.mean.alpha
 questionnaire.ERPs$alpha.rand.1 <- rand1.mean.alpha
 questionnaire.ERPs$alpha.rand.2 <- rand2.mean.alpha
 # 6.2. Compute means of raw alpha across conditions
+# All conditions
 questionnaire.ERPs$mean.alpha <- 
   rowMeans(questionnaire.ERPs[,which(colnames(questionnaire.ERPs) == 
                                        'alpha.sqr.1'): 
                                 which(colnames(questionnaire.ERPs) == 
                                         'alpha.rand.2')])
+# Session 1
+questionnaire.ERPs$mean.alpha.1 <- 
+  rowMeans(questionnaire.ERPs[,c(which(colnames(questionnaire.ERPs) == 
+                                       'alpha.sqr.1'), 
+                                which(colnames(questionnaire.ERPs) == 
+                                        'alpha.rand.1'))])
+# Session 2
+questionnaire.ERPs$mean.alpha.2 <- 
+  rowMeans(questionnaire.ERPs[,c(which(colnames(questionnaire.ERPs) == 
+                                         'alpha.sqr.2'), 
+                                 which(colnames(questionnaire.ERPs) == 
+                                         'alpha.rand.2'))])
+# Square
+questionnaire.ERPs$mean.alpha.sqr <- 
+  rowMeans(questionnaire.ERPs[,c(which(colnames(questionnaire.ERPs) == 
+                                         'alpha.sqr.1'), 
+                                 which(colnames(questionnaire.ERPs) == 
+                                         'alpha.sqr.2'))])
+# Random
+questionnaire.ERPs$mean.alpha.rand <- 
+  rowMeans(questionnaire.ERPs[,c(which(colnames(questionnaire.ERPs) == 
+                                         'alpha.rand.1'), 
+                                 which(colnames(questionnaire.ERPs) == 
+                                         'alpha.rand.2'))])
+
 # 6.3 Log alpha values by condition
 questionnaire.ERPs$log.alpha.sqr.1 <- log(questionnaire.ERPs$alpha.sqr.1)
 questionnaire.ERPs$log.alpha.sqr.2 <- log(questionnaire.ERPs$alpha.sqr.2)
@@ -349,12 +379,8 @@ levels(rep_data_alpha3$alpha.group) <- c("high alpha group", "low alpha group")
 # questionnaire.ERPs$aware.threshold.1 <- questionnaire.ERPs$threshold.1 *
 #   questionnaire.ERPs$conf.4.ses1
 
-# 9.2 Compute RT means across sessions
-questionnaire.ERPs$RT.1.2 <- rowMeans(questionnaire.ERPs[,
-                            which(colnames(questionnaire.ERPs) == "RT.mean.1"):
-                            which(colnames(questionnaire.ERPs) == "RT.mean.2")])
 
-# 9.3. Compute differences
+# 9.2. Compute differences
 # session 1
 questionnaire.ERPs$occ.diff.1 <- questionnaire.ERPs$low.alpha.occ.nd1.sqr_1 -
   questionnaire.ERPs$low.alpha.occ.nd1.rand_1

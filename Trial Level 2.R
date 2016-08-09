@@ -263,13 +263,13 @@ extract.ERPs <- function(ROIs.by.subject) {
   P3 <- ROIs.by.subject[[9]]
   LP <- ROIs.by.subject[[10]]
   C1 <- mean(C1[40:50])
-  P1 <- mean(P1[51:61])
+  P1 <- mean(P1[55:60])
   N1 <- mean(N1[62:75])
-  occ.window_1 <- mean(occ.window_1[80:90])
+  occ.window_1 <- mean(occ.window_1[82:95])
   occ.window_2 <- mean(occ.window_2[100:110])
   left.window_1 <- mean(left.window_1[80:90])
   left.window_2 <- mean(left.window_2[100:110])
-  right.window_1 <- mean(right.window_1[80:90])
+  right.window_1 <- mean(right.window_1[82:95])
   right.window_2 <- mean(right.window_2[100:110])
   right.left.window_1 <- mean(right.left.window_1[80:90])
   right.left.window_2 <- mean(right.left.window_2[100:110])

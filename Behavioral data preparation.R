@@ -22,7 +22,6 @@ library(effsize)
 library(multcomp)
 # Psychophysics packages
 library(quickpsy)
-library(MPDiR)
 library(psyphy)
 # Data report packages
 library(knitr)
