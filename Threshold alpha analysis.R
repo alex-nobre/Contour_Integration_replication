@@ -37,17 +37,6 @@ extract.all.trials <- function(behav.file) {
   subj.data
 }
 
-# # 1.2. Extract trials for eeg analysis
-# # 1.2.1. Random
-# eeg.trials.rand <- function(behav.file) {
-#   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-#                           header = TRUE, sep = "\t", skip = 12)
-#   colnames(subj.data)[5] <- "target.presence"
-#   non.target.trials.rand <- subset(subj.data, target.presence == 0 & Configuration == 0)
-#   row.names(non.target.trials.rand) <- seq_len(nrow(non.target.trials.rand))
-#   non.target.trials.rand
-# }
-
 
 # 2. Bin trials by target
 bin.trials <- function(all.trials) {
@@ -139,40 +128,52 @@ remove.AR.trials <- function(trials.subset, AR.trial.list) {
   trials.subset <- trials.subset[-AR.trial.list[[data.index]]$remove.blinks,]
 }
 
+# 7. Single function
+threshold.alpha.data <- function(behav.file, configuration) {
+  all.trials <- extract.all.trials(behav.file)
+  binned.trials <- bin.trials(all.trials)
+  med.split.trials <- median.split.by.int(binned.trials)
+  if (configuration == 'square') {
+    sqr.trials <- subset.no.target.sqr(med.split.trials)
+    binned.sqr <- remove.AR.trials(sqr.trials, sqr.AR.list)
+  } else if (configuration == 'random') {
+    rand.trials <- subset.no.target.rand(med.split.trials)
+    binned.rand <- remove.AR.trials(rand.trials, rand.AR.list)
+  }
+}
 
-
-
-# test------------------------------------------------------------------------
-# Remove AR trials
-teegt <- extract.all.trials("Implicit segregation IB_01_1.txt")
-teegt <- teegt[-tartrials]
-row.names(teegt) <- seq_len(nrow(teegt))
-teegt <- teegt[-c(1, 89, 98, 174, 263),]
-tartrials <- AR.trials.rand("Trials removed in AR rand.txt")
-
-
-# teegt test
-teegt <- extract.all.trials("Implicit segregation IB_01_1.txt")
+tproduct <- threshold.alpha.data("Implicit segregation IB_20_1.txt", 'square')
+# View(tproduct)
+#
+tproduct.sqr <- mapply(threshold.alpha.data, behav_ses_1, 'square')
+# # test------------------------------------------------------------------------
+# # TEEGT TEST
+# #extract trials
+teegt <- extract.all.trials("Implicit segregation IB_20_1.txt")
 View(teegt)
 
+# bin data
 tbins <- bin.trials(teegt)
 View(tbins)
 
+# median split
 tmed <- median.split.by.int(tbins)
 View(tmed)
 
+# subset rand
 tmed.rand <- subset.no.target.rand(tmed)
 View(tmed.rand)
 row.names(tmed.rand) <- seq_len(nrow(tmed.rand))
 
+# subset sqr
 tmed.sqr <- subset.no.target.sqr(tmed)
 View(tmed.sqr)
 row.names(tmed.sqr) <- seq_len(nrow(tmed.sqr))
 
+# index for list names
 data.index <- paste(tmed.rand[1,"SubID"],tmed.rand[1,"Phase"], sep = "_")
 
-tmed.rand[1,"Phase"]
-
+# AR rand
 tmed.rand.AR <- tmed.rand[-rand.AR.list[[data.index]]$gen.artif,]
 tmed.rand.AR.n <- tmed.rand[-rand.AR.list[[names(rand.AR.list[1])]]$gen.artif,]
 View(tmed.rand.AR)
@@ -180,6 +181,9 @@ row.names(tmed.rand.AR) <- seq_len(nrow(tmed.rand.AR))
 tmed.rand.AR.2 <- tmed.rand.AR[-rand.AR.list[[data.index]]$remove.blinks,]
 View(tmed.rand.AR.2)
 
+tmed.rand.AR.2 <- tmed.rand.AR[-(nrow(tmed.sqr.AR) + 1),]
+
+# AR sqr
 tmed.sqr.AR <- tmed.sqr[-sqr.AR.list[[data.index]]$gen.artif,]
 View(tmed.sqr.AR)
 row.names(tmed.sqr.AR) <- seq_len(nrow(tmed.sqr.AR))
@@ -191,6 +195,13 @@ tmed.rand.AR.3 <- remove.AR.trials(tmed.rand, rand.AR.list)
 tmed.rand.AR.3 == tmed.rand.AR.2
 
 names(rand.AR.list[1])
+
+# Remove AR trials
+teegt <- extract.all.trials("Implicit segregation IB_01_1.txt")
+teegt <- teegt[-tartrials]
+row.names(teegt) <- seq_len(nrow(teegt))
+teegt <- teegt[-c(1, 89, 98, 174, 263),]
+tartrials <- AR.trials.rand("Trials removed in AR rand.txt")
 
 # MEDIAN SPLIT 1 - 1ST SEGMENTS NA AND NO CONDITION FOR INCLUSION OF MEDIAN
 tbins$bin.group <- NA
@@ -213,25 +224,25 @@ tbins$bin.group <- NA
 tbins[tbins$Decrement == "NaN",]$Decrement <- NA
 if (nrow(tbins[tbins$target.presence == 1,]) %% 2 != 0) {
   low.decrement.bins <- tbins[(tbins$target.presence == 1 &  tbins$Decrement <
-                                 median(c(tbins[tbins$target.presence == 1,]$Decrement[1], 
+                                 median(c(tbins[tbins$target.presence == 1,]$Decrement[1],
                                           tbins[tbins$target.presence == 1,]$Decrement))),]$bin
   high.decrement.bins <- tbins[(tbins$target.presence == 1 & tbins$Decrement >
-                                  median(c(tbins[tbins$target.presence == 1,]$Decrement[1], 
+                                  median(c(tbins[tbins$target.presence == 1,]$Decrement[1],
                                            tbins[tbins$target.presence == 1,]$Decrement))),]$bin
 } else if (nrow(tbins[tbins$target.presence == 1,]) %% 2 == 0) {
   low.decrement.bins <- tbins[(tbins$target.presence == 1 &  tbins$Decrement <
                                  median(tbins[tbins$target.presence == 1,]$Decrement)),]$bin
   high.decrement.bins <- tbins[(tbins$target.presence == 1 & tbins$Decrement >
-                                  median(tbins[tbins$target.presence == 1,]$Decrement)),]$bin 
+                                  median(tbins[tbins$target.presence == 1,]$Decrement)),]$bin
 }
 tbins[which(tbins$bin %in%
               low.decrement.bins),]$bin.group <- 'low.bin'
 tbins[which(tbins$bin %in%
               high.decrement.bins),]$bin.group <- 'high.bin'
-if (tbins[tbins$target.presence == 1,]$Decrement[1] < 
+if (tbins[tbins$target.presence == 1,]$Decrement[1] <
   median(tbins[tbins$target.presence == 1,]$Decrement)) {
   tbins[tbins$bin == 0,]$bin.group <- "low.bin"
-} else if (tbins[tbins$target.presence == 1,]$Decrement[1] > 
+} else if (tbins[tbins$target.presence == 1,]$Decrement[1] >
            median(tbins[tbins$target.presence == 1,]$Decrement)) {
   tbins[tbins$bin == 0,]$bin.group <- "high.bin"
 }
@@ -240,10 +251,10 @@ if (tbins[tbins$target.presence == 1,]$Decrement[1] <
 
 # tests for concatenation of first decrement value and decrements vector using sort and median
 sort(tbins[tbins$target.presence == 1,]$Decrement)
-sort(c(tbins[tbins$target.presence == 1,]$Decrement[1], 
+sort(c(tbins[tbins$target.presence == 1,]$Decrement[1],
      tbins[tbins$target.presence == 1,]$Decrement))
 tbins[tbins$target.presence == 1,]$Decrement[1]
-median(c(tbins[tbins$target.presence == 1,]$Decrement[1], 
+median(c(tbins[tbins$target.presence == 1,]$Decrement[1],
        tbins[tbins$target.presence == 1,]$Decrement))
 
 median(tbins[tbins$target.presence == 1,]$Decrement)
@@ -263,7 +274,7 @@ tbins[(tbins$target.presence == 1 & tbins$Decrement < median(tbins[tbins$target.
 
 
 # tests to make column of vectors as lists instead of factor - NOT USED!!!
-# tartrials <- read.table("Trials removed in AR rand.txt", 
+# tartrials <- read.table("Trials removed in AR rand.txt",
 #            header = TRUE, sep = "\t", row.names = NULL,
 #            colClasses = c("character", "list", "list"))
 # View(tartrials)
