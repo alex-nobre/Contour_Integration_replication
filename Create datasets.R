@@ -156,7 +156,6 @@ rep_data2$high.alpha.LP.rand_2 <- unlist(lapply(high.alpha.ROIs.rand2.means, "[[
 
 
 #-----------------------------------Base ERPs long data frame-----------------------------
-
 # 2.1. reshape by session
 rep_data_long <- reshape(rep_data2, varying = 4:ncol(rep_data2), sep = "_", 
                          direction = "long", 
@@ -563,3 +562,38 @@ rep.data.bin3$group.original <- factor(rep.data.bin3$group.original)
 rep.data.bin3$session <- factor(rep.data.bin3$session)
 rep.data.bin3$configuration <- factor(rep.data.bin3$configuration)
 rep.data.bin3$intensity.bin <- factor(rep.data.bin3$intensity.bin)
+
+#-------------------------Add threshold alpha to long data frame----------------------------
+# 11. Add to long data frame
+# 11.1. Raw alpha values
+rep.data.bin3$alpha <- numeric(nrow(rep.data.bin3))
+# Square, session 1
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.sqr1
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.sqr1
+# Square, session 2
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.sqr2
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.sqr2
+# Random, session 1
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.rand1
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand1
+# Random, session 2
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.rand2
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand2
+# 11.2. Log alpha values
+rep.data.bin3$log.alpha <- log(rep.data.bin3$alpha)

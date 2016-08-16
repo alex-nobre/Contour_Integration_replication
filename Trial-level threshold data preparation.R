@@ -324,49 +324,6 @@ high.bin.mean.alpha.rand1 <- sapply(high.bin.alpha.rand1, mean)
 low.bin.mean.alpha.rand2 <- sapply(low.bin.alpha.rand2, mean)
 high.bin.mean.alpha.rand2 <- sapply(high.bin.alpha.rand2, mean)
 
-# 11. Add to long data frame
-# 11.1. Raw alpha values
-rep.data.bin3$alpha <- numeric(nrow(rep.data.bin3))
-# Square, session 1
-rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
-                rep.data.bin3$session == 1 & 
-                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.sqr1
-rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
-                rep.data.bin3$session == 1 & 
-                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.sqr1
-# Square, session 2
-rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
-                rep.data.bin3$session == 2 & 
-                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.sqr2
-rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
-                rep.data.bin3$session == 2 & 
-                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.sqr2
-# Random, session 1
-rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
-                rep.data.bin3$session == 1 & 
-                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.rand1
-rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
-                rep.data.bin3$session == 1 & 
-                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand1
-# Random, session 2
-rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
-                rep.data.bin3$session == 2 & 
-                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.rand2
-rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
-                rep.data.bin3$session == 2 & 
-                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand2
-# 11.2. Log alpha values
-rep.data.bin3$log.alpha <- log(rep.data.bin3$alpha)
-
-
-
-
-
-
-
-
-
-
 
 
 

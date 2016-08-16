@@ -17,5 +17,11 @@ source("./Trial-level alpha data preparation.R")
 # Behavioral data
 source("./Behavioral data preparation.R")
 
+# Artifact rejection lists
+source("./ARlist.R")
+
+# Trial-level threshold ERPs and alpha
+source("./Trial-level threshold data preparation.R")
+
 # Build dataframes
 source("./Create datasets.R")
