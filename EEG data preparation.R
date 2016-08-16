@@ -38,7 +38,7 @@ rand2_fnames <- list.files('./Data/Data_BVA', pattern = "2_All ROIs Rand")
 list_fnames <- c(sqr1_fnames, sqr2_fnames, rand1_fnames, rand2_fnames)
 
 #------------------------Individual windows extraction by file------------------------
-# Function to extract ROIs
+# 1. Function to extract ROIs means
 rois.means <- function(eeg.file) {
   eeg.data <- read.delim(paste('./Data/Data_BVA/', eeg.file, sep = ""), sep = " ", 
                           dec = ",", header = TRUE)
@@ -88,21 +88,21 @@ rand1_dat <- data.frame(matrix(unlist(rand1_means), nrow = length(rand1_means), 
 rand2_dat <- data.frame(matrix(unlist(rand2_means), nrow = length(rand2_means), byrow = T))
 
 # Rename columms
-colnames(sqr1_dat) <- c("C1.sqr_1", "P1.sqr_1", "N1.sqr_1", "occ.sqr.nd1_1", 
-                        "occ.sqr.nd2_1", "left.sqr.nd1_1", "left.sqr.nd2_1", 
-                        "right.sqr.nd1_1", "right.sqr.nd2_1", "RL.sqr.nd1_1", 
+colnames(sqr1_dat) <- c("C1.sqr_1", "P1.sqr_1", "N1.sqr_1", "occ.sqr.nd1_1",
+                        "occ.sqr.nd2_1", "left.sqr.nd1_1", "left.sqr.nd2_1",
+                        "right.sqr.nd1_1", "right.sqr.nd2_1", "RL.sqr.nd1_1",
                         "RL.sqr.nd2_1", "N2.sqr_1", "LP.sqr_1")
-colnames(sqr2_dat) <- c("C1.sqr_2", "P1.sqr_2", "N1.sqr_2", "occ.sqr.nd1_2", 
-                        "occ.sqr.nd2_2", "left.sqr.nd1_2", "left.sqr.nd2_2", 
-                        "right.sqr.nd1_2", "right.sqr.nd2_2", "RL.sqr.nd1_2", 
+colnames(sqr2_dat) <- c("C1.sqr_2", "P1.sqr_2", "N1.sqr_2", "occ.sqr.nd1_2",
+                        "occ.sqr.nd2_2", "left.sqr.nd1_2", "left.sqr.nd2_2",
+                        "right.sqr.nd1_2", "right.sqr.nd2_2", "RL.sqr.nd1_2",
                         "RL.sqr.nd2_2", "N2.sqr_2", "LP.sqr_2")
-colnames(rand1_dat) <- c("C1.rand_1", "P1.rand_1", "N1.rand_1", "occ.rand.nd1_1", 
-                         "occ.rand.nd2_1", "left.rand.nd1_1", "left.rand.nd2_1", 
-                         "right.rand.nd1_1", "right.rand.nd2_1", "RL.rand.nd1_1", 
+colnames(rand1_dat) <- c("C1.rand_1", "P1.rand_1", "N1.rand_1", "occ.rand.nd1_1",
+                         "occ.rand.nd2_1", "left.rand.nd1_1", "left.rand.nd2_1",
+                         "right.rand.nd1_1", "right.rand.nd2_1", "RL.rand.nd1_1",
                          "RL.rand.nd2_1", "N2.rand_1", "LP.rand_1")
-colnames(rand2_dat) <- c("C1.rand_2", "P1.rand_2", "N1.rand_2", "occ.rand.nd1_2", 
-                         "occ.rand.nd2_2", "left.rand.nd1_2", "left.rand.nd2_2", 
-                         "right.rand.nd1_2", "right.rand.nd2_2", "RL.rand.nd1_2", 
+colnames(rand2_dat) <- c("C1.rand_2", "P1.rand_2", "N1.rand_2", "occ.rand.nd1_2",
+                         "occ.rand.nd2_2", "left.rand.nd1_2", "left.rand.nd2_2",
+                         "right.rand.nd1_2", "right.rand.nd2_2", "RL.rand.nd1_2",
                          "RL.rand.nd2_2", "N2.rand_2", "LP.rand_2")
 
 # Merge data frames
@@ -115,12 +115,12 @@ group <- c("unaware", "aware", "unaware", "unaware", "unaware",
                     "aware", "aware", "unaware", "aware", "unaware", "unaware",
                     "unaware", "unaware", "unaware", "unaware",
                     "unaware", "aware", "aware", "unaware", "unaware")
-group.original <- c("unaware", "aware", "unaware", "unaware", "aware", 
-                             "aware", "unaware", "aware", "aware", "aware", "aware", 
-                             "unaware", "aware", "aware", "unaware", "aware", "aware", 
-                             "aware", "aware", "unaware", "aware", "unaware", "unaware", 
-                             "unaware", "unaware", "unaware", 
-                             "unaware", "aware", "aware", "aware", "aware", 
+group.original <- c("unaware", "aware", "unaware", "unaware", "aware",
+                             "aware", "unaware", "aware", "aware", "aware", "aware",
+                             "unaware", "aware", "aware", "unaware", "aware", "aware",
+                             "aware", "aware", "unaware", "aware", "unaware", "unaware",
+                             "unaware", "unaware", "unaware",
+                             "unaware", "aware", "aware", "aware", "aware",
                              "unaware")
 
 # Add subject number
@@ -131,7 +131,7 @@ rep_data <- cbind(Subject, group, group.original, rep_data)
 row.names(rep_data) <- 1:32
 
 # #--------------------------------Include location as factor--------------------------------
-# 
+#
 # # Rename columns to separate electrode location number using sep = "_"
 # names(rep_data_long2)[names(rep_data_long2) == "left.nd2"] <- "nd2_1"
 # names(rep_data_long2)[names(rep_data_long2) == "right.nd2"] <- "nd2_2"
@@ -140,14 +140,14 @@ row.names(rep_data) <- 1:32
 #                           direction = "long", idvar = " Subject", sep = "_")
 # # Rename configuration column name
 # names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
-# 
+#
 # # Rename configuration levels
 # rep_data_long2$location[rep_data_long2$location == 1] <- "left"
 # rep_data_long2$location[rep_data_long2$location == 2] <- "right"
-# 
+#
 # #Remove redundant subject column
 # rep_data_long2[,ncol(rep_data_long2)]<- NULL
-#  
+#
 # # # Convert configuration, group and session to factors
 # rep_data_long2$group <- factor(rep_data_long2$group)
 # rep_data_long2$group.original <- factor(rep_data_long2$group.original)
