@@ -396,3 +396,170 @@ questionnaire.ERPs$left.diff.2 <- questionnaire.ERPs$low.alpha.left.nd2.sqr_2 -
 questionnaire.ERPs$right.diff.2 <- questionnaire.ERPs$low.alpha.right.nd2.sqr_2 -
   questionnaire.ERPs$low.alpha.right.nd2.rand_2
 
+#-------------------------------Create data set for binned ERPs------------------------
+# 10.1. Remove base and trial-alpha ERPs
+rep_data6 <- rep_data2[,-c(4:length(rep_data2))]
+
+# 10.1 Low bin
+# 10.1.1. Square, session 1
+rep_data6$low.bin.C1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 1))
+rep_data6$low.bin.P1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 2))
+rep_data6$low.bin.N1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 3))
+rep_data6$low.bin.occ.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 4))
+rep_data6$low.bin.occ.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 5))
+rep_data6$low.bin.left.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 6))
+rep_data6$low.bin.left.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 7))
+rep_data6$low.bin.right.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 8))
+rep_data6$low.bin.right.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 9))
+rep_data6$low.bin.RL.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 10))
+rep_data6$low.bin.RL.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 11))
+rep_data6$low.bin.N2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 12))
+rep_data6$low.bin.P3.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 13))
+rep_data6$low.bin.LP.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 14))
+# 10.1.2. Square, session 2
+rep_data6$low.bin.C1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 1))
+rep_data6$low.bin.P1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 2))
+rep_data6$low.bin.N1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 3))
+rep_data6$low.bin.occ.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 4))
+rep_data6$low.bin.occ.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 5))
+rep_data6$low.bin.left.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 6))
+rep_data6$low.bin.left.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 7))
+rep_data6$low.bin.right.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 8))
+rep_data6$low.bin.right.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 9))
+rep_data6$low.bin.RL.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 10))
+rep_data6$low.bin.RL.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 11))
+rep_data6$low.bin.N2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 12))
+rep_data6$low.bin.P3.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 13))
+rep_data6$low.bin.LP.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 14))
+# 10.1.3. Random, session 1
+rep_data6$low.bin.C1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 1))
+rep_data6$low.bin.P1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 2))
+rep_data6$low.bin.N1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 3))
+rep_data6$low.bin.occ.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 4))
+rep_data6$low.bin.occ.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 5))
+rep_data6$low.bin.left.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 6))
+rep_data6$low.bin.left.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 7))
+rep_data6$low.bin.right.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 8))
+rep_data6$low.bin.right.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 9))
+rep_data6$low.bin.RL.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 10))
+rep_data6$low.bin.RL.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 11))
+rep_data6$low.bin.N2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 12))
+rep_data6$low.bin.P3.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 13))
+rep_data6$low.bin.LP.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 14))
+# 10.1.4. Random, session 2
+rep_data6$low.bin.C1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 1))
+rep_data6$low.bin.P1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 2))
+rep_data6$low.bin.N1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 3))
+rep_data6$low.bin.occ.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 4))
+rep_data6$low.bin.occ.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 5))
+rep_data6$low.bin.left.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 6))
+rep_data6$low.bin.left.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 7))
+rep_data6$low.bin.right.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 8))
+rep_data6$low.bin.right.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 9))
+rep_data6$low.bin.RL.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 10))
+rep_data6$low.bin.RL.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 11))
+rep_data6$low.bin.N2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 12))
+rep_data6$low.bin.P3.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 13))
+rep_data6$low.bin.LP.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 14))
+
+# 10.2. High bin
+# 10.2.1. Square, session 1
+rep_data6$high.bin.C1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 1))
+rep_data6$high.bin.P1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 2))
+rep_data6$high.bin.N1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 3))
+rep_data6$high.bin.occ.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 4))
+rep_data6$high.bin.occ.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 5))
+rep_data6$high.bin.left.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 6))
+rep_data6$high.bin.left.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 7))
+rep_data6$high.bin.right.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 8))
+rep_data6$high.bin.right.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 9))
+rep_data6$high.bin.RL.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 10))
+rep_data6$high.bin.RL.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 11))
+rep_data6$high.bin.N2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 12))
+rep_data6$high.bin.P3.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 13))
+rep_data6$high.bin.LP.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 14))
+# 10.2.2. Square, session 2
+rep_data6$high.bin.C1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 1))
+rep_data6$high.bin.P1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 2))
+rep_data6$high.bin.N1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 3))
+rep_data6$high.bin.occ.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 4))
+rep_data6$high.bin.occ.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 5))
+rep_data6$high.bin.left.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 6))
+rep_data6$high.bin.left.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 7))
+rep_data6$high.bin.right.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 8))
+rep_data6$high.bin.right.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 9))
+rep_data6$high.bin.RL.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 10))
+rep_data6$high.bin.RL.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 11))
+rep_data6$high.bin.N2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 12))
+rep_data6$high.bin.P3.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 13))
+rep_data6$high.bin.LP.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 14))
+# 10.2.3. Random, session 1
+rep_data6$high.bin.C1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 1))
+rep_data6$high.bin.P1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 2))
+rep_data6$high.bin.N1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 3))
+rep_data6$high.bin.occ.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 4))
+rep_data6$high.bin.occ.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 5))
+rep_data6$high.bin.left.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 6))
+rep_data6$high.bin.left.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 7))
+rep_data6$high.bin.right.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 8))
+rep_data6$high.bin.right.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 9))
+rep_data6$high.bin.RL.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 10))
+rep_data6$high.bin.RL.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 11))
+rep_data6$high.bin.N2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 12))
+rep_data6$high.bin.P3.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 13))
+rep_data6$high.bin.LP.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 14))
+# 10.2.4. Random, session 2
+rep_data6$high.bin.C1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 1))
+rep_data6$high.bin.P1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 2))
+rep_data6$high.bin.N1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 3))
+rep_data6$high.bin.occ.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 4))
+rep_data6$high.bin.occ.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 5))
+rep_data6$high.bin.left.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 6))
+rep_data6$high.bin.left.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 7))
+rep_data6$high.bin.right.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 8))
+rep_data6$high.bin.right.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 9))
+rep_data6$high.bin.RL.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 10))
+rep_data6$high.bin.RL.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 11))
+rep_data6$high.bin.N2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 12))
+rep_data6$high.bin.P3.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 13))
+rep_data6$high.bin.LP.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 14))
+
+# 10.3. Reshape by session
+rep.data.bin <- reshape(rep_data6, varying = 4:ncol(rep_data6), sep = "_", 
+                        direction = "long", 
+                        new.row.names = NULL)
+rep.data.bin[,ncol(rep.data.bin)]<- NULL
+names(rep.data.bin)[names(rep.data.bin) == "time"] <- "session"
+
+# 10.4. Tidyr by configuration
+rep.data.bin2 <- rep.data.bin %>%
+  unite(sqr,contains("sqr")) %>%
+  unite(rand,contains("rand")) %>%
+  gather(configuration,values,sqr:rand) %>%
+  separate(values,c("low.bin.C1","low.bin.P1","low.bin.N1","low.bin.occ.nd1",
+                    "low.bin.occ.nd2","low.bin.left.nd1","low.bin.left.nd2",
+                    "low.bin.right.nd1","low.bin.right.nd2","low.bin.RL.nd1",
+                    "low.bin.RL.nd2","low.bin.N2","low.bin.P3","low.bin.LP",
+                    "high.bin.C1","high.bin.P1","high.bin.N1","high.bin.occ.nd1",
+                    "high.bin.occ.nd2","high.bin.left.nd1","high.bin.left.nd2",
+                    "high.bin.right.nd1","high.bin.right.nd2","high.bin.RL.nd1",
+                    "high.bin.RL.nd2","high.bin.N2","high.bin.P3","high.bin.LP"),
+           sep = "_",
+           convert = TRUE)
+
+# 10.5. Tidyr by intensity bin
+rep.data.bin3 <- rep.data.bin2 %>%
+  unite(low.bin,contains("low.bin")) %>%
+  unite(high.bin,contains("high.bin")) %>%
+  gather(intensity.bin,values,low.bin:high.bin) %>%
+  separate(values,c("C1","P1","N1","occ.nd1","occ.nd2","left.nd1","left.nd2",
+                    "right.nd1","right.nd2","RL.nd1","RL.nd2","N2","P3","LP"),
+           sep = "_",
+           convert = TRUE)
+
+# 10.6. Coerce to factors
+rep.data.bin3$group <- factor(rep.data.bin3$group)
+rep.data.bin3$group.original <- factor(rep.data.bin3$group.original)
+rep.data.bin3$session <- factor(rep.data.bin3$session)
+rep.data.bin3$configuration <- factor(rep.data.bin3$configuration)
+rep.data.bin3$intensity.bin <- factor(rep.data.bin3$intensity.bin)

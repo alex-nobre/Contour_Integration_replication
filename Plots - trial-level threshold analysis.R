@@ -237,44 +237,44 @@ high.bin.list.indices <- which(rep_data2$Subject %in% high.bin.group)
 # 3.2. Create groups for plotting by condition
 # Low bin trial-level, sqr1 
 low.group.low.bin.sqr1 <- lapply(lapply(split.ROIs(low.bin.segments.sqr1.corrected[low.bin.list.indices]),
-                                          function(l)do.call(rbind, l)), colMeans)
+                                        function(l)do.call(rbind, l)), colMeans)
 high.group.low.bin.sqr1 <- lapply(lapply(split.ROIs(low.bin.segments.sqr1.corrected[high.bin.list.indices]),
-                                           function(l)do.call(rbind, l)), colMeans)
+                                         function(l)do.call(rbind, l)), colMeans)
 # high bin trial-level, sqr1
 low.group.high.bin.sqr1 <- lapply(lapply(split.ROIs(high.bin.segments.sqr1.corrected[low.bin.list.indices]),
-                                           function(l)do.call(rbind, l)), colMeans)
+                                         function(l)do.call(rbind, l)), colMeans)
 high.group.high.bin.sqr1 <- lapply(lapply(split.ROIs(high.bin.segments.sqr1.corrected[high.bin.list.indices]),
-                                            function(l)do.call(rbind, l)), colMeans)
+                                          function(l)do.call(rbind, l)), colMeans)
 # Low bin trial-level, sqr2 
 low.group.low.bin.sqr2 <- lapply(lapply(split.ROIs(low.bin.segments.sqr2.corrected[low.bin.list.indices]),
-                                          function(l)do.call(rbind, l)), colMeans)
+                                        function(l)do.call(rbind, l)), colMeans)
 high.group.low.bin.sqr2 <- lapply(lapply(split.ROIs(low.bin.segments.sqr2.corrected[high.bin.list.indices]),
-                                           function(l)do.call(rbind, l)), colMeans)
+                                         function(l)do.call(rbind, l)), colMeans)
 # high bin trial-level, sqr2
 low.group.high.bin.sqr2 <- lapply(lapply(split.ROIs(high.bin.segments.sqr2.corrected[low.bin.list.indices]),
-                                           function(l)do.call(rbind, l)), colMeans)
+                                         function(l)do.call(rbind, l)), colMeans)
 high.group.high.bin.sqr2 <- lapply(lapply(split.ROIs(high.bin.segments.sqr2.corrected[high.bin.list.indices]),
-                                            function(l)do.call(rbind, l)), colMeans)
+                                          function(l)do.call(rbind, l)), colMeans)
 # Low bin trial-level, rand1 
 low.group.low.bin.rand1 <- lapply(lapply(split.ROIs(low.bin.segments.rand1.corrected[low.bin.list.indices]),
-                                           function(l)do.call(rbind, l)), colMeans)
+                                         function(l)do.call(rbind, l)), colMeans)
 high.group.low.bin.rand1 <- lapply(lapply(split.ROIs(low.bin.segments.rand1.corrected[high.bin.list.indices]),
-                                            function(l)do.call(rbind, l)), colMeans)
+                                          function(l)do.call(rbind, l)), colMeans)
 # high bin trial-level, rand1
 low.group.high.bin.rand1 <- lapply(lapply(split.ROIs(high.bin.segments.rand1.corrected[low.bin.list.indices]),
-                                            function(l)do.call(rbind, l)), colMeans)
+                                          function(l)do.call(rbind, l)), colMeans)
 high.group.high.bin.rand1 <- lapply(lapply(split.ROIs(high.bin.segments.rand1.corrected[high.bin.list.indices]),
-                                             function(l)do.call(rbind, l)), colMeans)
+                                           function(l)do.call(rbind, l)), colMeans)
 # Low bin trial-level, rand2 
 low.group.low.bin.rand2 <- lapply(lapply(split.ROIs(low.bin.segments.rand2.corrected[low.bin.list.indices]),
-                                           function(l)do.call(rbind, l)), colMeans)
+                                         function(l)do.call(rbind, l)), colMeans)
 high.group.low.bin.rand2 <- lapply(lapply(split.ROIs(low.bin.segments.rand2.corrected[high.bin.list.indices]),
-                                            function(l)do.call(rbind, l)), colMeans)
+                                          function(l)do.call(rbind, l)), colMeans)
 # high bin trial-level, rand2
 low.group.high.bin.rand2 <- lapply(lapply(split.ROIs(high.bin.segments.rand2.corrected[low.bin.list.indices]),
-                                            function(l)do.call(rbind, l)), colMeans)
+                                          function(l)do.call(rbind, l)), colMeans)
 high.group.high.bin.rand2 <- lapply(lapply(split.ROIs(high.bin.segments.rand2.corrected[high.bin.list.indices]),
-                                             function(l)do.call(rbind, l)), colMeans)
+                                           function(l)do.call(rbind, l)), colMeans)
 
 
 

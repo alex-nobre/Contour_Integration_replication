@@ -150,48 +150,48 @@ threshold.alpha.data <- function(behav.file, config.type) {
 # 1. Bin data for all conditions
 bin.trials.sqr1 <- mapply(threshold.alpha.data, behav_ses_1, 'square', SIMPLIFY = FALSE)
 bin.trials.sqr2 <- mapply(threshold.alpha.data, behav_ses_2, 'square', SIMPLIFY = FALSE)
-bin.trials.rand1 <- mapply(threshold.alpha.data, behav_ses_1, 'square', SIMPLIFY = FALSE)
-bin.trials.rand2 <- mapply(threshold.alpha.data, behav_ses_2, 'square', SIMPLIFY = FALSE)
+bin.trials.rand1 <- mapply(threshold.alpha.data, behav_ses_1, 'random', SIMPLIFY = FALSE)
+bin.trials.rand2 <- mapply(threshold.alpha.data, behav_ses_2, 'random', SIMPLIFY = FALSE)
 
 # 2. Get indices for each bin
 # 2.1. Square 1
 low.bin.indices.sqr1 <- lapply(bin.trials.sqr1, function(data) {
-                                which(data$bin.group == "low.bin")})
+  which(data$bin.group == "low.bin")})
 high.bin.indices.sqr1 <- lapply(bin.trials.sqr1, function(data) {
-                                which(data$bin.group == "high.bin")})
+  which(data$bin.group == "high.bin")})
 # 2.2. Square 2
 low.bin.indices.sqr2 <- lapply(bin.trials.sqr2, function(data) {
-                                which(data$bin.group == "low.bin")})
+  which(data$bin.group == "low.bin")})
 high.bin.indices.sqr2 <- lapply(bin.trials.sqr2, function(data) {
-                                which(data$bin.group == "high.bin")})
+  which(data$bin.group == "high.bin")})
 # 2.3. Random 1
 low.bin.indices.rand1 <- lapply(bin.trials.rand1, function(data) {
-                                which(data$bin.group == "low.bin")})
+  which(data$bin.group == "low.bin")})
 high.bin.indices.rand1 <- lapply(bin.trials.rand1, function(data) {
-                                which(data$bin.group == "high.bin")})
+  which(data$bin.group == "high.bin")})
 # 2.4. Random 2
 low.bin.indices.rand2 <- lapply(bin.trials.rand2, function(data) {
-                                which(data$bin.group == "low.bin")})
+  which(data$bin.group == "low.bin")})
 high.bin.indices.rand2 <- lapply(bin.trials.rand2, function(data) {
-                                which(data$bin.group == "high.bin")})
+  which(data$bin.group == "high.bin")})
 
 
-# 3. ERPs
+# 3. Divide ERPs by low and high bins
 # 3.1. Square 1
 low.bin.segments.sqr1 <- mapply(function(segments, indices) {segments[indices]},
                                 sqr1.trial.dat, low.bin.indices.sqr1)
 high.bin.segments.sqr1 <- mapply(function(segments, indices) {segments[indices]},
-                                sqr1.trial.dat, high.bin.indices.sqr1)
+                                 sqr1.trial.dat, high.bin.indices.sqr1)
 # 3.2. Square 2
 low.bin.segments.sqr2 <- mapply(function(segments, indices) {segments[indices]},
                                 sqr2.trial.dat, low.bin.indices.sqr2)
 high.bin.segments.sqr2 <- mapply(function(segments, indices) {segments[indices]},
-                                sqr2.trial.dat, high.bin.indices.sqr2)
+                                 sqr2.trial.dat, high.bin.indices.sqr2)
 # 3.3. Random 1
 low.bin.segments.rand1 <- mapply(function(segments, indices) {segments[indices]},
-                                rand1.trial.dat, low.bin.indices.rand1)
+                                 rand1.trial.dat, low.bin.indices.rand1)
 high.bin.segments.rand1 <- mapply(function(segments, indices) {segments[indices]},
-                                 rand1.trial.dat, high.bin.indices.rand1)
+                                  rand1.trial.dat, high.bin.indices.rand1)
 # 3.4. Random 2
 low.bin.segments.rand2 <- mapply(function(segments, indices) {segments[indices]},
                                  rand2.trial.dat, low.bin.indices.rand2)
@@ -217,24 +217,24 @@ high.bin.segments.rand2.average <- lapply(high.bin.segments.rand2, average.segme
 # 5. Baseline correction by session, configuration and alpha power
 # 5.1. Square, session 1
 low.bin.segments.sqr1.corrected <- lapply(low.bin.segments.sqr1.average, 
-                                            baseline.correction)
+                                          baseline.correction)
 high.bin.segments.sqr1.corrected <- lapply(high.bin.segments.sqr1.average, 
-                                             baseline.correction)
+                                           baseline.correction)
 # 5.2. Square, session 2
 low.bin.segments.sqr2.corrected <- lapply(low.bin.segments.sqr2.average, 
-                                            baseline.correction)
+                                          baseline.correction)
 high.bin.segments.sqr2.corrected <- lapply(high.bin.segments.sqr2.average, 
-                                             baseline.correction)
+                                           baseline.correction)
 # 5.3.Random, session 1
 low.bin.segments.rand1.corrected <- lapply(low.bin.segments.rand1.average, 
-                                             baseline.correction)
+                                           baseline.correction)
 high.bin.segments.rand1.corrected <- lapply(high.bin.segments.rand1.average, 
-                                              baseline.correction)
+                                            baseline.correction)
 # 5.4. Random, session 1
 low.bin.segments.rand2.corrected <- lapply(low.bin.segments.rand2.average, 
-                                             baseline.correction)
+                                           baseline.correction)
 high.bin.segments.rand2.corrected <- lapply(high.bin.segments.rand2.average, 
-                                              baseline.correction)
+                                            baseline.correction)
 
 # 6. Join segments by ROI
 # 6.1. Square, session 1
@@ -268,203 +268,95 @@ high.bin.grand.averages.rand2 <- lapply(high.bin.ROIs.rand2, compute.grand.avera
 # 8. Compute ERP mean amplitudes by session, configuration and alpha power
 # 8.1. Square, session 1
 low.bin.ROIs.sqr1.means <- lapply(low.bin.segments.sqr1.corrected, 
-                                    extract.ERPs)
+                                  extract.ERPs)
 high.bin.ROIs.sqr1.means <- lapply(high.bin.segments.sqr1.corrected, 
-                                     extract.ERPs)
+                                   extract.ERPs)
 # 8.2. Square, session 2
 low.bin.ROIs.sqr2.means <- lapply(low.bin.segments.sqr2.corrected, 
-                                    extract.ERPs)
+                                  extract.ERPs)
 high.bin.ROIs.sqr2.means <- lapply(high.bin.segments.sqr2.corrected, 
-                                     extract.ERPs)
+                                   extract.ERPs)
 # 8.3. Random, session 1
 low.bin.ROIs.rand1.means <- lapply(low.bin.segments.rand1.corrected, 
-                                     extract.ERPs)
+                                   extract.ERPs)
 high.bin.ROIs.rand1.means <- lapply(high.bin.segments.rand1.corrected, 
-                                      extract.ERPs)
+                                    extract.ERPs)
 # 8.4. Random, session 1
 low.bin.ROIs.rand2.means <- lapply(low.bin.segments.rand2.corrected, 
-                                     extract.ERPs)
+                                   extract.ERPs)
 high.bin.ROIs.rand2.means <- lapply(high.bin.segments.rand2.corrected, 
-                                      extract.ERPs)
+                                    extract.ERPs)
 
 
-#-------------------------------Create data set for binned ERPs------------------------
-# 4. Create new data frame for analysis with alpha as factor
-# 4.1. Remove base and trial-alpha ERPs
-rep_data6 <- rep_data2[,-c(4:length(rep_data2))]
+# 9. Divide alpha power according to low and high bins
+# 9.1. Square 1
+low.bin.alpha.sqr1 <- mapply(function(segments, indices) {segments[indices]},
+                             sqr1.alpha, low.bin.indices.sqr1)
+high.bin.alpha.sqr1 <- mapply(function(segments, indices) {segments[indices]},
+                              sqr1.alpha, high.bin.indices.sqr1)
+# 9.2. Square 2
+low.bin.alpha.sqr2 <- mapply(function(segments, indices) {segments[indices]},
+                             sqr2.alpha, low.bin.indices.sqr2)
+high.bin.alpha.sqr2 <- mapply(function(segments, indices) {segments[indices]},
+                              sqr2.alpha, high.bin.indices.sqr2)
+# 9.3. Random 1
+low.bin.alpha.rand1 <- mapply(function(segments, indices) {segments[indices]},
+                              rand1.alpha, low.bin.indices.rand1)
+high.bin.alpha.rand1 <- mapply(function(segments, indices) {segments[indices]},
+                               rand1.alpha, high.bin.indices.rand1)
+# 9.4. Random 2
+low.bin.alpha.rand2 <- mapply(function(segments, indices) {segments[indices]},
+                              rand2.alpha, low.bin.indices.rand2)
+high.bin.alpha.rand2 <- mapply(function(segments, indices) {segments[indices]},
+                               rand2.alpha, high.bin.indices.rand2)
 
-#---------------------------Trial level alpha data frame-------------------------
-# 1. Append to data frame with average ERPs
-rep_data2 <- rep_data
+# 10. Compute mean power for each subject
+# 10.1. Square, session 1
+low.bin.mean.alpha.sqr1 <- sapply(low.bin.alpha.sqr1, mean)
+high.bin.mean.alpha.sqr1 <- sapply(high.bin.alpha.sqr1, mean)
+# 10.2. Square, session 2
+low.bin.mean.alpha.sqr2 <- sapply(low.bin.alpha.sqr2, mean)
+high.bin.mean.alpha.sqr2 <- sapply(high.bin.alpha.sqr2, mean)
+# 10.3. Random, session 1
+low.bin.mean.alpha.rand1 <- sapply(low.bin.alpha.rand1, mean)
+high.bin.mean.alpha.rand1 <- sapply(high.bin.alpha.rand1, mean)
+# 10.4. Random, session 2
+low.bin.mean.alpha.rand2 <- sapply(low.bin.alpha.rand2, mean)
+high.bin.mean.alpha.rand2 <- sapply(high.bin.alpha.rand2, mean)
 
-# 1.1 Low bin
-# 1.1.1. Square, session 1
-rep_data6$low.bin.C1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 1))
-rep_data6$low.bin.P1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 2))
-rep_data6$low.bin.N1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 3))
-rep_data6$low.bin.occ.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 4))
-rep_data6$low.bin.occ.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 5))
-rep_data6$low.bin.left.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 6))
-rep_data6$low.bin.left.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 7))
-rep_data6$low.bin.right.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 8))
-rep_data6$low.bin.right.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 9))
-rep_data6$low.bin.RL.nd1.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 10))
-rep_data6$low.bin.RL.nd2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 11))
-rep_data6$low.bin.N2.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 12))
-rep_data6$low.bin.P3.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 13))
-rep_data6$low.bin.LP.sqr_1 <- unlist(lapply(low.bin.ROIs.sqr1.means, "[[", 14))
-# 1.1.2. Square, session 2
-rep_data6$low.bin.C1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 1))
-rep_data6$low.bin.P1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 2))
-rep_data6$low.bin.N1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 3))
-rep_data6$low.bin.occ.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 4))
-rep_data6$low.bin.occ.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 5))
-rep_data6$low.bin.left.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 6))
-rep_data6$low.bin.left.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 7))
-rep_data6$low.bin.right.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 8))
-rep_data6$low.bin.right.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 9))
-rep_data6$low.bin.RL.nd1.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 10))
-rep_data6$low.bin.RL.nd2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 11))
-rep_data6$low.bin.N2.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 12))
-rep_data6$low.bin.P3.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 13))
-rep_data6$low.bin.LP.sqr_2 <- unlist(lapply(low.bin.ROIs.sqr2.means, "[[", 14))
-# 1.1.3. Random, session 1
-rep_data6$low.bin.C1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 1))
-rep_data6$low.bin.P1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 2))
-rep_data6$low.bin.N1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 3))
-rep_data6$low.bin.occ.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 4))
-rep_data6$low.bin.occ.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 5))
-rep_data6$low.bin.left.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 6))
-rep_data6$low.bin.left.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 7))
-rep_data6$low.bin.right.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 8))
-rep_data6$low.bin.right.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 9))
-rep_data6$low.bin.RL.nd1.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 10))
-rep_data6$low.bin.RL.nd2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 11))
-rep_data6$low.bin.N2.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 12))
-rep_data6$low.bin.P3.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 13))
-rep_data6$low.bin.LP.rand_1 <- unlist(lapply(low.bin.ROIs.rand1.means, "[[", 14))
-# 1.1.4. Random, session 2
-rep_data6$low.bin.C1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 1))
-rep_data6$low.bin.P1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 2))
-rep_data6$low.bin.N1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 3))
-rep_data6$low.bin.occ.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 4))
-rep_data6$low.bin.occ.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 5))
-rep_data6$low.bin.left.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 6))
-rep_data6$low.bin.left.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 7))
-rep_data6$low.bin.right.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 8))
-rep_data6$low.bin.right.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 9))
-rep_data6$low.bin.RL.nd1.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 10))
-rep_data6$low.bin.RL.nd2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 11))
-rep_data6$low.bin.N2.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 12))
-rep_data6$low.bin.P3.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 13))
-rep_data6$low.bin.LP.rand_2 <- unlist(lapply(low.bin.ROIs.rand2.means, "[[", 14))
-
-# 1.2. High bin
-# 1.2.1. Square, session 1
-rep_data6$high.bin.C1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 1))
-rep_data6$high.bin.P1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 2))
-rep_data6$high.bin.N1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 3))
-rep_data6$high.bin.occ.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 4))
-rep_data6$high.bin.occ.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 5))
-rep_data6$high.bin.left.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 6))
-rep_data6$high.bin.left.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 7))
-rep_data6$high.bin.right.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 8))
-rep_data6$high.bin.right.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 9))
-rep_data6$high.bin.RL.nd1.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 10))
-rep_data6$high.bin.RL.nd2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 11))
-rep_data6$high.bin.N2.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 12))
-rep_data6$high.bin.P3.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 13))
-rep_data6$high.bin.LP.sqr_1 <- unlist(lapply(high.bin.ROIs.sqr1.means, "[[", 14))
-# 1.2.2. Square, session 2
-rep_data6$high.bin.C1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 1))
-rep_data6$high.bin.P1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 2))
-rep_data6$high.bin.N1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 3))
-rep_data6$high.bin.occ.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 4))
-rep_data6$high.bin.occ.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 5))
-rep_data6$high.bin.left.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 6))
-rep_data6$high.bin.left.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 7))
-rep_data6$high.bin.right.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 8))
-rep_data6$high.bin.right.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 9))
-rep_data6$high.bin.RL.nd1.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 10))
-rep_data6$high.bin.RL.nd2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 11))
-rep_data6$high.bin.N2.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 12))
-rep_data6$high.bin.P3.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 13))
-rep_data6$high.bin.LP.sqr_2 <- unlist(lapply(high.bin.ROIs.sqr2.means, "[[", 14))
-# 1.2.3. Random, session 1
-rep_data6$high.bin.C1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 1))
-rep_data6$high.bin.P1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 2))
-rep_data6$high.bin.N1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 3))
-rep_data6$high.bin.occ.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 4))
-rep_data6$high.bin.occ.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 5))
-rep_data6$high.bin.left.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 6))
-rep_data6$high.bin.left.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 7))
-rep_data6$high.bin.right.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 8))
-rep_data6$high.bin.right.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 9))
-rep_data6$high.bin.RL.nd1.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 10))
-rep_data6$high.bin.RL.nd2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 11))
-rep_data6$high.bin.N2.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 12))
-rep_data6$high.bin.P3.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 13))
-rep_data6$high.bin.LP.rand_1 <- unlist(lapply(high.bin.ROIs.rand1.means, "[[", 14))
-# 1.2.4. Random, session 2
-rep_data6$high.bin.C1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 1))
-rep_data6$high.bin.P1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 2))
-rep_data6$high.bin.N1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 3))
-rep_data6$high.bin.occ.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 4))
-rep_data6$high.bin.occ.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 5))
-rep_data6$high.bin.left.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 6))
-rep_data6$high.bin.left.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 7))
-rep_data6$high.bin.right.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 8))
-rep_data6$high.bin.right.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 9))
-rep_data6$high.bin.RL.nd1.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 10))
-rep_data6$high.bin.RL.nd2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 11))
-rep_data6$high.bin.N2.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 12))
-rep_data6$high.bin.P3.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 13))
-rep_data6$high.bin.LP.rand_2 <- unlist(lapply(high.bin.ROIs.rand2.means, "[[", 14))
-
-# 4.2. Reshape by session
-rep.data.bin <- reshape(rep_data6, varying = 4:ncol(rep_data6), sep = "_", 
-                          direction = "long", 
-                          new.row.names = NULL)
-rep.data.bin[,ncol(rep.data.bin)]<- NULL
-names(rep.data.bin)[names(rep.data.bin) == "time"] <- "session"
-
-# 4.3. Tidyr by configuration
-rep.data.bin2 <- rep.data.bin %>%
-  unite(sqr,contains("sqr")) %>%
-  unite(rand,contains("rand")) %>%
-  gather(configuration,values,sqr:rand) %>%
-  separate(values,c("low.bin.C1","low.bin.P1","low.bin.N1","low.bin.occ.nd1",
-                    "low.bin.occ.nd2","low.bin.left.nd1","low.bin.left.nd2",
-                    "low.bin.right.nd1","low.bin.right.nd2","low.bin.RL.nd1",
-                    "low.bin.RL.nd2","low.bin.N2","low.bin.P3","low.bin.LP",
-                    "high.bin.C1","high.bin.P1","high.bin.N1","high.bin.occ.nd1",
-                    "high.bin.occ.nd2","high.bin.left.nd1","high.bin.left.nd2",
-                    "high.bin.right.nd1","high.bin.right.nd2","high.bin.RL.nd1",
-                    "high.bin.RL.nd2","high.bin.N2","high.bin.P3","high.bin.LP"),
-           sep = "_",
-           convert = TRUE)
-
-# 4.4. Tidyr by intensity bin
-rep.data.bin3 <- rep.data.bin2 %>%
-  unite(low.bin,contains("low.bin")) %>%
-  unite(high.bin,contains("high.bin")) %>%
-  gather(intensity.bin,values,low.bin:high.bin) %>%
-  separate(values,c("C1","P1","N1","occ.nd1","occ.nd2","left.nd1","left.nd2",
-                    "right.nd1","right.nd2","RL.nd1","RL.nd2","N2","P3","LP"),
-           sep = "_",
-           convert = TRUE)
-
-# 4.5. Coerce to factors
-rep.data.bin3$group <- factor(rep.data.bin3$group)
-rep.data.bin3$group.original <- factor(rep.data.bin3$group.original)
-rep.data.bin3$session <- factor(rep.data.bin3$session)
-rep.data.bin3$configuration <- factor(rep.data.bin3$configuration)
-rep.data.bin3$intensity.bin <- factor(rep.data.bin3$intensity.bin)
-
-# Alpha power
-
-
-
+# 11. Add to long data frame
+# 11.1. Raw alpha values
+rep.data.bin3$alpha <- numeric(nrow(rep.data.bin3))
+# Square, session 1
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.sqr1
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.sqr1
+# Square, session 2
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.sqr2
+rep.data.bin3[rep.data.bin3$configuration == 'sqr' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.sqr2
+# Random, session 1
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.rand1
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 1 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand1
+# Random, session 2
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "low.bin",]$alpha <- low.bin.mean.alpha.rand2
+rep.data.bin3[rep.data.bin3$configuration == 'rand' & 
+                rep.data.bin3$session == 2 & 
+                rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand2
+# 11.2. Log alpha values
+rep.data.bin3$log.alpha <- log(rep.data.bin3$alpha)
 
 
 
@@ -481,14 +373,14 @@ rep.data.bin3$intensity.bin <- factor(rep.data.bin3$intensity.bin)
 # # test------------------------------------------------------------------------
 # # TEEGT TEST
 # #extract trials
-teegt <- extract.all.trials("Implicit segregation IB_20_1.txt")
+teegt <- extract.all.trials("Implicit segregation IB_30_2.txt")
 View(teegt)
 
 # bin data
 tbins <- bin.trials(teegt)
 View(tbins)
 
-is.na(tbins[1,"Decrement"] == FALSE)
+which(is.na(tmed[1,"bin.group"]))
 # median split
 tmed <- median.split.by.int(tbins)
 View(tmed)
@@ -545,9 +437,9 @@ low.decrement.bins <- tbins[(tbins$target.presence == 1 & tbins$Decrement <
 high.decrement.bins <- tbins[(tbins$target.presence == 1 & tbins$Decrement >
                                 median(tbins[tbins$target.presence == 1,]$Decrement)),]$bin
 tbins[which(tbins$bin %in%
-                      low.decrement.bins),]$bin.group <- 'low.bin'
+              low.decrement.bins),]$bin.group <- 'low.bin'
 tbins[which(tbins$bin %in%
-                      high.decrement.bins),]$bin.group <- 'high.bin'
+              high.decrement.bins),]$bin.group <- 'high.bin'
 tbins[tbins$bin == 0,]$bin.group <- "low.bin"
 binned.data
 
@@ -573,7 +465,7 @@ tbins[which(tbins$bin %in%
 tbins[which(tbins$bin %in%
               high.decrement.bins),]$bin.group <- 'high.bin'
 if (tbins[tbins$target.presence == 1,]$Decrement[1] <
-  median(tbins[tbins$target.presence == 1,]$Decrement)) {
+    median(tbins[tbins$target.presence == 1,]$Decrement)) {
   tbins[tbins$bin == 0,]$bin.group <- "low.bin"
 } else if (tbins[tbins$target.presence == 1,]$Decrement[1] >
            median(tbins[tbins$target.presence == 1,]$Decrement)) {

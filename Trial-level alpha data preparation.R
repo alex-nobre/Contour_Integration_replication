@@ -103,7 +103,7 @@ average.segments <- function(subj.segments) {
   points.averages.rois <- lapply(lapply(segments.by.roi, function(l)do.call(rbind, l)), 
                                  colMeans)
 }
- 
+
 #--------------------------------Extract trial-level ERPs---------------------------
 # 6. Apply segment extraction function to all subjects in a condition
 sqr1.trial.dat <- lapply(sqr1.trialERP.files, subject.trialERPs)
@@ -277,33 +277,33 @@ extract.ERPs <- function(ROIs.by.subject) {
   P3 <- mean(P3[112:162])
   LP <- mean(LP[130:160])
   ERPs.means <- list(C1, P1, N1, occ.window_1, occ.window_2, left.window_1, 
-                         left.window_2, right.window_1, right.window_2, 
-                         right.left.window_1, right.left.window_2, N2, P3, LP)
+                     left.window_2, right.window_1, right.window_2, 
+                     right.left.window_1, right.left.window_2, N2, P3, LP)
 }
 
 
-  
+
 # 18. Compute ERP mean amplitudes by session, configuration and alpha power
 # 18.1. Square, session 1
 low.alpha.ROIs.sqr1.means <- lapply(low.alpha.segments.sqr1.corrected, 
-                                            extract.ERPs)
+                                    extract.ERPs)
 high.alpha.ROIs.sqr1.means <- lapply(high.alpha.segments.sqr1.corrected, 
-                                             extract.ERPs)
+                                     extract.ERPs)
 # 18.2. Square, session 2
 low.alpha.ROIs.sqr2.means <- lapply(low.alpha.segments.sqr2.corrected, 
-                                            extract.ERPs)
+                                    extract.ERPs)
 high.alpha.ROIs.sqr2.means <- lapply(high.alpha.segments.sqr2.corrected, 
-                                             extract.ERPs)
+                                     extract.ERPs)
 # 18.3. Random, session 1
 low.alpha.ROIs.rand1.means <- lapply(low.alpha.segments.rand1.corrected, 
-                                             extract.ERPs)
+                                     extract.ERPs)
 high.alpha.ROIs.rand1.means <- lapply(high.alpha.segments.rand1.corrected, 
-                                              extract.ERPs)
+                                      extract.ERPs)
 # 18.4. Random, session 1
 low.alpha.ROIs.rand2.means <- lapply(low.alpha.segments.rand2.corrected, 
-                                             extract.ERPs)
+                                     extract.ERPs)
 high.alpha.ROIs.rand2.means <- lapply(high.alpha.segments.rand2.corrected, 
-                                              extract.ERPs)
+                                      extract.ERPs)
 
 #---------------------------------------test----------------------------------------------
 # tpoints <- subject.trialERPs("01_1_All ROIS Alpha Sqr .dat")
