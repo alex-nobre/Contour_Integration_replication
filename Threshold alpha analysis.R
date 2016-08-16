@@ -89,13 +89,15 @@ median.split.by.int <- function(binned.data) {
                       low.decrement.bins),]$bin.group <- 'low.bin'
   binned.data[which(binned.data$bin %in% 
                       high.decrement.bins),]$bin.group <- 'high.bin'
-  # Assign trials before 1st target to a bin.group based on position relative to median
-  if (binned.data[binned.data$target.presence == 1,]$Decrement[1] < 
-      median(binned.data[binned.data$target.presence == 1,]$Decrement)) {
-    binned.data[binned.data$bin == 0,]$bin.group <- "low.bin"
-  } else if (binned.data[binned.data$target.presence == 1,]$Decrement[1] > 
-             median(binned.data[binned.data$target.presence == 1,]$Decrement)) {
-    binned.data[binned.data$bin == 0,]$bin.group <- "high.bin"
+  # Assign trials before 1st target to a bin.group if 1st trial is a target-absent trial
+  if (is.na(binned.data[1, "Decrement"]) == TRUE) { # 1st trial is target-absent
+    if (binned.data[binned.data$target.presence == 1,]$Decrement[1] < # Decrement in 1st bin < median
+        median(binned.data[binned.data$target.presence == 1,]$Decrement)) {
+      binned.data[binned.data$bin == 0,]$bin.group <- "low.bin" 
+    } else if (binned.data[binned.data$target.presence == 1,]$Decrement[1] > # Decrement in 1st bin > median
+               median(binned.data[binned.data$target.presence == 1,]$Decrement)) {
+      binned.data[binned.data$bin == 0,]$bin.group <- "high.bin"
+    }
   }
   # return median-split data frame
   binned.data
@@ -129,23 +131,24 @@ remove.AR.trials <- function(trials.subset, AR.trial.list) {
 }
 
 # 7. Single function
-threshold.alpha.data <- function(behav.file, configuration) {
+threshold.alpha.data <- function(behav.file, config.type) {
   all.trials <- extract.all.trials(behav.file)
   binned.trials <- bin.trials(all.trials)
   med.split.trials <- median.split.by.int(binned.trials)
-  if (configuration == 'square') {
+  if (config.type == 'square') {
     sqr.trials <- subset.no.target.sqr(med.split.trials)
-    binned.sqr <- remove.AR.trials(sqr.trials, sqr.AR.list)
-  } else if (configuration == 'random') {
+    binned.trials <- remove.AR.trials(sqr.trials, sqr.AR.list)
+  } else if (config.type == 'random') {
     rand.trials <- subset.no.target.rand(med.split.trials)
-    binned.rand <- remove.AR.trials(rand.trials, rand.AR.list)
+    binned.trials <- remove.AR.trials(rand.trials, rand.AR.list)
   }
+  binned.trials
 }
 
-tproduct <- threshold.alpha.data("Implicit segregation IB_20_1.txt", 'square')
+tproduct <- threshold.alpha.data("Implicit segregation IB_37_1.txt", 'square')
 # View(tproduct)
 #
-tproduct.sqr <- mapply(threshold.alpha.data, behav_ses_1, 'square')
+tproduct.sqr <- mapply(threshold.alpha.data, behav_ses_1, 'square', SIMPLIFY = FALSE)
 # # test------------------------------------------------------------------------
 # # TEEGT TEST
 # #extract trials
@@ -156,6 +159,7 @@ View(teegt)
 tbins <- bin.trials(teegt)
 View(tbins)
 
+is.na(tbins[1,"Decrement"] == FALSE)
 # median split
 tmed <- median.split.by.int(tbins)
 View(tmed)

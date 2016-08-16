@@ -1,11 +1,14 @@
 
+# For files with no segments removed in either phase, a large number (10000) is used to make
+# the removal process useless (i.e., not remove anything)
 # 1. BUild list for random segments
 rand.AR.list <- list(
   "1_1" = list(gen.artif = c(19, 44, 81, 89, 151, 166, 180, 194), 
               remove.blinks = c(1, 89, 98, 174, 263)),
   "1_2" =	list(gen.artif = c(36, 74, 82, 107, 110, 119, 124, 134, 135, 159, 186, 188, 
                               200, 201, 217, 233, 235, 236, 240, 253, 256, 259, 261, 265, 267, 
-                              268, 269, 270, 271), 	remove.blinks = 10000),
+                              268, 269, 270, 271), 	
+               remove.blinks = 10000),
   "2_1" = list(gen.artif = c(1, 4, 12, 22, 25, 32, 36, 49, 60, 61, 
                              62, 64, 69, 72, 73, 80, 82, 84, 85, 88, 
                              89, 90, 104, 116, 119, 122, 132, 133, 134, 137, 
@@ -514,8 +517,8 @@ sqr.AR.list <- list(
                               156, 185, 189), 	
                 remove.blinks = c(71, 150, 155)),
   "37_1" = list(gen.artif = c(3, 4, 9, 10, 15, 27, 47, 51, 58, 108, 
-                              113, 120, 131, 152, 168, 190)), 
-                remove.blinks = c(39, 76, 114, 115, 136, 197),
+                              113, 120, 131, 152, 168, 190), 
+                remove.blinks = c(39, 76, 114, 115, 136, 197)),
   "37_2" =	list(gen.artif = c(7, 12, 55, 81, 109, 114, 115, 146), 	
                 remove.blinks = c(138, 197))
 )
