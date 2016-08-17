@@ -30,7 +30,7 @@ library(knitr)
 
 #-------------------------------------------------------------------------------------
 dataset <- questionnaire.ERPs
-# dataset <- rep_data_long3
+# dataset <- rep.data.long2
 # dataset <- rep_data_alpha3
 
 # 0. Save graphical default settings
@@ -38,15 +38,15 @@ defaults <- par()
 
 # 1. ERPs x alpha group
 # set contrasts
-contrasts(rep_data_long3$configuration) <- c(-1, 1) # contrasts for config
-contrasts(rep_data_long3$session) <- c(-1, 1) # contrasts for session
-contrasts(rep_data_long3$alpha.group) <- c(-1, 1) # contrasts for alpha.group
+contrasts(rep.data.long2$configuration) <- c(-1, 1) # contrasts for config
+contrasts(rep.data.long2$session) <- c(-1, 1) # contrasts for session
+contrasts(rep.data.long2$alpha.group) <- c(-1, 1) # contrasts for alpha.group
 
 # 1.1. C1
 # 1.1.1. ANOVA
 alpha.C1.baseline <- lme(C1 ~ 1, 
                          random = ~1|Subject/configuration, 
-                         data = rep_data_long3[rep_data_long3$session == 1,], 
+                         data = rep.data.long2[rep.data.long2$session == 1,], 
                          method = "ML") #baseline
 alpha.C1.config <- update(alpha.C1.baseline, .~. + configuration)
 alpha.C1.alpha.group <- update(alpha.C1.config, .~. + alpha.group)
@@ -55,7 +55,7 @@ alpha.C1.lme <- update(alpha.C1.alpha.group, .~. +
 anova(alpha.C1.baseline, alpha.C1.config, alpha.C1.alpha.group, 
       alpha.C1.lme)
 # 1.1.2. Line plot
-alpha.C1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.C1.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                         aes(x = alpha.group, y = C1, 
                             colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -69,7 +69,7 @@ alpha.C1.line
 # 1.2.1. ANOVA
 alpha.P1.baseline <- lme(P1 ~ 1, 
                          random = ~1|Subject/configuration, 
-                         data = rep_data_long3[rep_data_long3$session == 1,], 
+                         data = rep.data.long2[rep.data.long2$session == 1,], 
                          method = "ML") #baseline
 alpha.P1.config <- update(alpha.P1.baseline, .~. + configuration)
 alpha.P1.alpha.group <- update(alpha.P1.config, .~. + alpha.group)
@@ -79,7 +79,7 @@ anova(alpha.P1.baseline, alpha.P1.config, alpha.P1.alpha.group,
       alpha.P1.lme)
 
 # 1.2.2. Line plot
-alpha.P1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.P1.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                         aes(x = alpha.group, y = P1, 
                             colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -93,7 +93,7 @@ alpha.P1.line
 # 1.3.1. ANOVA
 alpha.N1.baseline <- lme(N1 ~ 1, 
                           random = ~1|Subject/configuration, 
-                         rep_data_long3[rep_data_long3$session == 1,], 
+                         rep.data.long2[rep.data.long2$session == 1,], 
                           method = "ML") #baseline
 alpha.N1.config <- update(alpha.N1.baseline, .~. + configuration)
 alpha.N1.alpha.group <- update(alpha.N1.config, .~. + alpha.group)
@@ -103,7 +103,7 @@ anova(alpha.N1.baseline, alpha.N1.config, alpha.N1.alpha.group,
       alpha.N1.lme)
 
 # 1.3.2. Line plot
-alpha.N1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.N1.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                          aes(x = alpha.group, y = N1, 
                              colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -117,7 +117,7 @@ alpha.N1.line
 # 1.4.1. ANOVA
 alpha.nd1.baseline <- lme(occ.nd1 ~ 1, 
                               random = ~1|Subject/configuration, 
-                              data = rep_data_long3[rep_data_long3$session == 1,], 
+                              data = rep.data.long2[rep.data.long2$session == 1,], 
                           method = "ML") #baseline
 alpha.nd1.config <- update(alpha.nd1.baseline, .~. + configuration)
 alpha.nd1.alpha.group <- update(alpha.nd1.config, .~. + alpha.group)
@@ -128,7 +128,7 @@ anova(alpha.nd1.baseline, alpha.nd1.config,
       alpha.nd1.lme)
 
 # 1.4.2. Line plot
-alpha.nd1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.nd1.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                              aes(x = alpha.group, y = occ.nd1, 
                                                  colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -138,11 +138,30 @@ alpha.nd1.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,],
        colour = "configuration")
 alpha.nd1.line
 
+# 1.4.3. Scatterplot
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$occ.diff.1, 
+     col = "red", pch = 16, main = "mean alpha 1 x nd1  amplitude",
+     xlab = "mean alpha", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$occ.diff.2,
+       col = " black", pch = 16)
+abline(lm(questionnaire.ERPs$occ.diff.1 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = "red")
+abline(lm(questionnaire.ERPs$occ.diff.2 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("nd1 diff 1", "nd1 diff 2"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
+
 # 1.5. Nd2 left
 # 1.5.1. ANOVA
 alpha.nd2.left.baseline <- lme(left.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
-                               data = rep_data_long3[rep_data_long3$session == 1,], 
+                               data = rep.data.long2[rep.data.long2$session == 1,], 
                                method = "ML") #baseline
 alpha.nd2.left.config <- update(alpha.nd2.left.baseline, .~. + configuration)
 alpha.nd2.left.alpha.group <- update(alpha.nd2.left.config, .~. + alpha.group)
@@ -153,7 +172,7 @@ anova(alpha.nd2.left.baseline, alpha.nd2.left.config,
       alpha.nd2.left.lme)
 
 # 1.5.2. Line plot
-alpha.nd2.left.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.nd2.left.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                               aes(x = alpha.group, y = left.nd2, 
                                                   colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -164,11 +183,29 @@ alpha.nd2.left.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,],
        colour = "configuration")
 alpha.nd2.left.line
 
+# 1.5.3.
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1, 
+     col = "red", pch = 16, main = "mean alpha 1 x left Nd2 amplitude",
+     xlab = "mean alpha", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.2,
+       col = " black", pch = 16)
+abline(lm(questionnaire.ERPs$left.diff.1 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = "red")
+abline(lm(questionnaire.ERPs$left.diff.2 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("left diff 1", "left diff 2"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
 # 1.6. Nd2 right
 # 1.6.1. ANOVA
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
-                               data = rep_data_long3[rep_data_long3$session == 1,], 
+                               data = rep.data.long2[rep.data.long2$session == 1,], 
                                method = "ML") #baseline
 alpha.right.nd2.config <- update(alpha.right.nd2.baseline, .~. + configuration)
 alpha.right.nd2.alpha.group <- update(alpha.right.nd2.config, .~. + alpha.group)
@@ -185,7 +222,7 @@ summary(alpha.right.nd2.lme)
 lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group)
 
 # 1.6.3. Line plot
-alpha.right.nd2.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.right.nd2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                               aes(x = alpha.group, y = right.nd2, 
                                   colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -196,11 +233,30 @@ alpha.right.nd2.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,],
        colour = "configuration")
 alpha.right.nd2.line
 
+# 1.6.4. Correlations scatterplot
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.1, 
+     col = "red", pch = 16, main = "mean alpha 1 x right Nd2 amplitude",
+     xlab = "mean alpha", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.2,
+       col = " black", pch = 16)
+abline(lm(questionnaire.ERPs$right.diff.1 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = "red")
+abline(lm(questionnaire.ERPs$right.diff.2 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("right diff 1", "right diff 2"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
+
 # 1.7. Nd2 RL
 # 1.7.1. ANOVA
 alpha.nd2.RL.baseline <- lme(RL.nd2 ~ 1, 
                                 random = ~1|Subject/configuration, 
-                                data = rep_data_long3[rep_data_long3$session == 1,], 
+                                data = rep.data.long2[rep.data.long2$session == 1,], 
                                 method = "ML") #baseline
 alpha.nd2.RL.config <- update(alpha.nd2.RL.baseline, .~. + configuration)
 alpha.nd2.RL.alpha.group <- update(alpha.nd2.RL.config, .~. + alpha.group)
@@ -211,7 +267,7 @@ anova(alpha.nd2.RL.baseline, alpha.nd2.RL.config,
       alpha.nd2.RL.lme)
 
 # 1.7.2. Line plot
-alpha.nd2.RL.line <- ggplot(rep_data_long3[rep_data_long3$session == 1,], 
+alpha.nd2.RL.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                                aes(x = alpha.group, y = RL.nd2, 
                                    colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -227,7 +283,7 @@ alpha.nd2.RL.line
 # 1.10.1. ANOVA
 alpha.LP.baseline <- lme(LP ~ 1, 
                              random = ~1|Subject/configuration, 
-                             data = rep_data_long3[rep_data_long3$session == 1,], 
+                             data = rep.data.long2[rep.data.long2$session == 1,], 
                              method = "ML") #baseline
 alpha.LP.config <- update(alpha.LP.baseline, .~. + configuration)
 alpha.LP.alpha.group <- update(alpha.LP.config, .~. + alpha.group)
@@ -240,7 +296,7 @@ anova(alpha.LP.baseline, alpha.LP.config, alpha.LP.alpha.group, alpha.LP.lme)
 # 2. Alpha power x awareness group
 # 2.1. Line plots
 # 2.1.1 New grouping
-alpha.line <- ggplot(rep_data_long3, aes(x = group, y = alpha, 
+alpha.line <- ggplot(rep.data.long2, aes(x = group, y = alpha, 
                                          colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
@@ -250,7 +306,7 @@ alpha.line <- ggplot(rep_data_long3, aes(x = group, y = alpha,
 alpha.line
 
 # 2.1.2. Alpha, original grouping
-alpha.line <- ggplot(rep_data_long3, aes(x = group.original, y = alpha, 
+alpha.line <- ggplot(rep.data.long2, aes(x = group.original, y = alpha, 
                                          colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
@@ -260,7 +316,7 @@ alpha.line <- ggplot(rep_data_long3, aes(x = group.original, y = alpha,
 alpha.line
 
 # 2.1.3. Log alpha, new grouping
-log.alpha.line <- ggplot(rep_data_long3, aes(x = group, y = log.alpha, 
+log.alpha.line <- ggplot(rep.data.long2, aes(x = group, y = log.alpha, 
                                              colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
@@ -271,7 +327,7 @@ log.alpha.line <- ggplot(rep_data_long3, aes(x = group, y = log.alpha,
 log.alpha.line
 
 # 2.1.4. Log alpha, original grouping
-log.alpha.line <- ggplot(rep_data_long3, aes(x = group.original, y = log.alpha, 
+log.alpha.line <- ggplot(rep.data.long2, aes(x = group.original, y = log.alpha, 
                                              colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
@@ -421,7 +477,7 @@ cohen.d(dataset[group.original == "aware",]$log.alpha,
 
 # Multiplot
 # segmentation by subject
-rep_data_long3 %>%
+rep.data.long2 %>%
   gather(occ.nd1, left.nd2, right.nd2, RL.nd2, 
          key = "var", value = "value") %>% 
   ggplot(aes(x = alpha, y = value, color = configuration)) +

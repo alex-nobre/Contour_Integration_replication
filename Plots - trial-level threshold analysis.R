@@ -42,60 +42,99 @@ x.points <- seq(-100, 596, by = 4)
 # 2. bin power x configuration
 # 2.1. C1
 # 2.1.1. Session 1
-pdf("C1 - both groups - sqr x rand.pdf")
-par(mfrow = c(2,1))
+layout(rbind(1,2), heights=c(5,1))
 plot(x.points, low.bin.grand.averages.sqr1[[1]], type = "l", xlab = "Time points", 
-     ylab = "Mean amplitude", col = "red",
-     main = "Low bin x high bin - sqr x rand")
-lines(col_headers, rand1.points.C1.means, type = "l", col = "blue")
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "C1 bin x configuration session 1")
+lines(x.points, high.bin.grand.averages.sqr1[[1]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand1[[1]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand1[[1]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
-legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
-# 2.1.1. Session 2
-plot(col_headers, sqr2.points.C1.means, type = "l", xlab = "Time points", 
-     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "C1 ROI session 2 - sqr x rand")
-lines(col_headers, rand2.points.C1.means, type = "l", col = "blue")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+# 2.1.2. Session 2
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr2[[1]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "C1 bin x configuration session 2")
+lines(x.points, high.bin.grand.averages.sqr2[[1]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand2[[1]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand2[[1]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
-legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
-dev.off()
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
 
 # P1
-# 1.3. Aware - session 1
-pdf("Nd1 occ aware - sqr x rand.pdf")
-par(mfrow = c(2,1))
-plot(col_headers, sqr1.points.Occ.means, type = "l", xlab = "Time points", 
-     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 1 sqr x rand")
-lines(col_headers, rand1.points.Occ.means, type = "l", col = "blue")
+# 2.2.1. Session 1
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr1[[2]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "P1 bin x configuration session 1")
+lines(x.points, high.bin.grand.averages.sqr1[[2]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand1[[2]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand1[[2]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
-legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
-# 1.2. Unaware - session 2
-plot(col_headers, sqr2_points_aware_means, type = "l", xlab = "Time points", 
-     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 2 aware - sqr x rand")
-lines(col_headers, rand2_points_aware_means, type = "l", col = "blue")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+# 2.2.2. Session 2
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr2[[2]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "P1 bin x configuration session 2")
+lines(x.points, high.bin.grand.averages.sqr2[[2]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand2[[2]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand2[[2]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
-legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
-dev.off()
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
 
-# N1
-# 1.3. Aware - session 1
-pdf("Nd1 occ aware - sqr x rand.pdf")
-par(mfrow = c(2,1))
-plot(col_headers, sqr1.points.Occ.means, type = "l", xlab = "Time points", 
-     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 1 sqr x rand")
-lines(col_headers, rand1.points.Occ.means, type = "l", col = "blue")
+# 2.3. N1
+# 2.3.1. Session 1
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr1[[3]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "N1 bin x configuration session 1")
+lines(x.points, high.bin.grand.averages.sqr1[[3]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand1[[3]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand1[[3]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
-legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
-# 1.2. Unaware - session 2
-plot(col_headers, sqr2_points_aware_means, type = "l", xlab = "Time points", 
-     ylab = "mean amplitude", col = "red", ylim = c(-2.5, 1.0),
-     main = "Nd1 occ session 2 aware - sqr x rand")
-lines(col_headers, rand2_points_aware_means, type = "l", col = "blue")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+# 2.3.2. Session 2
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr2[[3]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "N1 bin x configuration session 2")
+lines(x.points, high.bin.grand.averages.sqr2[[3]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand2[[3]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand2[[3]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
-legend('topright', legend = labels, col = c("blue", "red"), lwd=c(2,2))
-dev.off()
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
 
 # 2.4. Occ
 # 2.4.1. Session 1
@@ -168,7 +207,6 @@ layout(rbind(1,2), heights=c(5,1))
 plot(x.points, low.bin.grand.averages.sqr1[[6]], type = "l", xlab = "Time points", 
      ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
      main = "Right nd2 bin x configuration session 1")
-#axis(1, at = seq(-100, 600, by = 20), labels = TRUE)
 lines(x.points, high.bin.grand.averages.sqr1[[6]], type = "l", col = "blue")
 lines(x.points, low.bin.grand.averages.rand1[[6]], type = "l", col = "green")
 lines(x.points, high.bin.grand.averages.rand1[[6]], type = "l", col = "purple")
@@ -221,6 +259,71 @@ plot(x.points, low.bin.grand.averages.sqr2[[7]], type = "l", xlab = "Time points
 lines(x.points, high.bin.grand.averages.sqr2[[7]], type = "l", col = "blue")
 lines(x.points, low.bin.grand.averages.rand2[[7]], type = "l", col = "green")
 lines(x.points, high.bin.grand.averages.rand2[[7]], type = "l", col = "purple")
+abline(h = 0, lty = 2, col = "black")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+
+
+# 2.8. N2
+# 2.8.1. Session 1
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr1[[8]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "N2 bin x configuration session 1")
+lines(x.points, high.bin.grand.averages.sqr1[[8]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand1[[8]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand1[[8]], type = "l", col = "purple")
+abline(h = 0, lty = 2, col = "black")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+# 2.8.2. Session 2
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr2[[8]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "N2 bin x configuration session 2")
+lines(x.points, high.bin.grand.averages.sqr2[[8]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand2[[8]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand2[[8]], type = "l", col = "purple")
+abline(h = 0, lty = 2, col = "black")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+
+# 2.10. LP
+# 2.10.1. Session 1
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr1[[10]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "LP bin x configuration session 1")
+lines(x.points, high.bin.grand.averages.sqr1[[10]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand1[[10]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand1[[10]], type = "l", col = "purple")
+abline(h = 0, lty = 2, col = "black")
+abline(v = 0, lty = 1, col = "black")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = labels, col = c("red", "blue", "green", "purple"), 
+       lwd=c(2,2), cex = 0.8)
+par(defaults)
+# 2.10.2. Session 2
+layout(rbind(1,2), heights=c(5,1))
+plot(x.points, low.bin.grand.averages.sqr2[[10]], type = "l", xlab = "Time points", 
+     ylab = "Mean amplitude", col = "red", ylim = c(-2.5, 1.5),
+     main = "LP bin x configuration session 2")
+lines(x.points, high.bin.grand.averages.sqr2[[10]], type = "l", col = "blue")
+lines(x.points, low.bin.grand.averages.rand2[[10]], type = "l", col = "green")
+lines(x.points, high.bin.grand.averages.rand2[[10]], type = "l", col = "purple")
 abline(h = 0, lty = 2, col = "black")
 abline(v = 0, lty = 1, col = "black")
 par(mar=c(0, 0, 0, 0))

@@ -289,9 +289,9 @@ alpha.left.nd2.line
 
 # 2.7. right nd2
 # 2.7.1. ANOVA
-alpha.right.nd2.baseline <- lme(right.nd1 ~ 1, 
+alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                 random = ~1|Subject/configuration/alpha.power, 
-                                data = rep_data_alpha3[rep_data_alpha3$session == 2,], 
+                                data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                           method = "ML") #baseline
 alpha.right.nd2.config <- update(alpha.right.nd2.baseline, .~. + configuration)
 alpha.right.nd2.alpha.power <- update(alpha.right.nd2.config, .~. + alpha.power)
@@ -303,7 +303,7 @@ anova(alpha.right.nd2.baseline, alpha.right.nd2.config, alpha.right.nd2.alpha.po
 summary(alpha.right.nd2.lme)
 
 # 2.7.2. Post-hocs
-alpha.right.nd2.lme <- lme(right.nd1 ~ configuration * alpha.power * alpha.group, 
+alpha.right.nd2.lme <- lme(right.nd2 ~ configuration * alpha.power * alpha.group, 
                             random = ~1|Subject/configuration/alpha.power, 
                             data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                             method = "ML")

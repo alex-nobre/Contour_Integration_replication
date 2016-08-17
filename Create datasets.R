@@ -356,8 +356,8 @@ questionnaire.ERPs[which(questionnaire.ERPs$Subject %in%
 questionnaire.ERPs$alpha.group <- factor(questionnaire.ERPs$alpha.group)
 
 # 8. Append meadian-split-based group to long data frame
-rep_data_long3$alpha.group <- rep(questionnaire.ERPs$alpha.group, 4)
-rep_data_alpha3$alpha.group <- factor(rep(as.vector(rep_data_long3$alpha.group), 2))
+rep.data.long2$alpha.group <- rep(questionnaire.ERPs$alpha.group, 4)
+rep_data_alpha3$alpha.group <- factor(rep(as.vector(rep.data.long2$alpha.group), 2))
 levels(rep_data_alpha3$alpha.group) <- c("high alpha group", "low alpha group")
 
 #-------------------------------Correlational measures----------------------------
@@ -380,6 +380,23 @@ levels(rep_data_alpha3$alpha.group) <- c("high alpha group", "low alpha group")
 
 
 # 9.2. Compute differences
+# Old ERPs
+# session 1
+questionnaire.ERPs$occ.diff.1 <- questionnaire.ERPs$occ.sqr.nd1_1 -
+  questionnaire.ERPs$occ.rand.nd1_1
+questionnaire.ERPs$left.diff.1 <- questionnaire.ERPs$left.sqr.nd2_1 -
+  questionnaire.ERPs$left.rand.nd2_1
+questionnaire.ERPs$right.diff.1 <- questionnaire.ERPs$right.sqr.nd2_1 -
+  questionnaire.ERPs$right.rand.nd2_1
+# session 2
+questionnaire.ERPs$occ.diff.2 <- questionnaire.ERPs$occ.sqr.nd1_2 -
+  questionnaire.ERPs$occ.rand.nd1_2
+questionnaire.ERPs$left.diff.2 <- questionnaire.ERPs$left.sqr.nd2_2 -
+  questionnaire.ERPs$left.rand.nd2_2
+questionnaire.ERPs$right.diff.2 <- questionnaire.ERPs$right.sqr.nd2_2 -
+  questionnaire.ERPs$right.rand.nd2_2
+
+# Low alpha
 # session 1
 questionnaire.ERPs$occ.diff.1 <- questionnaire.ERPs$low.alpha.occ.nd1.sqr_1 -
   questionnaire.ERPs$low.alpha.occ.nd1.rand_1
@@ -563,7 +580,46 @@ rep.data.bin3$session <- factor(rep.data.bin3$session)
 rep.data.bin3$configuration <- factor(rep.data.bin3$configuration)
 rep.data.bin3$intensity.bin <- factor(rep.data.bin3$intensity.bin)
 
-#-------------------------Add threshold alpha to long data frame----------------------------
+#-------------------------Add threshold alpha to data frames----------------------------
+# 11.  Wide data frame
+rep_data6$low.bin.log.alpha.sqr1 <- log(low.bin.mean.alpha.sqr1)
+rep_data6$high.bin.log.alpha.sqr1 <- log(high.bin.mean.alpha.sqr1)
+rep_data6$low.bin.log.alpha.sqr2 <- log(low.bin.mean.alpha.sqr2)
+rep_data6$high.bin.log.alpha.sqr2 <- log(high.bin.mean.alpha.sqr2)
+rep_data6$low.bin.log.alpha.rand1 <- log(low.bin.mean.alpha.rand1)
+rep_data6$high.bin.log.alpha.rand1 <- log(high.bin.mean.alpha.rand1)
+rep_data6$low.bin.log.alpha.rand2 <- log(low.bin.mean.alpha.rand2)
+rep_data6$high.bin.log.alpha.rand2 <- log(high.bin.mean.alpha.rand2)
+rep_data6$mean.log.alpha <- 
+  rowMeans(rep_data6[,which(colnames(rep_data6) == 
+                              'low.bin.log.alpha.sqr1'): 
+                       which(colnames(rep_data6) == 
+                               'high.bin.log.alpha.rand2')])
+# Correlational measures
+# Right diff
+# Low bin
+rep_data6$low.bin.right.nd2.diff.1 <- rep_data6$low.bin.right.nd2.sqr_1 -
+  rep_data6$low.bin.right.nd2.rand_1
+# High bin
+rep_data6$high.bin.right.nd2.diff.1 <- rep_data6$high.bin.right.nd2.sqr_1 -
+  rep_data6$high.bin.right.nd2.rand_1
+
+# Left diff
+# Low bin
+rep_data6$low.bin.left.nd2.diff.1 <- rep_data6$low.bin.left.nd2.sqr_1 -
+  rep_data6$low.bin.left.nd2.rand_1
+# High bin
+rep_data6$high.bin.left.nd2.diff.1 <- rep_data6$high.bin.left.nd2.sqr_1 -
+  rep_data6$high.bin.left.nd2.rand_1
+
+# Occ diff
+# Low bin
+rep_data6$low.bin.occ.nd1.diff.1 <- rep_data6$low.bin.occ.nd1.sqr_1 -
+  rep_data6$low.bin.occ.nd1.rand_1
+# High bin
+rep_data6$high.bin.occ.nd1.diff.1 <- rep_data6$high.bin.occ.nd1.sqr_1 -
+  rep_data6$high.bin.occ.nd1.rand_1
+
 # 11. Add to long data frame
 # 11.1. Raw alpha values
 rep.data.bin3$alpha <- numeric(nrow(rep.data.bin3))
