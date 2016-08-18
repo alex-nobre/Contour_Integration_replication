@@ -183,7 +183,7 @@ alpha.nd2.left.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,],
        colour = "configuration")
 alpha.nd2.left.line
 
-# 1.5.3.
+# 1.5.3. Scatterplot - log mean alpha x left nd2 diff
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x left Nd2 amplitude",
@@ -291,31 +291,21 @@ alpha.LP.lme <- update(alpha.LP.alpha.group, .~. +
                              configuration:alpha.group)
 anova(alpha.LP.baseline, alpha.LP.config, alpha.LP.alpha.group, alpha.LP.lme)
 
-# # 1.10.2. Line plot
+# 1.10.2. Line plot
+alpha.nd2.LP.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
+                            aes(x = alpha.group, y = LP, 
+                                colour = configuration)) + 
+  stat_summary(fun.y = mean, geom = "point") + 
+  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  labs(title = "Nd2 LP x alpha group", x = "alpha.group", 
+       y = "LP amplitude", 
+       colour = "configuration")
+alpha.nd2.LP.line
 
 # 2. Alpha power x awareness group
 # 2.1. Line plots
-# 2.1.1 New grouping
-alpha.line <- ggplot(rep.data.long2, aes(x = group, y = alpha, 
-                                         colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  labs(title = "Alpha power - new group", x = "new group", y = "Alpha mean", 
-       colour = "configuration")
-alpha.line
-
-# 2.1.2. Alpha, original grouping
-alpha.line <- ggplot(rep.data.long2, aes(x = group.original, y = alpha, 
-                                         colour = configuration)) + 
-  stat_summary(fun.y = mean, geom = "point") + 
-  stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  labs(title = "Alpha power  - original group", x = "original group", y = "Alpha mean", 
-       colour = "configuration")
-alpha.line
-
-# 2.1.3. Log alpha, new grouping
+# 2.1.1. Log alpha, new grouping
 log.alpha.line <- ggplot(rep.data.long2, aes(x = group, y = log.alpha, 
                                              colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -326,7 +316,7 @@ log.alpha.line <- ggplot(rep.data.long2, aes(x = group, y = log.alpha,
        colour = "configuration")
 log.alpha.line
 
-# 2.1.4. Log alpha, original grouping
+# 2.1.2. Log alpha, original grouping
 log.alpha.line <- ggplot(rep.data.long2, aes(x = group.original, y = log.alpha, 
                                              colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -337,7 +327,7 @@ log.alpha.line <- ggplot(rep.data.long2, aes(x = group.original, y = log.alpha,
        colour = "configuration")
 log.alpha.line
 
-# 2.2. Scatterplots
+# 2.2. Mean alpha scatterplots
 # 2.2.1. Alpha
 par(mfrow = c(2, 2))
 plot(dataset$Subject, dataset$alpha.sqr.1, col = 2, pch = 16, 
@@ -348,8 +338,10 @@ plot(dataset$Subject, dataset$alpha.rand.1, col = 4, pch = 16,
      main = "Random, session 1", xlab = 'Subject', ylab = "mean alpha power")
 plot(dataset$Subject, dataset$alpha.rand.2, col = 6, pch = 16,
      main = "Random, session 2", xlab = 'Subject', ylab = "mean alpha power")
+par(defaults)
 
 # 2.2.2. Log alpha
+par(mfrow = c(2, 2))
 plot(dataset$Subject, dataset$log.alpha.sqr.1, col = 2, pch = 16, 
      main = "Square, session 1", xlab = 'Subject', ylab = "mean alpha power")
 plot(dataset$Subject, dataset$log.alpha.sqr.2, col = 3, pch = 16,
@@ -358,12 +350,11 @@ plot(dataset$Subject, dataset$log.alpha.rand.1, col = 4, pch = 16,
      main = "Random, session 1", xlab = 'Subject', ylab = "mean alpha power")
 plot(dataset$Subject, dataset$log.alpha.rand.2, col = 6, pch = 16,
      main = "Random, session 2", xlab = 'Subject', ylab = "mean alpha power")
+par(defaults)
 
 
-
-# 3.4.4.2. Scatterplots
-# 3.4.4.2.1. Square, session 1
-par(mfrow = c(1, 1))
+# 2.3. Scatterplots - Right nd2 x alpha group
+# 2.3.1. Square, session 1
 plot(dataset[dataset$alpha.group == "high.alpha",]$Subject, 
      dataset[dataset$alpha.group == "high.alpha",]$right.sqr.nd2_1, 
      col = 2, pch = 16, main = "Nd2 x alpha, Square, session 1", 
@@ -378,7 +369,7 @@ abline(h=mean(dataset[dataset$alpha.group == "low.alpha",]$right.sqr.nd2_1),
 legend(2, -3, legend = levels(dataset$alpha.group), 
        col = c("red", "blue"), pch = 16)
 
-# 3.4.4.2.2. Square, session 2
+# 2.3.2. Square, session 2
 plot(dataset[dataset$alpha.group == "high.alpha",]$Subject, 
      dataset[dataset$alpha.group == "high.alpha",]$right.sqr.nd2_2, 
      col = 2, pch = 16, main = "Nd2 x alpha, Square, session 2", 
@@ -393,6 +384,57 @@ abline(h=mean(dataset[dataset$alpha.group == "low.alpha",]$right.sqr.nd2_2),
 legend(2, -3, legend = levels(dataset$alpha.group), 
        col = c("red", "blue"), pch = 16)
 
+# 2.4. Correlations scatterplots - log alpha x ERPs
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$occ.diff.1, 
+     col = "red", pch = 16, main = "mean alpha 1 x occ Nd2 different",
+     xlab = "mean alpha", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$occ.diff.2,
+       col = " black", pch = 16)
+abline(lm(questionnaire.ERPs$occ.diff.1 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = "red")
+abline(lm(questionnaire.ERPs$occ.diff.2 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("occ diff 1", "occ diff 2"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+# 2.4.1. Left Nd2 difference
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1, 
+     col = "red", pch = 16, main = "mean alpha 1 x left Nd2 different",
+     xlab = "mean alpha", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.2,
+       col = " black", pch = 16)
+abline(lm(questionnaire.ERPs$left.diff.1 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = "red")
+abline(lm(questionnaire.ERPs$left.diff.2 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("left diff 1", "left diff 2"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+# 2.4.2. Right Nd2 difference
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.1, 
+     col = "red", pch = 16, main = "mean alpha 1 x right Nd2 different",
+     xlab = "mean alpha", ylab = "Mean amplitude")
+points(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.2,
+       col = " black", pch = 16)
+abline(lm(questionnaire.ERPs$right.diff.1 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = "red")
+abline(lm(questionnaire.ERPs$right.diff.2 ~ questionnaire.ERPs$mean.log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("right diff 1", "right diff 2"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
 
 # 4. Create Median split groups by condition based on alpha power
 # 4.1. Square, session 1
@@ -461,18 +503,12 @@ dataset$alpha.rand2.group <- factor(dataset$alpha.rand2.group)
 
 # 1. T-tests for alpha mean power - aware x unaware
 # 1.1. New grouping
-# 1.1.1. Alpha
-t.test(dataset[group.original == "aware",]$mean.alpha, 
-       dataset[group.original == "unaware",]$mean.alpha)
+# 1.1.1. Log alpha
+t.test(dataset[group.original == "aware",]$mean.log.alpha, 
+       dataset[group.original == "unaware",]$mean.log.alpha)
 # 1.1.2. Effect sizes
-cohen.d(dataset[group.original == "aware",]$alpha, 
-        dataset[group.original == "unaware",]$alpha)
-# 1.2.1. Log alpha
-t.test(dataset[group == "aware",]$mean.log.alpha, 
-       dataset[group == "unaware",]$mean.log.alpha)
-# 1.2.2. Effect sizes
-cohen.d(dataset[group.original == "aware",]$log.alpha, 
-        dataset[group.original == "unaware",]$log.alpha)
+cohen.d(dataset[group.original == "aware",]$mean.log.alpha, 
+        dataset[group.original == "unaware",]$mean.log.alpha)
 
 
 # Multiplot
