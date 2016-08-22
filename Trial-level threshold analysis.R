@@ -150,19 +150,19 @@ summary(bin.nd1.lme)
 lsmeans(bin.nd1.lme, pairwise ~ configuration | intensity.bin)
 
 
-# ANOVA TESTING
-bin.nd1.model <- lme(occ.nd1 ~ configuration * intensity.bin, 
-                       random = ~1|Subject/configuration/intensity.bin, 
-                       data = rep.data.bin3, method = "ML")
-anova(bin.nd1.model)
+# # ANOVA TESTING
+# bin.nd1.model <- lme(occ.nd1 ~ configuration * intensity.bin, 
+#                        random = ~1|Subject/configuration/intensity.bin, 
+#                        data = rep.data.bin3, method = "ML")
+# anova(bin.nd1.model)
+# 
+# tanova <- aov(occ.nd1 ~ (configuration * intensity.bin) +
+#                 Error(Subject/(configuration * intensity.bin)), 
+#               data = rep.data.bin3)
+# 
+# summary(bin.nd1.baseline)
 
-tanova <- aov(occ.nd1 ~ (configuration * intensity.bin) +
-                Error(Subject/(configuration * intensity.bin)), 
-              data = rep.data.bin3)
-
-summary(bin.nd1.baseline)
-
-# Plots
+# 2.5.3. Plots
 bin.nd1.line <- ggplot(rep.data.bin3[rep.data.bin3$session == 1,], 
                          aes(x = intensity.bin, y = occ.nd1, 
                              colour = configuration)) + 
@@ -213,7 +213,8 @@ legend("center", legend = levels(rep.data.bin3$configuration),
        pch = 16)
 par(defaults)
 
-# 2.6.1. ANOVA
+# 2.6.2. ANOVA
+# 2.6.2.1. Without alpha group as factor
 bin.left.nd2.baseline <- lme(left.nd2 ~ 1, 
                                random = ~1|Subject/configuration/intensity.bin, 
                                data = rep.data.bin3[rep.data.bin3$session == 1,], 
@@ -225,17 +226,26 @@ bin.left.nd2.lme <- update(bin.left.nd2.intensity.bin, .~. +
 anova(bin.left.nd2.baseline, bin.left.nd2.config, bin.left.nd2.intensity.bin,
       bin.left.nd2.lme)
 
-# 2.6.2. Post-hocs
-bin.left.nd2.lme<- lme(left.nd2 ~ configuration * intensity.bin * bin.group, 
-                         random = ~1|Subject/configuration/intensity.bin, 
-                         data = rep.data.bin3[rep.data.bin3$session == 1,], 
-                         method = "ML")
+# 2.6.2.2. With alpha group as factor
+bin.left.nd2.lme<- lme(left.nd2 ~ configuration * intensity.bin * alpha.group, 
+                       random = ~1|Subject/configuration/intensity.bin, 
+                       data = rep.data.bin3[rep.data.bin3$session == 1,], 
+                       method = "ML")
 anova(bin.left.nd2.lme)
 
+# 2.6.3. Post-hocs
+# 2.6.3.1. Without alpha group as factor
 lsmeans(bin.left.nd2.lme, pairwise ~ configuration | intensity.bin)
 
-plot(lsmeans(bin.left.nd2.lme, pairwise ~ configuration | intensity.bin)$lsmeans, 
-     main = "Confidence intervals left nd2")
+plot(lsmeans(bin.left.nd2.lme, pairwise ~ configuration | intensity.bin)$contrasts, 
+     main = "CI nd2 left: configuration x intensity")
+
+# 2.6.3.2. With alpha group as factor
+lsmeans(bin.left.nd2.lme, pairwise ~ configuration | intensity.bin * alpha.group)
+
+plot(lsmeans(bin.left.nd2.lme, pairwise ~ configuration | intensity.bin  * 
+               alpha.group)$contrasts, 
+     main = "CI nd2 left: config x intensity x alpha group")
 
 # 2.6.3. Line plot
 bin.left.nd2.line <- ggplot(rep.data.bin3[rep.data.bin3$session == 1,], 
@@ -244,7 +254,8 @@ bin.left.nd2.line <- ggplot(rep.data.bin3[rep.data.bin3$session == 1,],
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
-  labs(title = "Left Nd2 mean amplitude", x = "decrement bin", 
+  facet_grid(.~alpha.group) +
+  labs(title = "Left Nd2 x intensity bin", x = "intensity bin", 
        y = "Left Nd2 mean amplitude", 
        colour = "configuration")
 bin.left.nd2.line
@@ -285,6 +296,7 @@ legend("center", legend = levels(rep.data.bin3$configuration),
 par(defaults)
 
 # 2.7.2. ANOVA
+# 2.7.2.1. Without alpha group as factor
 bin.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                 random = ~1|Subject/configuration/intensity.bin, 
                                 data = rep.data.bin3[rep.data.bin3$session == 1,], 
@@ -298,19 +310,41 @@ anova(bin.right.nd2.baseline, bin.right.nd2.config, bin.right.nd2.intensity.bin,
 
 summary(bin.right.nd2.lme)
 
-# 2.7.3. Line plot
+# 2.7.2.1. With alpha group as factor
+bin.right.nd2.lme <- lme(right.nd2 ~ configuration * intensity.bin * alpha.group, 
+                           random = ~1|Subject/configuration/intensity.bin, 
+                           data = rep.data.bin3[rep.data.bin3$session == 1,], 
+                           method = "ML")
+anova(bin.right.nd2.lme)
+
+# 2.7.3. Post-hocs
+# 2.7.3.1. Without alpha group as factor
+lsmeans(bin.right.nd2.lme, pairwise ~ configuration | intensity.bin)
+
+plot(lsmeans(bin.right.nd2.lme, pairwise ~ configuration | intensity.bin)$contrasts, 
+     main = "CI nd2 right: configuration x intensity")
+
+# 2.7.3.2. With alpha group as factor
+lsmeans(bin.right.nd2.lme, pairwise ~ configuration | intensity.bin * alpha.group)
+
+plot(lsmeans(bin.right.nd2.lme, pairwise ~ configuration | intensity.bin * 
+               alpha.group)$contrasts, 
+     main = "CI nd2 right: config x intensity x alpha group")
+
+# 2.7.4. Line plot
 bin.right.nd2.line <- ggplot(rep.data.bin3[rep.data.bin3$session == 1,], 
                              aes(x = intensity.bin, y = right.nd2, 
                                  colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
-  labs(title = "Right Nd2 mean amplitude", x = "bin power",
+  facet_grid(.~alpha.group) +
+  labs(title = "Right Nd2 x intensity bin", x = "intensity bin",
        y = "Right Nd2 mean amplitude", 
        colour = "configuration")
 bin.right.nd2.line
 
-# 2.7.4. alpha power x difference
+# 2.7.4. Alpha power x difference
 # right scatterplot
 layout(rbind(1,2), heights=c(5,1))
 plot(x = rep_data6$mean.log.alpha, y = rep_data6$low.bin.right.nd2.diff.1, 
@@ -403,26 +437,26 @@ plot(lsmeans(bin.RL.nd2.lme, pairwise ~ configuration | bin.group *
 qqnorm(bin.RL.nd2.lme)
 qqline(bin.RL.nd2.lme)
 
-# using multcomp
-# 1.
-# compute means for all combinations
-tmp <- expand.grid(configuration = unique(rep.data.bin3$configuration),
-                   intensity.bin = unique(rep.data.bin3$intensity.bin))
-x <- model.matrix(~ configuration * intensity.bin, data = tmp)
-glht(bin.RL.nd2.lme, linfct = x)
-
-# construct contrast matrix
-Tukey <- contrMat(table(rep.data.bin3$configuration), "Tukey")
-K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
-rownames(K1) <- paste(levels(rep.data.bin3$intensity.bin)[1], rownames(K1), 
-                      sep = ":")
-K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
-rownames(K2) <- paste(levels(rep.data.bin3$intensity.bin)[2], rownames(K2), 
-                      sep = ":")
-K <- rbind(K1, K2)
-colnames(K) <- c(colnames(Tukey), colnames(Tukey))
-#test
-summary(glht(bin.RL.nd2.lme, linfct = K %*% x))
+# # using multcomp
+# # 1.
+# # compute means for all combinations
+# tmp <- expand.grid(configuration = unique(rep.data.bin3$configuration),
+#                    intensity.bin = unique(rep.data.bin3$intensity.bin))
+# x <- model.matrix(~ configuration * intensity.bin, data = tmp)
+# glht(bin.RL.nd2.lme, linfct = x)
+# 
+# # construct contrast matrix
+# Tukey <- contrMat(table(rep.data.bin3$configuration), "Tukey")
+# K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+# rownames(K1) <- paste(levels(rep.data.bin3$intensity.bin)[1], rownames(K1), 
+#                       sep = ":")
+# K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
+# rownames(K2) <- paste(levels(rep.data.bin3$intensity.bin)[2], rownames(K2), 
+#                       sep = ":")
+# K <- rbind(K1, K2)
+# colnames(K) <- c(colnames(Tukey), colnames(Tukey))
+# #test
+# summary(glht(bin.RL.nd2.lme, linfct = K %*% x))
 
 # 2.8.3. Plots
 bin.RL.nd2.line <- ggplot(rep.data.bin3[rep.data.bin3$session == 1,], 

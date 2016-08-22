@@ -653,3 +653,7 @@ rep.data.bin3[rep.data.bin3$configuration == 'rand' &
                 rep.data.bin3$intensity.bin == "high.bin",]$alpha <- high.bin.mean.alpha.rand2
 # 11.2. Log alpha values
 rep.data.bin3$log.alpha <- log(rep.data.bin3$alpha)
+
+# 12. Append median-split alpha group to bin data frame
+rep.data.bin3$alpha.group <- factor(rep(as.vector(rep.data.long2$alpha.group), 2))
+levels(rep.data.bin3$alpha.group) <- c("high alpha group", "low alpha group")

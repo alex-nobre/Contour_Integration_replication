@@ -174,6 +174,8 @@ alpha.N1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
 alpha.N1.line
 
 # 2.5. nd1
+# 2.5.1. ANOVA
+# 2.5.1.1. Without alpha group as factor
 alpha.nd1.baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/alpha.power, 
                     data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
                     method = "ML") #baseline
@@ -183,7 +185,7 @@ alpha.nd1.lme <- update(alpha.nd1.alpha.power, .~. + configuration:alpha.power)
 anova(alpha.nd1.baseline, alpha.nd1.config, alpha.nd1.alpha.power,
       alpha.nd1.lme)
 
-# 2.5.1. Post-hocs
+# 2.5.1.2.With alpha group as factor 
 alpha.nd1.lme <- lme(occ.nd1 ~ configuration * alpha.power * alpha.group, 
                      random = ~1|Subject/configuration/alpha.power, 
                      data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -191,13 +193,21 @@ alpha.nd1.lme <- lme(occ.nd1 ~ configuration * alpha.power * alpha.group,
 anova(alpha.nd1.lme)
 summary(alpha.nd1.lme)
 
-# 2.5.2. using lsmeans
+
+# 2.5.2. Post-hocs using lsmeans
+# 2.5.2.1. Without alpha group as factor
 lsmeans(alpha.nd1.lme, pairwise ~ configuration | alpha.power)
 
-TukeyHSD(alpha.nd1.lme, c(
-                rep_data_alpha3[rep_data_alpha3$session == 1,]$alpha.power * 
-                  rep_data_alpha3[rep_data_alpha3$session == 1,]$configuration),
-                conf.level = 0.95)
+plot(lsmeans(alpha.nd1.lme, pairwise ~ configuration | alpha.power)$contrasts, 
+     main = "Confidence intervals contrasts nd1")
+
+# 2.5.2.2. With alpha group as factor
+lsmeans(alpha.nd1.lme, pairwise ~ configuration | alpha.power * alpha.group)
+
+plot(lsmeans(alpha.nd1.lme, pairwise ~ configuration |  alpha.power * 
+               alpha.group)$contrasts, 
+     main = "Confidence intervals contrasts nd1")
+
 
 # # using multcomp
 # # 1.
@@ -233,7 +243,7 @@ tanova <- aov(occ.nd1 ~ (configuration * alpha.power) +
       
 summary(alpha.nd1.baseline)
 
-# Plots
+# 2.5.3. Plots
 alpha.nd1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
                          aes(x = alpha.power, y = occ.nd1, 
                                               colour = configuration)) + 
@@ -245,12 +255,10 @@ alpha.nd1.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
        colour = "configuration")
 alpha.nd1.line
 
-plot(lsmeans(alpha.nd1.lme, pairwise ~ configuration | alpha.group * 
-               alpha.power)$contrasts, 
-     main = "Confidence intervals contrasts nd1")
 
 # 2.6. left nd2
 # 2.6.1. ANOVA
+# 2.6.1.1. Without alpha group as factor
 alpha.left.nd2.baseline <- lme(left.nd2 ~ 1, 
                           random = ~1|Subject/configuration/alpha.power, 
                           data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -262,17 +270,26 @@ alpha.left.nd2.lme <- update(alpha.left.nd2.alpha.power, .~. +
 anova(alpha.left.nd2.baseline, alpha.left.nd2.config, alpha.left.nd2.alpha.power,
       alpha.left.nd2.lme)
 
-# 2.6.2. Post-hocs
-alpha.left.nd2.lme<- lme(left.nd2 ~ configuration * alpha.power * alpha.group, 
-                       random = ~1|Subject/configuration/alpha.power, 
-                       data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
-                       method = "ML")
+# 2.6.1.2. With alpha group as factor
+alpha.left.nd2.lme <- lme(left.nd2 ~ configuration * alpha.power * alpha.group, 
+                         random = ~1|Subject/configuration/alpha.power, 
+                         data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                         method = "ML")
 anova(alpha.left.nd2.lme)
 
+# 2.6.2. Post-hocs
+# 2.6.2.1. Without alpha group as factor
 lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power)
 
-plot(lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power)$lsmeans, 
+plot(lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power)$contrasts, 
      main = "Confidence intervals left nd2")
+
+# 2.6.2.2. With alpha group as factor
+lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power * alpha.group)
+
+plot(lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.power  * 
+               alpha.group)$contrasts, 
+     main = "CI nd2 left: config x alpha power x alpha group")
 
 # 2.6.3. Line plot
 alpha.left.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -289,6 +306,7 @@ alpha.left.nd2.line
 
 # 2.7. right nd2
 # 2.7.1. ANOVA
+# 2.7.1.1. Without alpha group as factor
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                 random = ~1|Subject/configuration/alpha.power, 
                                 data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -302,21 +320,26 @@ anova(alpha.right.nd2.baseline, alpha.right.nd2.config, alpha.right.nd2.alpha.po
 
 summary(alpha.right.nd2.lme)
 
-# 2.7.2. Post-hocs
+# 2.7.1.2. With alpha group as factor
 alpha.right.nd2.lme <- lme(right.nd2 ~ configuration * alpha.power * alpha.group, 
-                            random = ~1|Subject/configuration/alpha.power, 
-                            data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
-                            method = "ML")
+                           random = ~1|Subject/configuration/alpha.power, 
+                           data = rep_data_alpha3[rep_data_alpha3$session == 1,], 
+                           method = "ML")
 anova(alpha.right.nd2.lme)
 
-lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group * alpha.power)
+# 2.7.2. Post-hocs
+# 2.7.2.1. Without alpha group as factor
+lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)
 
-plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)$lsmeans, 
+plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power)$contrasts, 
      main = "Confidence intervals right nd2")
 
-plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group * 
-               alpha.power)$contrasts, 
-     main = "Confidence intervals contrasts right nd2")
+# 2.7.2.2. Without alpha group as factor
+lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power * alpha.group)
+
+plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.power * 
+               alpha.group)$contrasts, 
+     main = "CI nd2 right: config x alpha power x alpha group")
 
 # 2.7.3. Line plot
 alpha.right.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 
@@ -378,26 +401,26 @@ plot(lsmeans(alpha.RL.nd2.lme, pairwise ~ configuration | alpha.group *
 qqnorm(alpha.RL.nd2.lme)
 qqline(alpha.RL.nd2.lme)
 
-# using multcomp
-# 1.
-# compute means for all combinations
-tmp <- expand.grid(configuration = unique(rep_data_alpha3$configuration),
-                   alpha.power = unique(rep_data_alpha3$alpha.power))
-x <- model.matrix(~ configuration * alpha.power, data = tmp)
-glht(alpha.RL.nd2.lme, linfct = x)
-
-# construct contrast matrix
-Tukey <- contrMat(table(rep_data_alpha3$configuration), "Tukey")
-K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
-rownames(K1) <- paste(levels(rep_data_alpha3$alpha.power)[1], rownames(K1), 
-                      sep = ":")
-K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
-rownames(K2) <- paste(levels(rep_data_alpha3$alpha.power)[2], rownames(K2), 
-                      sep = ":")
-K <- rbind(K1, K2)
-colnames(K) <- c(colnames(Tukey), colnames(Tukey))
-#test
-summary(glht(alpha.RL.nd2.lme, linfct = K %*% x))
+# # using multcomp
+# # 1.
+# # compute means for all combinations
+# tmp <- expand.grid(configuration = unique(rep_data_alpha3$configuration),
+#                    alpha.power = unique(rep_data_alpha3$alpha.power))
+# x <- model.matrix(~ configuration * alpha.power, data = tmp)
+# glht(alpha.RL.nd2.lme, linfct = x)
+# 
+# # construct contrast matrix
+# Tukey <- contrMat(table(rep_data_alpha3$configuration), "Tukey")
+# K1 <- cbind(Tukey, matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)))
+# rownames(K1) <- paste(levels(rep_data_alpha3$alpha.power)[1], rownames(K1), 
+#                       sep = ":")
+# K2 <- cbind(matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)), Tukey)
+# rownames(K2) <- paste(levels(rep_data_alpha3$alpha.power)[2], rownames(K2), 
+#                       sep = ":")
+# K <- rbind(K1, K2)
+# colnames(K) <- c(colnames(Tukey), colnames(Tukey))
+# #test
+# summary(glht(alpha.RL.nd2.lme, linfct = K %*% x))
 
 # 2.8.3. Plots
 alpha.RL.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,], 

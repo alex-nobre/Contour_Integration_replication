@@ -633,4 +633,6 @@ t.test(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2,
 cohen.d(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2, 
         paired = TRUE)
 
+# Logistic regression - alpha, ratings and intensity/threshold/accuracy/rt on group
+
 

@@ -159,19 +159,25 @@ par(defaults)
 
 # 1.5. Nd2 left
 # 1.5.1. ANOVA
-alpha.nd2.left.baseline <- lme(left.nd2 ~ 1, 
+alpha.left.nd2.baseline <- lme(left.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
                                data = rep.data.long2[rep.data.long2$session == 1,], 
                                method = "ML") #baseline
-alpha.nd2.left.config <- update(alpha.nd2.left.baseline, .~. + configuration)
-alpha.nd2.left.alpha.group <- update(alpha.nd2.left.config, .~. + alpha.group)
-alpha.nd2.left.lme <- update(alpha.nd2.left.alpha.group, .~. + 
+alpha.left.nd2.config <- update(alpha.left.nd2.baseline, .~. + configuration)
+alpha.left.nd2.alpha.group <- update(alpha.left.nd2.config, .~. + alpha.group)
+alpha.left.nd2.lme <- update(alpha.left.nd2.alpha.group, .~. + 
                                configuration:alpha.group)
-anova(alpha.nd2.left.baseline, alpha.nd2.left.config,
-      alpha.nd2.left.alpha.group, 
-      alpha.nd2.left.lme)
+anova(alpha.left.nd2.baseline, alpha.left.nd2.config,
+      alpha.left.nd2.alpha.group, 
+      alpha.left.nd2.lme)
 
-# 1.5.2. Line plot
+# 1.5.2. Post-hocs
+lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.group)
+
+plot(lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.group)$contrasts, 
+     main = "CI nd2 left: configuration x alpha group")
+
+# 1.5.3. Line plot
 alpha.nd2.left.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                               aes(x = alpha.group, y = left.nd2, 
                                                   colour = configuration)) + 
@@ -183,7 +189,7 @@ alpha.nd2.left.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,],
        colour = "configuration")
 alpha.nd2.left.line
 
-# 1.5.3. Scatterplot - log mean alpha x left nd2 diff
+# 1.5.4. Scatterplot - log mean alpha x left nd2 diff
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x left Nd2 amplitude",
@@ -201,7 +207,7 @@ legend("center", legend = c("left diff 1", "left diff 2"),
        pch = 16)
 par(defaults)
 
-# 1.6. Nd2 right
+# 1.6. Nd2 left
 # 1.6.1. ANOVA
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
@@ -220,6 +226,9 @@ summary(alpha.right.nd2.lme)
 
 # 1.6.2. Post-hocs
 lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group)
+
+plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group)$contrasts, 
+     main = "CI nd2 right: configuration x alpha group")
 
 # 1.6.3. Line plot
 alpha.right.nd2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
@@ -385,6 +394,7 @@ legend(2, -3, legend = levels(dataset$alpha.group),
        col = c("red", "blue"), pch = 16)
 
 # 2.4. Correlations scatterplots - log alpha x ERPs
+# 2.4.1. Occ nd1 differences
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$occ.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x occ Nd2 different",
@@ -401,7 +411,7 @@ legend("center", legend = c("occ diff 1", "occ diff 2"),
        col = c("red", "black"),
        pch = 16)
 par(defaults)
-# 2.4.1. Left Nd2 difference
+# 2.4.2. Left Nd2 difference
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x left Nd2 different",
@@ -418,7 +428,11 @@ legend("center", legend = c("left diff 1", "left diff 2"),
        col = c("red", "black"),
        pch = 16)
 par(defaults)
-# 2.4.2. Right Nd2 difference
+
+cor.test(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1)
+cor.test(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.2)
+
+# 2.4.3. Right Nd2 difference
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x right Nd2 different",
@@ -435,6 +449,9 @@ legend("center", legend = c("right diff 1", "right diff 2"),
        col = c("red", "black"),
        pch = 16)
 par(defaults)
+
+cor.test(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.1)
+cor.test(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.2)
 
 # 4. Create Median split groups by condition based on alpha power
 # 4.1. Square, session 1
