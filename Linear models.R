@@ -34,13 +34,16 @@ contrasts(rep.data.long2$configuration) <- contr.treatment(2, base = 1)
 contrasts(rep.data.long2$group.original) <- contr.treatment(2, base = 2)
 
 # 1. Model 1
-occ.model3 <- lm(occ.nd1 ~ configuration + group.original + log.alpha, 
+occ.model1 <- lm(occ.nd1 ~ configuration + group.original + log.alpha, 
                  data = rep.data.long2)
-plot(occ.model3)
+plot(occ.model1)
 
 # 2. Model 2
+occ.model2 <- lm(occ.nd1 ~ configuration + group + log.alpha, 
+                 data = rep.data.long2)
+plot(occ.model1)
 
-# INCLUDE BEHAVIORAL VARIABLES IN LONG FORMAT
+anova(occ.model1)
 
 # Assess assumptions - multicollinearity, normality of residuals, independence
 

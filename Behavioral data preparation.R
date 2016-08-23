@@ -45,16 +45,16 @@ questionnaire.ses1[,c(1,16,17)] <- NULL # exclude subject, group & annotations c
 questionnaire.ses2[,c(1,16,17)] <- NULL # exclude subject, group & annotations columns
 
 # 1.4. Assign column names
-colnames(questionnaire.ses1) <- c("Recall.ses1",	"Block.ses1", "conf.1.ses1",	
-                                  "conf.2.ses1", "conf.3.ses1",	"conf.4.ses1",	
-                                  "conf.5.ses1",	"conf.6.ses1",	"freq.1.ses1",	
-                                  "freq.2.ses1",	"freq.3.ses1","freq.4.ses1",	
-                                  "freq.5.ses1",	"freq.6.ses1")
-colnames(questionnaire.ses2) <- c("Recall.ses2",	"Block.ses2", "conf.1.ses2",	
-                                  "conf.2.ses2", "conf.3.ses2", "conf.4.ses2", 
-                                  "conf.5.ses2",	"conf.6.ses2",	"freq.1.ses2",	
-                                  "freq.2.ses2",	"freq.3.ses2",	"freq.4.ses2",	
-                                  "freq.5.ses2",	"freq.6.ses2")
+colnames(questionnaire.ses1) <- c("Recall_1",	"Block_1", "conf.1_1",	
+                                  "conf.2_1", "conf.3_1",	"conf.4_1",	
+                                  "conf.5_1",	"conf.6_1",	"freq.1_1",	
+                                  "freq.2_1",	"freq.3_1","freq.4_1",	
+                                  "freq.5_1",	"freq.6_1")
+colnames(questionnaire.ses2) <- c("Recall_2",	"Block_2", "conf.1_2",	
+                                  "conf.2_2", "conf.3_2", "conf.4_2", 
+                                  "conf.5_2",	"conf.6_2",	"freq.1_2",	
+                                  "freq.2_2",	"freq.3_2",	"freq.4_2",	
+                                  "freq.5_2",	"freq.6_2")
 
 # 2. Get list of psychopy file names
 behav_ses_1 <- list.files('./Data/Data_Psychopy', pattern = "Implicit segregation IB_.*\\_1")
@@ -143,74 +143,74 @@ extract.fa.ses3 <- function(behav.file) {
 
 # 1.2. Extract hits and misses for each configuration
 #square
-ses1.h.sqr <- lapply(as.list(behav_ses_1), extract.h.sqr)
-ses2.h.sqr <- lapply(as.list(behav_ses_2), extract.h.sqr)
+hit.sqr_1 <- lapply(as.list(behav_ses_1), extract.h.sqr)
+hit.sqr_2 <- lapply(as.list(behav_ses_2), extract.h.sqr)
 #random
-ses1.h.rand <- lapply(as.list(behav_ses_1), extract.h.rand)
-ses2.h.rand <- lapply(as.list(behav_ses_2), extract.h.rand)
+hit.rand_1 <- lapply(as.list(behav_ses_1), extract.h.rand)
+hit.rand_2 <- lapply(as.list(behav_ses_2), extract.h.rand)
 # Both
-ses1.h <- lapply(as.list(behav_ses_1), extract.h)
-ses2.h <- lapply(as.list(behav_ses_2), extract.h)
-ses3.h <- lapply(as.list(behav_ses_3), extract.h.ses3)
+hit_1 <- lapply(as.list(behav_ses_1), extract.h)
+hit_2 <- lapply(as.list(behav_ses_2), extract.h)
+hit_3 <- lapply(as.list(behav_ses_3), extract.h.ses3)
 
 # 1.3. Extract false alarms and correct rejections for both configurations
 #square
-ses1.fa.sqr <- lapply(as.list(behav_ses_1), extract.fa.sqr)
-ses2.fa.sqr <- lapply(as.list(behav_ses_2), extract.fa.sqr)
+fa.sqr_1 <- lapply(as.list(behav_ses_1), extract.fa.sqr)
+fa.sqr_2 <- lapply(as.list(behav_ses_2), extract.fa.sqr)
 #random
-ses1.fa.rand <- lapply(as.list(behav_ses_1), extract.fa.rand)
-ses2.fa.rand <- lapply(as.list(behav_ses_2), extract.fa.rand)
+fa.rand_1 <- lapply(as.list(behav_ses_1), extract.fa.rand)
+fa.rand_2 <- lapply(as.list(behav_ses_2), extract.fa.rand)
 # Both
-ses1.fa <- lapply(as.list(behav_ses_1), extract.fa)
-ses2.fa <- lapply(as.list(behav_ses_2), extract.fa)
-ses3.fa <- lapply(as.list(behav_ses_3), extract.fa.ses3)
+fa_1 <- lapply(as.list(behav_ses_1), extract.fa)
+fa_2 <- lapply(as.list(behav_ses_2), extract.fa)
+fa_3 <- lapply(as.list(behav_ses_3), extract.fa.ses3)
 
 # 1.4. Compute proportions (hits, false alarms, correct rejections, misses, correct)
 # 1.4.1. Square
 # 1.4.1.1. Session 1
-ses1.Ph.sqr <- sapply(ses1.h.sqr, mean)
-ses1.Pfa.sqr <- sapply(ses1.fa.sqr, mean)
-ses1.Pcr.sqr <- sapply(ses1.Pfa.sqr, function(x) 1-x)
-ses1.Pm.sqr <- sapply(ses1.Ph.sqr, function(y) 1-y)
-ses1.Pc.sqr <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph.sqr, ses1.Pcr.sqr)
+Ph.sqr_1 <- sapply(hit.sqr_1, mean)
+Pfa.sqr_1 <- sapply(fa.sqr_1, mean)
+Pcr.sqr_1 <- sapply(Pfa.sqr_1, function(x) 1-x)
+Pm.sqr_1 <- sapply(Ph.sqr_1, function(y) 1-y)
+Pc.sqr_1 <- mapply(function(a, b) (a + 9 * b)/10, Ph.sqr_1, Pcr.sqr_1)
 # 1.4.1.1. Session 2
-ses2.Ph.sqr <- sapply(ses2.h.sqr, mean)
-ses2.Pfa.sqr <- sapply(ses2.fa.sqr, mean)
-ses2.Pcr.sqr <- sapply(ses2.Pfa.sqr, function(x) 1-x)
-ses2.Pm.sqr <- sapply(ses2.Ph.sqr, function(y) 1-y)
-ses2.Pc.sqr <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph.sqr, ses2.Pcr.sqr)
+Ph.sqr_2 <- sapply(hit.sqr_2, mean)
+Pfa.sqr_2 <- sapply(fa.sqr_2, mean)
+Pcr.sqr_2 <- sapply(Pfa.sqr_2, function(x) 1-x)
+Pm.sqr_2 <- sapply(Ph.sqr_2, function(y) 1-y)
+Pc.sqr_2 <- mapply(function(a, b) (a + 9 * b)/10, Ph.sqr_2, Pcr.sqr_2)
 # 1.4.2. Random
 # 1.4.2.1. Session 1
-ses1.Ph.rand <- sapply(ses1.h.rand, mean)
-ses1.Pfa.rand <- sapply(ses1.fa.rand, mean)
-ses1.Pcr.rand <- sapply(ses1.Pfa.rand, function(x) 1-x)
-ses1.Pm.rand <- sapply(ses1.Ph.rand, function(y) 1-y)
-ses1.Pc.rand <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph.rand, ses1.Pcr.rand)
+Ph.rand_1 <- sapply(hit.rand_1, mean)
+Pfa.rand_1 <- sapply(fa.rand_1, mean)
+Pcr.rand_1 <- sapply(Pfa.rand_1, function(x) 1-x)
+Pm.rand_1 <- sapply(Ph.rand_1, function(y) 1-y)
+Pc.rand_1 <- mapply(function(a, b) (a + 9 * b)/10, Ph.rand_1, Pcr.rand_1)
 # 1.4.2.1. Session 2
-ses2.Ph.rand <- sapply(ses2.h.rand, mean)
-ses2.Pfa.rand <- sapply(ses2.fa.rand, mean)
-ses2.Pcr.rand <- sapply(ses2.Pfa.rand, function(x) 1-x)
-ses2.Pm.rand <- sapply(ses2.Ph.rand, function(y) 1-y)
-ses2.Pc.rand <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph.rand, ses2.Pcr.rand)
+Ph.rand_2 <- sapply(hit.rand_2, mean)
+Pfa.rand_2 <- sapply(fa.rand_2, mean)
+Pcr.rand_2 <- sapply(Pfa.rand_2, function(x) 1-x)
+Pm.rand_2 <- sapply(Ph.rand_2, function(y) 1-y)
+Pc.rand_2 <- mapply(function(a, b) (a + 9 * b)/10, Ph.rand_2, Pcr.rand_2)
 # 1.4.3. Both
 # 1.4.3.1. Session 1
-ses1.Ph <- sapply(ses1.h, mean)
-ses1.Pfa <- sapply(ses1.fa, mean)
-ses1.Pcr <- sapply(ses1.Pfa, function(x) 1-x)
-ses1.Pm <- sapply(ses1.Ph, function(y) 1-y)
-ses1.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses1.Ph, ses1.Pcr)
+Ph_1 <- sapply(hit_1, mean)
+Pfa_1 <- sapply(fa_1, mean)
+Pcr_1 <- sapply(Pfa_1, function(x) 1-x)
+Pm_1 <- sapply(Ph_1, function(y) 1-y)
+Pc_1 <- mapply(function(a, b) (a + 9 * b)/10, Ph_1, Pcr_1)
 # 1.4.3.2. Session 2
-ses2.Ph <- sapply(ses2.h, mean)
-ses2.Pfa <- sapply(ses2.fa, mean)
-ses2.Pcr <- sapply(ses2.Pfa, function(x) 1-x)
-ses2.Pm <- sapply(ses2.Ph, function(y) 1-y)
-ses2.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses2.Ph, ses2.Pcr)
+Ph_2 <- sapply(hit_2, mean)
+Pfa_2 <- sapply(fa_2, mean)
+Pcr_2 <- sapply(Pfa_2, function(x) 1-x)
+Pm_2 <- sapply(Ph_2, function(y) 1-y)
+Pc_2 <- mapply(function(a, b) (a + 9 * b)/10, Ph_2, Pcr_2)
 # 1.4.3.3. Session 3
-ses3.Ph <- sapply(ses3.h, mean)
-ses3.Pfa <- sapply(ses3.fa, mean)
-ses3.Pcr <- sapply(ses3.Pfa, function(x) 1-x)
-ses3.Pm <- sapply(ses3.Ph, function(y) 1-y)
-ses3.Pc <- mapply(function(a, b) (a + 9 * b)/10, ses3.Ph, ses3.Pcr)
+Ph_3 <- sapply(hit_3, mean)
+Pfa_3 <- sapply(fa_3, mean)
+Pcr_3 <- sapply(Pfa_3, function(x) 1-x)
+Pm_3 <- sapply(Ph_3, function(y) 1-y)
+Pc_3 <- mapply(function(a, b) (a + 9 * b)/10, Ph_3, Pcr_3)
 
 # 1.5. Function to compute d'
 compute.dprime <- function(hit, fa) {
@@ -223,16 +223,16 @@ compute.dprime <- function(hit, fa) {
 }
 # 1.6. Compute d'
 #square
-ses.sqr.dprime_1 <- mapply(compute.dprime, ses1.Ph.sqr, ses1.Pfa.sqr)
-ses.sqr.dprime_2 <- mapply(compute.dprime, ses2.Ph.sqr, ses2.Pfa.sqr)
+dprime.sqr_1 <- mapply(compute.dprime, Ph.sqr_1, Pfa.sqr_1)
+dprime.sqr_2 <- mapply(compute.dprime, Ph.sqr_2, Pfa.sqr_2)
 #random
-ses.rand.dprime_1 <- mapply(compute.dprime, ses1.Ph.rand, ses1.Pfa.rand)
-ses.rand.dprime_2 <- mapply(compute.dprime, ses2.Ph.rand, ses2.Pfa.rand)
+dprime.rand_1 <- mapply(compute.dprime, Ph.rand_1, Pfa.rand_1)
+dprime.rand_2 <- mapply(compute.dprime, Ph.rand_2, Pfa.rand_2)
 # Both
-ses.dprime_1 <- mapply(compute.dprime, ses1.Ph, ses1.Pfa)
-ses.dprime_2 <- mapply(compute.dprime, ses2.Ph, ses2.Pfa)
-ses.dprime_3 <- mapply(compute.dprime, ses3.Ph, ses3.Pfa)
-ses.dprime_3[28] <- 3.090232
+dprime_1 <- mapply(compute.dprime, Ph_1, Pfa_1)
+dprime_2 <- mapply(compute.dprime, Ph_2, Pfa_2)
+dprime_3 <- mapply(compute.dprime, Ph_3, Pfa_3)
+dprime_3[28] <- 3.090232
 
 # 2. Retrieve RT
 # 2.1. Functions for retrieving RTs
@@ -301,17 +301,17 @@ RT_3 <- lapply(as.list(behav_ses_3), retrieve.RT)
 
 # 2.4. Compute mean RTs
 # 2.4.1. Square
-RT.mean.sqr.1 <- sapply(RT.sqr_1, mean)
-RT.mean.sqr.2 <- sapply(RT.sqr_2, mean)
-RT.mean.sqr.3 <- sapply(RT.sqr_3, mean)
+RT.mean.sqr_1 <- sapply(RT.sqr_1, mean)
+RT.mean.sqr_2 <- sapply(RT.sqr_2, mean)
+RT.mean.sqr_3 <- sapply(RT.sqr_3, mean)
 # 2.4.2. Random
-RT.mean.rand.1 <- sapply(RT.rand_1, mean)
-RT.mean.rand.2 <- sapply(RT.rand_2, mean)
-RT.mean.rand.3 <- sapply(RT.rand_3, mean)
+RT.mean.rand_1 <- sapply(RT.rand_1, mean)
+RT.mean.rand_2 <- sapply(RT.rand_2, mean)
+RT.mean.rand_3 <- sapply(RT.rand_3, mean)
 # 2.4.3. Both
-RT.mean.1 <- sapply(RT_1, mean)
-RT.mean.2 <- sapply(RT_2, mean)
-RT.mean.3 <- sapply(RT_3, mean)
+RT.mean_1 <- sapply(RT_1, mean)
+RT.mean_2 <- sapply(RT_2, mean)
+RT.mean_3 <- sapply(RT_3, mean)
 
 # 3. Retrieve  intensisites
 # 3.1. Function to extract intensities
@@ -380,128 +380,28 @@ extract.intensities.rand <- function(behav.file) {
 
 # 3.3. Extract intensities for each subject by session and configuration
 # 3.3.1. Square
-intensities.sqr.1 <- lapply(behav_ses_1, extract.intensities.sqr)
-intensities.sqr.2 <- lapply(behav_ses_2, extract.intensities.sqr)
-intensities.sqr.3 <- lapply(behav_ses_3, extract.intensities.sqr)
+intensities.sqr_1 <- lapply(behav_ses_1, extract.intensities.sqr)
+intensities.sqr_2 <- lapply(behav_ses_2, extract.intensities.sqr)
+intensities.sqr_3 <- lapply(behav_ses_3, extract.intensities.sqr)
 # 3.3.1. Random
-intensities.rand.1 <- lapply(behav_ses_1, extract.intensities.rand)
-intensities.rand.2 <- lapply(behav_ses_2, extract.intensities.rand)
-intensities.rand.3 <- lapply(behav_ses_3, extract.intensities.rand)
+intensities.rand_1 <- lapply(behav_ses_1, extract.intensities.rand)
+intensities.rand_2 <- lapply(behav_ses_2, extract.intensities.rand)
+intensities.rand_3 <- lapply(behav_ses_3, extract.intensities.rand)
 # 3.3.1. Both configurations
-intensities.1 <- lapply(behav_ses_1, extract.intensities)
-intensities.2 <- lapply(behav_ses_2, extract.intensities)
-intensities.3 <- lapply(behav_ses_3, extract.intensities)
+intensities_1 <- lapply(behav_ses_1, extract.intensities)
+intensities_2 <- lapply(behav_ses_2, extract.intensities)
+intensities_3 <- lapply(behav_ses_3, extract.intensities)
 
 # 3.4. Extract  final thresholds for each session
 # 3.4.1. Square
-threshold.sqr_1 <- sapply(intensities.sqr.1, function(x) { return( x[length(x)] ) })
-threshold.sqr_2 <- sapply(intensities.sqr.2, function(x) { return( x[length(x)] ) })
-threshold.sqr_3 <- sapply(intensities.sqr.3, function(x) { return( x[length(x)] ) })
+threshold.sqr_1 <- sapply(intensities.sqr_1, function(x) { return( x[length(x)] ) })
+threshold.sqr_2 <- sapply(intensities.sqr_2, function(x) { return( x[length(x)] ) })
+threshold.sqr_3 <- sapply(intensities.sqr_3, function(x) { return( x[length(x)] ) })
 # 3.4.1. Random
-threshold.rand_1 <- sapply(intensities.rand.1, function(x) { return( x[length(x)] ) })
-threshold.rand_2 <- sapply(intensities.rand.2, function(x) { return( x[length(x)] ) })
-threshold.rand_3 <- sapply(intensities.rand.3, function(x) { return( x[length(x)] ) })
+threshold.rand_1 <- sapply(intensities.rand_1, function(x) { return( x[length(x)] ) })
+threshold.rand_2 <- sapply(intensities.rand_2, function(x) { return( x[length(x)] ) })
+threshold.rand_3 <- sapply(intensities.rand_3, function(x) { return( x[length(x)] ) })
 # 3.4.1. Both configurations
-threshold.1 <- sapply(intensities.1, function(x) { return( x[length(x)] ) })
-threshold.2 <- sapply(intensities.2, function(x) { return( x[length(x)] ) })
-threshold.3 <- sapply(intensities.3, function(x) { return( x[length(x)] ) })
-
-
-# # 4.6.Convert from wide to long
-# # Extracts session number to column
-# rep_data_long <- reshape(rep_data4, varying = c("C1.sqr_1", "C1.sqr_2", "C1.rand_1",
-#                                                 "C1.rand_2", "P1.sqr_1", "P1.sqr_2", 
-#                                                 "P1.rand_1", "P1.rand_2", "N1.sqr_1", 
-#                                                 "N1.sqr_2", "N1.rand_1", "N1.rand_2",
-#                                                 "occ.sqr.nd1_1", "occ.sqr.nd2_1",
-#                                                 "occ.sqr.nd1_2", "occ.sqr.nd2_2",
-#                                                 "occ.rand.nd1_1", "occ.rand.nd2_1",
-#                                                 "occ.rand.nd1_2", "occ.rand.nd2_2",
-#                                                 "left.sqr.nd1_1", "left.sqr.nd2_1",
-#                                                 "left.sqr.nd1_2", "left.sqr.nd2_2",
-#                                                 "left.rand.nd1_1", "left.rand.nd2_1", 
-#                                                 "left.rand.nd1_2", "left.rand.nd2_2",
-#                                                 "right.sqr.nd1_1", "right.sqr.nd2_1",
-#                                                 "right.sqr.nd1_2", "right.sqr.nd2_2",
-#                                                 "right.rand.nd1_1", "right.rand.nd2_1",
-#                                                 "right.rand.nd1_2", "right.rand.nd2_2",
-#                                                 "RL.sqr.nd1_1", "RL.sqr.nd2_1", 
-#                                                 "RL.sqr.nd1_2", "RL.sqr.nd2_2",
-#                                                 "RL.rand.nd1_1", "RL.rand.nd2_1", 
-#                                                 "RL.rand.nd1_2", "RL.rand.nd2_2",
-#                                                 "N2.sqr_1", "N2.sqr_2", "N2.rand_1", 
-#                                                 "N2.rand_2", "LP.sqr_1", "LP.sqr_2", 
-#                                                 "LP.rand_1", "LP.rand_2",
-#                                                 "ses.sqr.dprime_1", "ses.sqr.dprime_2",
-#                                                 "ses.rand.dprime_1", "ses.rand.dprime_2",
-#                                                 "RT.sqr_1", "RT.sqr_2",
-#                                                 "RT.rand_1", "RT.rand_2",
-#                                                 "threshold.sqr_1", "threshold.sqr_2",
-#                                                 "threshold.rand_1", "threshold.rand_2"),  
-#                          direction = "long", idvar = "Subject", sep = "_")
-# # Rename session column
-# names(rep_data_long)[names(rep_data_long) == "time"] <- "session"
-# 
-# # Rename columns to separate configuration number using sep = "_"
-# names(rep_data_long)[names(rep_data_long) == "C1.sqr"] <- "C1_1"
-# names(rep_data_long)[names(rep_data_long) == "C1.rand"] <- "C1_2"
-# names(rep_data_long)[names(rep_data_long) == "P1.sqr"] <- "P1_1"
-# names(rep_data_long)[names(rep_data_long) == "P1.rand"] <- "P1_2"
-# names(rep_data_long)[names(rep_data_long) == "N1.sqr"] <- "N1_1"
-# names(rep_data_long)[names(rep_data_long) == "N1.rand"] <- "N1_2"
-# names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd1"] <- "occ.nd1_1"
-# names(rep_data_long)[names(rep_data_long) == "occ.sqr.nd2"] <- "occ.nd2_1"
-# names(rep_data_long)[names(rep_data_long) == "occ.rand.nd1"] <- "occ.nd1_2"
-# names(rep_data_long)[names(rep_data_long) == "occ.rand.nd2"] <- "occ.nd2_2"
-# names(rep_data_long)[names(rep_data_long) == "left.sqr.nd1"] <- "left.nd1_1"
-# names(rep_data_long)[names(rep_data_long) == "left.sqr.nd2"] <- "left.nd2_1"
-# names(rep_data_long)[names(rep_data_long) == "left.rand.nd1"] <- "left.nd1_2"
-# names(rep_data_long)[names(rep_data_long) == "left.rand.nd2"] <- "left.nd2_2"
-# names(rep_data_long)[names(rep_data_long) == "right.sqr.nd1"] <- "right.nd1_1"
-# names(rep_data_long)[names(rep_data_long) == "right.sqr.nd2"] <- "right.nd2_1"
-# names(rep_data_long)[names(rep_data_long) == "right.rand.nd1"] <- "right.nd1_2"
-# names(rep_data_long)[names(rep_data_long) == "right.rand.nd2"] <- "right.nd2_2"
-# names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd1"] <- "RL.nd1_1"
-# names(rep_data_long)[names(rep_data_long) == "RL.sqr.nd2"] <- "RL.nd2_1"
-# names(rep_data_long)[names(rep_data_long) == "RL.rand.nd1"] <- "RL.nd1_2"
-# names(rep_data_long)[names(rep_data_long) == "RL.rand.nd2"] <- "RL.nd2_2"
-# names(rep_data_long)[names(rep_data_long) == "N2.sqr"] <- "N2_1"
-# names(rep_data_long)[names(rep_data_long) == "N2.rand"] <- "N2_2"
-# names(rep_data_long)[names(rep_data_long) == "LP.sqr"] <- "LP_1"
-# names(rep_data_long)[names(rep_data_long) == "LP.rand"] <- "LP_2"
-# names(rep_data_long)[names(rep_data_long) == "ses.sqr.dprime"] <- "ses.dprime_1"
-# names(rep_data_long)[names(rep_data_long) == "ses.rand.dprime"] <- "ses.dprime_2"
-# names(rep_data_long)[names(rep_data_long) == "RT.sqr"] <- "RT_1"
-# names(rep_data_long)[names(rep_data_long) == "RT.rand"] <- "RT_2"
-# names(rep_data_long)[names(rep_data_long) == "threshold.sqr"] <- "threshold_1"
-# names(rep_data_long)[names(rep_data_long) == "threshold.rand"] <- "threshold_2"
-# # Extracts configuration number to column
-# rep_data_long2 <- reshape(rep_data_long, varying = c("C1_1", "C1_2", "P1_1", "P1_2",
-#                                                      "N1_1", "N1_2", "occ.nd1_1", 
-#                                                      "occ.nd2_1", "occ.nd1_2", 
-#                                                      "occ.nd2_2", "left.nd1_1", 
-#                                                      "left.nd2_1", "left.nd1_2", 
-#                                                      "left.nd2_2", "right.nd1_1", 
-#                                                      "right.nd2_1", "right.nd1_2", 
-#                                                      "right.nd2_2", "RL.nd1_1", 
-#                                                      "RL.nd2_1", "RL.nd1_2", 
-#                                                      "RL.nd2_2", "N2_1", "N2_2",
-#                                                      "LP_1", "LP_2",
-#                                                      "ses.dprime_1", "ses.dprime_2",
-#                                                      "RT_1", "RT_2",
-#                                                      "threshold_1", "threshold_2"),  
-#                           direction = "long", idvar = " Subject", sep = "_")
-# # Rename configuration column name
-# names(rep_data_long2)[names(rep_data_long2) == "time"] <- "configuration"
-# # Rename configuration levels
-# rep_data_long2$configuration[rep_data_long2$configuration == 1] <- "sqr"
-# rep_data_long2$configuration[rep_data_long2$configuration == 2] <- "rand"
-# # Rename d' column
-# names(rep_data_long2)[names(rep_data_long2) == "ses.dprime"] <- "dprime"
-# 
-# # Convert configuration, group and session to factors
-# rep_data_long2$group <- factor(rep_data_long2$group)
-# rep_data_long2$group.original <- factor(rep_data_long2$group.original)
-# rep_data_long2$session <- factor(rep_data_long2$session)
-# rep_data_long2$configuration <- factor(rep_data_long2$configuration)
-# 
+threshold_1 <- sapply(intensities_1, function(x) { return( x[length(x)] ) })
+threshold_2 <- sapply(intensities_2, function(x) { return( x[length(x)] ) })
+threshold_3 <- sapply(intensities_3, function(x) { return( x[length(x)] ) })

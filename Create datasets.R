@@ -253,30 +253,26 @@ rep_data_alpha3$alpha.power <- factor(rep_data_alpha3$alpha.power)
 
 #-------------------------Dataset with behavioral data-------------------------
 # 5.1. Bind dprime values to wide data frame
-rep_data4 <- cbind(rep_data2, ses.sqr.dprime_1, ses.sqr.dprime_2, ses.rand.dprime_1, 
-                   ses.rand.dprime_2, ses.dprime_1, ses.dprime_2)
+rep_data4 <- cbind(rep_data2, dprime.sqr_1, dprime.sqr_2, dprime.rand_1, 
+                   dprime.rand_2, dprime_1, dprime_2)
 # 5.2.1. Bind RT values to data frame
-rep_data5 <- cbind(rep_data4, RT.mean.sqr.1, RT.mean.sqr.2, RT.mean.sqr.3, 
-                   RT.mean.rand.1, RT.mean.rand.2, RT.mean.rand.3, RT.mean.1, 
-                   RT.mean.2, RT.mean.3)
-# 5.2.2. Compute RT means across sessions
-questionnaire.ERPs$RT.1.2 <- rowMeans(questionnaire.ERPs[,
-                                      which(colnames(questionnaire.ERPs) == "RT.mean.1"):
-                                      which(colnames(questionnaire.ERPs) == "RT.mean.2")])
+rep_data5 <- cbind(rep_data4, RT.mean.sqr_1, RT.mean.sqr_2, RT.mean.sqr_3, 
+                   RT.mean.rand_1, RT.mean.rand_2, RT.mean.rand_3, RT.mean_1, 
+                   RT.mean_2, RT.mean_3)
 
 # 5.3. Bind session threshold, proportion correct to data frame
 # 5.3.1. Thresholds
 rep_data5 <- cbind(rep_data5, threshold.sqr_1, threshold.sqr_2, threshold.rand_1, 
-                   threshold.rand_2, threshold.1, threshold.2)
+                   threshold.rand_2, threshold_1, threshold_2)
 
 # 5.3.2. Proportion correct, hits, misses, false alarms and correct rejections
-rep_data5 <- cbind(rep_data5, ses1.Ph.sqr, ses2.Ph.sqr, ses1.Ph.rand, ses2.Ph.rand, ses1.Ph, 
-                   ses2.Ph, ses3.Ph, ses1.Pfa.sqr, ses2.Pfa.sqr, ses1.Pfa.rand, 
-                   ses2.Pfa.rand, ses1.Pfa, ses2.Pfa, ses3.Pfa, ses1.Pm.sqr, 
-                   ses2.Pm.sqr, ses1.Pm.rand, ses2.Pm.rand, ses1.Pm, ses2.Pm,
-                   ses3.Pm, ses1.Pcr.sqr, ses2.Pcr.sqr, ses1.Pcr.rand, ses2.Pcr.rand,
-                   ses1.Pcr, ses2.Pcr, ses3.Pcr, ses1.Pc.sqr, ses2.Pc.sqr, 
-                   ses1.Pc.rand, ses2.Pc.rand, ses1.Pc, ses2.Pc, ses3.Pc)
+rep_data5 <- cbind(rep_data5, Ph.sqr_1, Ph.sqr_2, Ph.rand_1, Ph.rand_2, Ph_1, 
+                   Ph_2, Ph_3, Pfa.sqr_1, Pfa.sqr_2, Pfa.rand_1, 
+                   Pfa.rand_2, Pfa_1, Pfa_2, Pfa_3, Pm.sqr_1, 
+                   Pm.sqr_2, Pm.rand_1, Pm.rand_2, Pm_1, Pm_2,
+                   Pm_3, Pcr.sqr_1, Pcr.sqr_2, Pcr.rand_1, Pcr.rand_2,
+                   Pcr_1, Pcr_2, Pcr_3, Pc.sqr_1, Pc.sqr_2, 
+                   Pc.rand_1, Pc.rand_2, Pc_1, Pc_2, Pc_3)
 
 
 
@@ -287,6 +283,55 @@ questionnaire.ERPs <- cbind(rep_data5, questionnaire.ses1, questionnaire.ses2)
 questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)
 questionnaire.ERPs$group.original <- factor(questionnaire.ERPs$group.original)
 
+#---------------------Create long data frame with behavioral data--------------
+# 5.6. reshape by session
+questionnaire.ERPs.long <- questionnaire.ERPs[,which(colnames(questionnaire.ERPs) ==
+                                                       "dprime.sqr_1"):
+                                                which(colnames(questionnaire.ERPs) ==
+                                                        "Pc_3")]
+
+# 5.6.1. remove columsn for third session to reshape
+questionnaire.ERPs.long <- questionnaire.ERPs.long[,
+                                -which(colnames(questionnaire.ERPs.long) %in% 
+                                         ls(pattern = "_3"))]
+questionnaire.ERPs.long[,c("dprime", "dprime_1", "dprime_2", "RT.mean", "RT.mean_1", 
+                           "RT.mean_2", "threshold", "threshold_1", "threshold_2",
+                           "Ph", "Ph_1", "Ph_2", "Pfa", "Pfa_1", "Pfa_2", 
+                           "Pm", "Pm_1", "Pm_2", "Pcr", "Pcr_1", "Pcr_2", 
+                           "Pc", "Pc_1", "Pc_2")] <- NULL
+
+# 5.6.2. reshape
+questionnaire.ERPs.long <- reshape(questionnaire.ERPs.long, 
+                                   varying = 1:ncol(questionnaire.ERPs.long), 
+                                   sep = "_", 
+                         direction = "long", 
+                         new.row.names = NULL)
+questionnaire.ERPs.long[,ncol(questionnaire.ERPs.long)]<- NULL #eliminate extra column added by reshape
+names(questionnaire.ERPs.long)[names(questionnaire.ERPs.long) == "time"] <- "behav.session"
+
+# 5.6.3. reshape by configuration
+questionnaire.ERPs.long2 <- questionnaire.ERPs.long %>%
+  unite(sqr,contains("sqr")) %>%
+  unite(rand,contains("rand")) %>%
+  gather(behav.configuration,values,sqr:rand) %>%
+  separate(values,c("dprime", "RT.mean", "threshold", 
+                    "Ph", "Pfa", "Pm", "Pcr","Pc"),
+           sep = "_",
+           convert = TRUE)
+
+# 5.6.4. Bind to long data frame
+rep.data.long2 <- cbind(rep.data.long2, questionnaire.ERPs.long2)
+rep.data.long2$behav.session <- NULL
+rep.data.long2$behav.configuration <- NULL
+
+# 5.6.5. coerce to factors
+rep.data.long2$group <- factor(rep.data.long2$group)
+rep.data.long2$group.original <- factor(rep.data.long2$group.original)
+rep.data.long2$session <- factor(rep.data.long2$session)
+rep.data.long2$configuration <- factor(rep.data.long2$configuration)
+
+# 5. Remove intermediary data frames
+rm(questionnaire.ERPs.long, questionnaire.ERPs.long2)
 
 #--------------------Create alpha group data by median split--------------------
 # 6. Add to wide data frame
