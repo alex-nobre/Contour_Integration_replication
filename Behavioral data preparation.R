@@ -322,7 +322,7 @@ extract.intensities <- function(behav.file) {
   colnames(subj.data)[5] <- "target.presence"
   target.trials <- subset(subj.data, target.presence == 1)
   decrement <- as.vector(target.trials$Decrement)
-  intensities <- 1 - decrement
+  #intensities <- 1 - decrement
 }
 
 # 3.1.2. Square 
@@ -332,7 +332,7 @@ extract.intensities.sqr <- function(behav.file) {
   colnames(subj.data)[5] <- "target.presence"
   target.trials.sqr <- subset(subj.data, target.presence == 1 & Configuration == 1)
   decrement.sqr <- as.vector(target.trials.sqr$Decrement)
-  intensities.sqr <- 1 - decrement.sqr
+  #intensities.sqr <- 1 - decrement.sqr
 }
 
 # 3.1.3. Random
@@ -342,7 +342,7 @@ extract.intensities.rand <- function(behav.file) {
   colnames(subj.data)[5] <- "target.presence"
   target.trials.rand <- subset(subj.data, target.presence == 1 & Configuration == 0)
   decrement.rand <- as.vector(target.trials.rand$Decrement)
-  intensities.rand <- 1 - decrement.rand
+  #intensities.rand <- 1 - decrement.rand
 }
 
 # # 3.2. Functions to extract intensity values by block

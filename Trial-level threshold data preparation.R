@@ -323,8 +323,6 @@ low.bin.mean.alpha.rand2 <- sapply(low.bin.alpha.rand2, mean)
 high.bin.mean.alpha.rand2 <- sapply(high.bin.alpha.rand2, mean)
 
 
-
-
 # # test------------------------------------------------------------------------
 # # TEEGT TEST
 # #extract trials

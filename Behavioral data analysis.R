@@ -75,7 +75,7 @@ anova(RT.mean.baseline, RT.mean.config, RT.mean.session, RT.mean.group.original,
 # }
 
 # 2. Intensities
-# 1. Create data frame for intensities
+# 2.1. Create data frame for intensities
 intensities.data <- data.frame()
 intensities.columsn <- data.frame()
 intensities.data <- rbind(blockintensities.1[[1]], blockintensities.1[[2]], 
@@ -89,44 +89,60 @@ colnames(intensities.data) <- c("block.intensities.0", "block.intensities.1",
                                 "block.intensities.6", "block.intensities.7",  
                                 "block.intensities.8", "block.intensities.9")
 
-# Bind to dataset
-questionnaire.ERPs <- cbind(questionnaire.ERPs, intensities.data)
+# # Bind to dataset
+# questionnaire.ERPs <- cbind(questionnaire.ERPs, intensities.data)
+# 
+# questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)
+# questionnaire.ERPs$group.original <- factor(questionnaire.ERPs$group.original)
 
-questionnaire.ERPs$group <- factor(questionnaire.ERPs$group)
-questionnaire.ERPs$group.original <- factor(questionnaire.ERPs$group.original)
 
-
-# 1.1. Function to plot intensities
+# 2.2. Function to plot intensities
 plot.intensities <- function(intlist, subject) {
-  plot(seq(1:length(intlist[[subject]])), intlist[[subject]], ylim = c(-0.5, 0.5),
+  plot(seq(1:length(intlist[[subject]])), intlist[[subject]],
        xlab = "Trial", ylab = "Intensities", main = "Intensities by trial", type = 'l')
 }
 
-# 1.2. Plot intensities for all subjects
+# 2.3. Plot intensities for all subjects
 pdf('threshold estimation.pdf')
-for (x in 1:32) {
+for (x in which(questionnaire.ERPs$group.original == "unaware")) {
   par(new = TRUE)
-  plot(seq(1:length(intensities.1[[x]])), intensities.1[[x]], ylim = c(-0.5, 0.5),
+  plot(seq(1:length(intensities_1[[x]])), intensities_1[[x]],
        xlab = "Trial", ylab = "Intensities", main = "Intensities by trial", type = 'l',
        col = x)
 }
-dev.off()
+#dev.off()
 par(new = FALSE)
 
+# 2.4. Separate plots
+par(mfrow = c(3,3))
+for (x in which(questionnaire.ERPs$group.original == "unaware")) {
+  plot(seq(1:length(intensities_1[[x]])), intensities_1[[x]],
+       xlab = "Trial", ylab = "Decrement values", main = paste("Subject ", x), type = 'l',
+       col = x)
+}
+par(defaults)
 
-# 2. Plot block end intensities values by awareness group
-plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$threshold.1, ylim = c(-0.5, 0.5), 
+length(questionnaire.ERPs[which(questionnaire.ERPs$group.original == "unaware"),]$Subject)
+
+# 2.5. Plot block end intensities values by awareness group
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$threshold_1, 
      col = questionnaire.ERPs$group.original, pch = 16, main = "Main task thresholds",
      xlab = "Subject", ylab = "Threshold")
-legend(0, -0.2, legend = levels(questionnaire.ERPs$group.original), 
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$group.original == 
+                                     'aware', ]$threshold_1))
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$group.original == 
+                                     'unaware', ]$threshold_1), 
+       col = 'red')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = levels(questionnaire.ERPs$group.original), 
        col = c("black", "red"),
        pch = 16)
-abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$group.original == 'aware', ]$threshold.1))
-abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$group.original == 'unaware', ]$threshold.1), 
-       col = 'red')
+par(defaults)
 
 # Line plot
-threshold.lineplot <- ggplot(rep_data_long2, aes(x = group.original, 
+threshold.lineplot <- ggplot(rep.data.long2, aes(x = group.original, 
                                                  y = threshold,
                                                  colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
