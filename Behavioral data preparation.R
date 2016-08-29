@@ -313,6 +313,20 @@ RT.mean_1 <- sapply(RT_1, mean)
 RT.mean_2 <- sapply(RT_2, mean)
 RT.mean_3 <- sapply(RT_3, mean)
 
+# 2.5. Compute SDs for RTs
+# 2.5.1. Square
+RT.sd.sqr_1 <- sapply(RT.sqr_1, sd)
+RT.sd.sqr_2 <- sapply(RT.sqr_2, sd)
+RT.sd.sqr_3 <- sapply(RT.sqr_3, sd)
+# 2.5.2. Random
+RT.sd.rand_1 <- sapply(RT.rand_1, sd)
+RT.sd.rand_2 <- sapply(RT.rand_2, sd)
+RT.sd.rand_3 <- sapply(RT.rand_3, sd)
+# 2.5.3. Both
+RT.sd_1 <- sapply(RT_1, sd)
+RT.sd_2 <- sapply(RT_2, sd)
+RT.sd_3 <- sapply(RT_3, sd)
+
 # 3. Retrieve  intensisites
 # 3.1. Function to extract intensities
 # 3.1.1. All conditions

@@ -258,7 +258,10 @@ rep_data4 <- cbind(rep_data2, dprime.sqr_1, dprime.sqr_2, dprime.rand_1,
 # 5.2.1. Bind RT values to data frame
 rep_data5 <- cbind(rep_data4, RT.mean.sqr_1, RT.mean.sqr_2, RT.mean.sqr_3, 
                    RT.mean.rand_1, RT.mean.rand_2, RT.mean.rand_3, RT.mean_1, 
-                   RT.mean_2, RT.mean_3)
+                   RT.mean_2, RT.mean_3, 
+                   RT.sd.sqr_1, RT.sd.sqr_2, RT.sd.sqr_3, 
+                   RT.sd.rand_1, RT.sd.rand_2, RT.sd.rand_3, RT.sd_1, 
+                   RT.sd_2, RT.sd_3)
 
 # 5.3. Bind session threshold, proportion correct to data frame
 # 5.3.1. Thresholds
@@ -295,7 +298,8 @@ questionnaire.ERPs.long <- questionnaire.ERPs.long[,
                                 -which(colnames(questionnaire.ERPs.long) %in% 
                                          ls(pattern = "_3"))]
 questionnaire.ERPs.long[,c("dprime", "dprime_1", "dprime_2", "RT.mean", "RT.mean_1", 
-                           "RT.mean_2", "threshold", "threshold_1", "threshold_2",
+                           "RT.mean_2", "RT.sd_1", "RT.sd_2", "threshold", 
+                           "threshold_1", "threshold_2",
                            "Ph", "Ph_1", "Ph_2", "Pfa", "Pfa_1", "Pfa_2", 
                            "Pm", "Pm_1", "Pm_2", "Pcr", "Pcr_1", "Pcr_2", 
                            "Pc", "Pc_1", "Pc_2")] <- NULL
@@ -306,15 +310,17 @@ questionnaire.ERPs.long <- reshape(questionnaire.ERPs.long,
                                    sep = "_", 
                          direction = "long", 
                          new.row.names = NULL)
-questionnaire.ERPs.long[,ncol(questionnaire.ERPs.long)]<- NULL #eliminate extra column added by reshape
-names(questionnaire.ERPs.long)[names(questionnaire.ERPs.long) == "time"] <- "behav.session"
+#eliminate extra column added by reshape
+questionnaire.ERPs.long[,ncol(questionnaire.ERPs.long)]<- NULL 
+names(questionnaire.ERPs.long)[names(questionnaire.ERPs.long) == "time"] <- 
+  "behav.session"
 
-# 5.6.3. reshape by configuration
+# 5.6.3. Reshape by configuration
 questionnaire.ERPs.long2 <- questionnaire.ERPs.long %>%
   unite(sqr,contains("sqr")) %>%
   unite(rand,contains("rand")) %>%
   gather(behav.configuration,values,sqr:rand) %>%
-  separate(values,c("dprime", "RT.mean", "threshold", 
+  separate(values,c("dprime", "RT.mean", "RT.sd", "threshold", 
                     "Ph", "Pfa", "Pm", "Pcr","Pc"),
            sep = "_",
            convert = TRUE)

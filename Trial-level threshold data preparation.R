@@ -146,10 +146,14 @@ threshold.alpha.data <- function(behav.file, config.type) {
 
 #--------------------------------------Prepare data----------------------------------------
 # 1. Bin data for all conditions
-bin.trials.sqr1 <- mapply(threshold.alpha.data, behav_ses_1, 'square', SIMPLIFY = FALSE)
-bin.trials.sqr2 <- mapply(threshold.alpha.data, behav_ses_2, 'square', SIMPLIFY = FALSE)
-bin.trials.rand1 <- mapply(threshold.alpha.data, behav_ses_1, 'random', SIMPLIFY = FALSE)
-bin.trials.rand2 <- mapply(threshold.alpha.data, behav_ses_2, 'random', SIMPLIFY = FALSE)
+bin.trials.sqr1 <- mapply(threshold.alpha.data, behav_ses_1, 'square', 
+                          SIMPLIFY = FALSE)
+bin.trials.sqr2 <- mapply(threshold.alpha.data, behav_ses_2, 'square', 
+                          SIMPLIFY = FALSE)
+bin.trials.rand1 <- mapply(threshold.alpha.data, behav_ses_1, 'random', 
+                           SIMPLIFY = FALSE)
+bin.trials.rand2 <- mapply(threshold.alpha.data, behav_ses_2, 'random', 
+                           SIMPLIFY = FALSE)
 
 # 2. Get indices for each bin
 # 2.1. Square 1

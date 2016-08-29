@@ -29,6 +29,12 @@ library(knitr)
 # 0. Save graphical defaults
 defaults <- par()
 
+# Contrasts
+contrasts(rep.data.long2$configuration) <- c(-1, 1) # contrasts for config
+contrasts(rep.data.long2$session) <- c(-1, 1) # contrasts for session
+contrasts(rep.data.long2$group.original) <- c(-1, 1) # contrasts for group.original
+contrasts(rep.data.long2$group) <- c(-1, 1) # contrasts for group
+
 #---------------------------Psychophysical analysis-------------------------
 # 1.RT
 # 1.1. Descriptives
@@ -38,31 +44,72 @@ summary(questionnaire.ERPs$RT.mean.3)
 
 # 1.2. Plots by session
 # 1.2.1. Scatterplot of mean RT per session
-plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean.1, main = "RT in session 1",
-     xlab = "RT", pch = 16, col = 6) #session 1
-plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean.2, main = "RT in session 2",
-     xlab = "RT", pch = 16, col = 6) #session 2
+layout(rbind(1,2), heights=c(5,1))
+# mean RTs for each session
+plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean_1, main = "RT by session",
+     ylim = range(c(RT.mean_2 - RT.sd_2, RT.mean_1 + RT.sd_1)),
+     xlab = "Subject", ylab = "mean RT +/- SD", pch = 16, col = 5) #session 1
+points(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean_2,
+     pch = 17, col = 6) #session 2
+# SDs of RTs for each session
+arrows(questionnaire.ERPs$Subject, RT.mean_1 - RT.sd_1, 
+       questionnaire.ERPs$Subject, RT.mean_1 + RT.sd_1, 
+       length=0.05, angle=90, code=3, col = 5) #session 1
+arrows(questionnaire.ERPs$Subject, RT.mean_2 - RT.sd_2, 
+       questionnaire.ERPs$Subject, RT.mean_2 + RT.sd_2, 
+       length=0.05, angle=90, code=3, col = 6) #session 2
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("session 1", " session 2"), 
+       col = c(5, 6),
+       pch = 16)
+par(defaults)
 # 1.2.2. Histograms of mean RT per session
 hist(questionnaire.ERPs$RT.mean.1, main = "RT in session 1",
      xlab = "RT", col = 7) #session 1
 hist(questionnaire.ERPs$RT.mean.2, main = "RT in session 2",
      xlab = "RT", col = 12) #session 2
 
-# 1.3. ANOVA for Comparison of RTs between square and random
-# TODO!!!!!!!!!!!!
+# 1.3. Plots by configuration
+# 1.2.1. Scatterplot of mean RT per session
+layout(rbind(1,2), heights=c(5,1))
+# mean RTs for each session
+plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean.sqr_1, 
+     main = "RT in session 1 by configuration",
+     ylim = range(c(RT.mean.sqr_1 - RT.sd.sqr_1, RT.mean.sqr_1 + RT.sd.sqr_1)),
+     xlab = "Subject", ylab = "mean RT +/- SD", pch = 16, col = 5) #square
+points(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean.rand_1,
+       pch = 17, col = 6) #random
+# SDs of RTs for each session
+arrows(questionnaire.ERPs$Subject, RT.mean.sqr_1 - RT.sd.sqr_1, 
+       questionnaire.ERPs$Subject, RT.mean.sqr_1 + RT.sd.sqr_1, 
+       length=0.05, angle=90, code=3, col = 5) #square
+arrows(questionnaire.ERPs$Subject, RT.mean.rand_1 - RT.sd.rand_1, 
+       questionnaire.ERPs$Subject, RT.mean.rand_1 + RT.sd.rand_1, 
+       length=0.05, angle=90, code=3, col = 6) #random
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("square", "random"), 
+       col = c(5, 6),
+       pch = 16)
+par(defaults)
 
 # 1.4. ANOVA - mean RT; session x configuration x group
-RT.mean.baseline <- lme(RT ~ 1, random = ~1|Subject/configuration/session, 
-                   data = rep_data_long2, method = "ML") #baseline
+RT.mean.baseline <- lme(RT.mean ~ 1, random = ~1|Subject/configuration/session, 
+                   data = rep.data.long2, method = "ML") #baseline
 RT.mean.config <- update(RT.mean.baseline, .~. + configuration)
 RT.mean.session <- update(RT.mean.config, .~. + session)
 RT.mean.group.original <- update(RT.mean.session, .~. + group.original)
-RT.mean.config_session <- update(RT.mean.group.original, .~. + configuration:session)
-RT.mean.session_group.original <- update(RT.mean.config_session, .~. + session:group.original)
-RT.mean.config_group.original <- update(RT.mean.session_group.original, .~. + configuration:group.original)
-RT.mean.lme <- update(RT.mean.config_group.original, .~. + configuration:session:group.original)
+RT.mean.config.session <- update(RT.mean.group.original, .~. + configuration:session)
+RT.mean.session.group.original <- update(RT.mean.config.session, .~. + 
+                                           session:group.original)
+RT.mean.config.group.original <- update(RT.mean.session.group.original, .~. + 
+                                          configuration:group.original)
+RT.mean.lme <- update(RT.mean.config.group.original, .~. + 
+                        configuration:session:group.original)
 anova(RT.mean.baseline, RT.mean.config, RT.mean.session, RT.mean.group.original, 
-      RT.mean.config_session, RT.mean.session_group.original, RT.mean.config_group.original, 
+      RT.mean.config.session, RT.mean.session.group.original, 
+      RT.mean.config.group.original, 
       RT.mean.lme)
 
 # # Function to bind values for each subject
@@ -73,6 +120,11 @@ anova(RT.mean.baseline, RT.mean.config, RT.mean.session, RT.mean.group.original,
 #   return(lapply(nested.columns, nested.list, cbind))
 #   blocksnames <- paste("block.intensities.", seq_along(0:9), sep = "")
 # }
+
+# 1.5. Right difference by RT
+layout(rbind(1,2), heights=c(5,1))
+plot(lm(questionnaire.ERPs$left.diff.1 ~ questionnaire.ERPs$RT.mean_1))
+cor.test(questionnaire.ERPs$RT.mean_1, questionnaire.ERPs$left.diff.1)
 
 # 2. Intensities
 # 2.1. Create data frame for intensities
@@ -369,85 +421,84 @@ labs(title = "Aware index session 2", x = "group", y = "aware index")
 # 3.1. ERP Differences x confidence ratings
 # 3.1.1. Both groups
 # 3.1.1.1. Session 1
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ratings1$conf.4.ses1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ratings1$conf.4.ses1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ratings1$conf.4.ses1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ratings1$conf.4.ses1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ratings1$conf.4.ses1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ratings1$conf.4.ses1, 
          method = "pearson")
 
 # 3.1.1.2. session 2
-cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ratings1$conf.4.ses2, 
+cor.test(questionnaire.ERPs$occ.diff.2, questionnaire.ratings1$conf.4.ses2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ratings1$conf.4.ses2, 
+cor.test(questionnaire.ERPs$left.diff.2, questionnaire.ratings1$conf.4.ses2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ratings1$conf.4.ses2, 
+cor.test(questionnaire.ERPs$right.diff.2, questionnaire.ratings1$conf.4.ses2, 
          method = "pearson")
 
 # 3.1.2. By group
 # 3.1.2.1. Session 1
-cor.test(aware$conf.4.ses1, aware$occ_diff_1)
-cor.test(aware$conf.4.ses1, aware$left_diff_1)
-cor.test(aware$conf.4.ses1, aware$right_diff_1)
-cor.test(unaware$conf.4.ses1, unaware$occ_diff_1)
-cor.test(unaware$conf.4.ses1, unaware$left_diff_1)
-cor.test(unaware$conf.4.ses1, unaware$right_diff_1)
+cor.test(aware$conf.4.ses1, aware$occ.diff.1)
+cor.test(aware$conf.4.ses1, aware$left.diff.1)
+cor.test(aware$conf.4.ses1, aware$right.diff.1)
+cor.test(unaware$conf.4.ses1, unaware$occ.diff.1)
+cor.test(unaware$conf.4.ses1, unaware$left.diff.1)
+cor.test(unaware$conf.4.ses1, unaware$right.diff.1)
 # 3.1.2.1. Session 2
-cor.test(aware$conf.4.ses2, aware$occ_diff_2)
-cor.test(aware$conf.4.ses2, aware$left_diff_2)
-cor.test(aware$conf.4.ses2, aware$right_diff_2)
-cor.test(unaware$conf.4.ses2, unaware$occ_diff_2)
-cor.test(unaware$conf.4.ses2, unaware$left_diff_2)
-cor.test(unaware$conf.4.ses2, unaware$right_diff_2)
+cor.test(aware$conf.4.ses2, aware$occ.diff.2)
+cor.test(aware$conf.4.ses2, aware$left.diff.2)
+cor.test(aware$conf.4.ses2, aware$right.diff.2)
+cor.test(unaware$conf.4.ses2, unaware$occ.diff.2)
+cor.test(unaware$conf.4.ses2, unaware$left.diff.2)
+cor.test(unaware$conf.4.ses2, unaware$right.diff.2)
 
 # 3.1. ERP Differences x frequency ratings
 # 3.1.1. Both groups
 # 3.1.1.1. Session 1
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$freq.4.ses1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$freq.4.ses1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$freq.4.ses1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$freq.4.ses1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$freq.4.ses1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$freq.4.ses1, 
          method = "pearson")
 # 3.1.1.2. session 2
-cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$freq.4.ses2, 
+cor.test(questionnaire.ERPs$occ.diff.2, questionnaire.ERPs$freq.4.ses2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$freq.4.ses2, 
+cor.test(questionnaire.ERPs$left.diff.2, questionnaire.ERPs$freq.4.ses2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$freq.4.ses2, 
+cor.test(questionnaire.ERPs$right.diff.2, questionnaire.ERPs$freq.4.ses2, 
          method = "pearson")
 
 # 3.2.2. By group
 # 3.2.2.1. Session 1
-corr.test(data.frame(questionnaire.ERPs[group.original == "aware",]$occ_diff_1, 
-                     questionnaire.ERPs[group.original == "aware",]$left_diff_1, 
-                     questionnaire.ERPs[group.original == "aware",]$right_diff_1, 
+corr.test(data.frame(questionnaire.ERPs[group.original == "aware",]$occ.diff.1, 
+                     questionnaire.ERPs[group.original == "aware",]$left.diff.1, 
+                     questionnaire.ERPs[group.original == "aware",]$right.diff.1, 
                      questionnaire.ERPs[group.original == "aware",]$conf.4.ses1, 
                      questionnaire.ERPs[group.original == "aware",]$freq.4.ses1))
-cor.test(aware$freq.4.ses1, aware$occ_diff_1)
-cor.test(aware$freq.4.ses1, aware$left_diff_1)
-cor.test(aware$freq.4.ses1, aware$right_diff_1)
-cor.test(unaware$freq.4.ses1, unaware$occ_diff_1)
-cor.test(unaware$freq.4.ses1, unaware$left_diff_1)
-cor.test(unaware$freq.4.ses1, unaware$right_diff_1)
+cor.test(aware$freq.4.ses1, aware$occ.diff.1)
+cor.test(aware$freq.4.ses1, aware$left.diff.1)
+cor.test(aware$freq.4.ses1, aware$right.diff.1)
+cor.test(unaware$freq.4.ses1, unaware$occ.diff.1)
+cor.test(unaware$freq.4.ses1, unaware$left.diff.1)
+cor.test(unaware$freq.4.ses1, unaware$right.diff.1)
 # 3.2.2.1. Session 2
-cor.test(aware$freq.4.ses2, aware$occ_diff_2)
-cor.test(aware$freq.4.ses2, aware$left_diff_2)
-cor.test(aware$freq.4.ses2, aware$right_diff_2)
-cor.test(unaware$freq.4.ses2, unaware$occ_diff_2)
-cor.test(unaware$freq.4.ses2, unaware$left_diff_2)
-cor.test(unaware$freq.4.ses2, unaware$right_diff_2)
+cor.test(aware$freq.4.ses2, aware$occ.diff.2)
+cor.test(aware$freq.4.ses2, aware$left.diff.2)
+cor.test(aware$freq.4.ses2, aware$right.diff.2)
+cor.test(unaware$freq.4.ses2, unaware$occ.diff.2)
+cor.test(unaware$freq.4.ses2, unaware$left.diff.2)
+cor.test(unaware$freq.4.ses2, unaware$right.diff.2)
 
 # 3.2. ERP Differences x combined awareness index
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$aware.index.1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$aware.index.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$aware.index.1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$aware.index.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$aware.index.1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$aware.index.1, 
          method = "pearson")
 
-#------------------------------------Correlations----------------------------
-# 1. Behavioral data correlations matrix
+# 4. Behavioral data correlations matrix
 ggpairs(questionnaire.ratings1, mapping = aes(color=Recall))
 
 # 1.3. Correlational measures subset
@@ -458,12 +509,12 @@ ggpairs(questionnaire.ratings1, mapping = aes(color=Recall))
 #                                   "freq.4.ses2", "aware.index.2", "ses.2.Pc",
 #                                   "ses2.Ph", "ses2.Pm", "ses2.Pfa", "ses2.Pcr")]
 
-cor_data <- questionnaire.ERPs[,c("RT.mean.1", "conf.4.ses1", "freq.4.ses1", 
-                                  "occ_diff_1", "left_diff_1", "right_diff_1")]
+cor_data <- questionnaire.ERPs[,c("RT.mean.1", "conf.4_1", "freq.4_1", 
+                                  "occ.diff.1", "left.diff.1", "right.diff.1")]
 colnames(cor_data) <- c("RT", "conf. rating", "freq. rating", "nd1 diff.",
                         "nd2 left diff.", "nd2 right diff.")
-cor_data2 <- questionnaire.ERPs[,c("RT.mean.2", "conf.4.ses2", "freq.4.ses2", 
-                                   "occ_diff_2", "left_diff_2", "right_diff_2")]
+cor_data2 <- questionnaire.ERPs[,c("RT.mean.2", "conf.4_2", "freq.4_2", 
+                                   "occ.diff.2", "left.diff.2", "right.diff.2")]
 colnames(cor_data2) <- c("RT", "conf. rating", "freq. rating", "nd1 diff.",
                         "nd2 left diff.", "nd2 right diff.")
 
@@ -496,91 +547,91 @@ cor.test(unaware$RT.mean.2, unaware$conf.4.ses2)
 # 4.1. Correlations: ERP Differences x reaction time
 # 4.1.1. Both groups
 # 4.1.1.1 Session 1
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT.mean.1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$RT.mean.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT.mean.1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$RT.mean.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT.mean.1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$RT.mean.1, 
          method = "pearson")
 # 4.1.1.2 Session 2
-cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$RT.mean.2, 
+cor.test(questionnaire.ERPs$occ.diff.2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$RT.mean.2, 
+cor.test(questionnaire.ERPs$left.diff.2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$RT.mean.2, 
+cor.test(questionnaire.ERPs$right.diff.2, questionnaire.ERPs$RT.mean.2, 
          method = "pearson")
 # 4.1.1.3 Average
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$RT.mean.1_2, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$RT.mean.1_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$RT.mean.1_2, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$RT.mean.1_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$RT.mean.1_2, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$RT.mean.1_2, 
          method = "pearson")
 
 # 4.1.2. By group
 # 4.1.2.1. Session 1
-cor.test(aware$RT.mean.1, aware$occ_diff_1)
-cor.test(aware$RT.mean.1, aware$left_diff_1)
-cor.test(aware$RT.mean.1, aware$right_diff_1)
-cor.test(unaware$RT.mean.1, unaware$occ_diff_1)
-cor.test(unaware$RT.mean.1, unaware$left_diff_1)
-cor.test(unaware$RT.mean.1, unaware$right_diff_1)
+cor.test(aware$RT.mean.1, aware$occ.diff.1)
+cor.test(aware$RT.mean.1, aware$left.diff.1)
+cor.test(aware$RT.mean.1, aware$right.diff.1)
+cor.test(unaware$RT.mean.1, unaware$occ.diff.1)
+cor.test(unaware$RT.mean.1, unaware$left.diff.1)
+cor.test(unaware$RT.mean.1, unaware$right.diff.1)
 # 4.1.2.1. Session 2
-cor.test(aware$RT.mean.2, aware$occ_diff_2)
-cor.test(aware$RT.mean.2, aware$left_diff_2)
-cor.test(aware$RT.mean.2, aware$right_diff_2)
-cor.test(unaware$RT.mean.2, unaware$occ_diff_2)
-cor.test(unaware$RT.mean.2, unaware$left_diff_2)
-cor.test(unaware$RT.mean.2, unaware$right_diff_2)
+cor.test(aware$RT.mean.2, aware$occ.diff.2)
+cor.test(aware$RT.mean.2, aware$left.diff.2)
+cor.test(aware$RT.mean.2, aware$right.diff.2)
+cor.test(unaware$RT.mean.2, unaware$occ.diff.2)
+cor.test(unaware$RT.mean.2, unaware$left.diff.2)
+cor.test(unaware$RT.mean.2, unaware$right.diff.2)
 
 # 4.2. ERP Differences x d'
 # 4.2.1. Both groups
 # 4.2.1.1. Session 1
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
 # 4.2.1.2. Session 2
-cor.test(questionnaire.ERPs$occ_diff_2, questionnaire.ERPs$ses.dprime_2, 
+cor.test(questionnaire.ERPs$occ.diff.2, questionnaire.ERPs$ses.dprime_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_2, questionnaire.ERPs$ses.dprime_2, 
+cor.test(questionnaire.ERPs$left.diff.2, questionnaire.ERPs$ses.dprime_2, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_2, questionnaire.ERPs$ses.dprime_2, 
+cor.test(questionnaire.ERPs$right.diff.2, questionnaire.ERPs$ses.dprime_2, 
          method = "pearson")
 
 # 4.2.2. By group
 # 4.1.2.1. Session 1
-cor.test(aware$ses.dprime_1, aware$occ_diff_1)
-cor.test(aware$ses.dprime_1, aware$left_diff_1)
-cor.test(aware$ses.dprime_1, aware$right_diff_1)
-cor.test(unaware$ses.dprime_1, unaware$occ_diff_1)
-cor.test(unaware$ses.dprime_1, unaware$left_diff_1)
-cor.test(unaware$ses.dprime_1, unaware$right_diff_1)
+cor.test(aware$ses.dprime_1, aware$occ.diff.1)
+cor.test(aware$ses.dprime_1, aware$left.diff.1)
+cor.test(aware$ses.dprime_1, aware$right.diff.1)
+cor.test(unaware$ses.dprime_1, unaware$occ.diff.1)
+cor.test(unaware$ses.dprime_1, unaware$left.diff.1)
+cor.test(unaware$ses.dprime_1, unaware$right.diff.1)
 # 4.1.2.1. Session 2
-cor.test(aware$ses.dprime_2, aware$occ_diff_2)
-cor.test(aware$ses.dprime_2, aware$left_diff_2)
-cor.test(aware$ses.dprime_2, aware$right_diff_2)
-cor.test(unaware$ses.dprime_2, unaware$occ_diff_2)
-cor.test(unaware$ses.dprime_2, unaware$left_diff_2)
-cor.test(unaware$ses.dprime_2, unaware$right_diff_2)
+cor.test(aware$ses.dprime_2, aware$occ.diff.2)
+cor.test(aware$ses.dprime_2, aware$left.diff.2)
+cor.test(aware$ses.dprime_2, aware$right.diff.2)
+cor.test(unaware$ses.dprime_2, unaware$occ.diff.2)
+cor.test(unaware$ses.dprime_2, unaware$left.diff.2)
+cor.test(unaware$ses.dprime_2, unaware$right.diff.2)
 
 # 4.3. ERP Differences x % correct - FINISH!
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$ses.dprime_1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$ses.dprime_1, 
          method = "pearson")
 
 # 4.3. ERP Differences x thresholds
 # 4.3.1. Session 1
-cor.test(questionnaire.ERPs$occ_diff_1, questionnaire.ERPs$threshold.1, 
+cor.test(questionnaire.ERPs$occ.diff.1, questionnaire.ERPs$threshold.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$left_diff_1, questionnaire.ERPs$threshold.1, 
+cor.test(questionnaire.ERPs$left.diff.1, questionnaire.ERPs$threshold.1, 
          method = "pearson")
-cor.test(questionnaire.ERPs$right_diff_1, questionnaire.ERPs$threshold.1, 
+cor.test(questionnaire.ERPs$right.diff.1, questionnaire.ERPs$threshold.1, 
          method = "pearson")
 
 #--------------------------------Comparisons--------------------------------------
@@ -650,5 +701,18 @@ cohen.d(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2,
         paired = TRUE)
 
 # Logistic regression - alpha, ratings and intensity/threshold/accuracy/rt on group
+questionnaire.ERPs$group.original.relevel <- 
+  relevel(questionnaire.ERPs$group.original, "unaware")
 
+logistic.model.group1 <- glm(group.original.relevel ~ mean.alpha.1, 
+                             data = ,
+                            family = binomial())
+
+logistic.model.group2 <- glm(group.original.relevel ~ mean.alpha.1 + RT.mean_1, 
+                             data = questionnaire.ERPs,
+                             family = binomial())
+
+
+summary(logistic.model.group1)
+summary(logistic.model.group2)
 
