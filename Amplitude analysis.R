@@ -80,6 +80,11 @@ hist(rep.data.long2$right.nd2, main = "Right nd2 mean amplitude", ylim = c(0, 0.
      xlab = "amplitude", col = 3, prob = T)
 lines(density(rep.data.long2$right.nd2), col = 9, lwd = 3)
 par(mfrow = c(1,1))
+# 5.4. Occ difference
+# 5.5. Left difference
+# 5.6. Right difference
+hist(questionnaire.ERPs$right.diff.1, main = "Difference in right nd2 session 1", 
+     xlab = "amplitude", col = 3, prob = T)
 
 
 #----------------------------------Linear model---------------------------------

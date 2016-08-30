@@ -62,11 +62,32 @@ plot(left.nd2.model2)
 anova(left.nd2.model2)
 
 # 3. Right nd2
-rep.data.long2$transf.right.nd2 <- sqrt(max(rep.data.long2$right.nd2) - rep.data.long2$right.nd2)
-right.nd2.model1 <- lm(transf.right.nd2 ~ configuration + group.original + log.alpha, 
+# Correct positive skew with square root transform on inverse values
+rep.data.long2$transf.right.nd2 <- sqrt(max(rep.data.long2$right.nd2) - 
+                                          rep.data.long2$right.nd2)
+
+questionnaire.ERPs$transf.right.sqr.nd2_1 <- sqrt(max(questionnaire.ERPs$right.sqr.nd2_1) - 
+                                          questionnaire.ERPs$right.sqr.nd2_1)
+
+
+# 3.1. Model 1
+right.nd2.model1 <- lm(transf.right.nd2 ~ configuration + conf.4 + log.alpha, 
                       data = rep.data.long2)
 
+
+right.nd2.model1 <- lm(transf.right.sqr.nd2_1 ~ conf.4_1 + log.alpha.1, 
+                       data = questionnaire.ERPs)
+
+right.diff.model1 <- lm(right.diff ~ mean.log.alpha, 
+                      data = rep.data.long2[rep.data.long2$session == 1,])
+
+anova(right.diff.model)
+
+# 4. Confidence ratings
+
 plot(right.nd2.model1)
+
+anova(right.nd2.model1)
 
 resid(right.nd2.model1)
 

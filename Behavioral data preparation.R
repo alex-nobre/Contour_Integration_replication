@@ -26,6 +26,10 @@ library(psyphy)
 # Data report packages
 library(knitr)
 
+
+# 0. Save graphical defaults
+defaults <- par()
+
 #-----------------------------------Prepare data----------------------------
 # 1. Import questionnaire data and rename columns
 # 1.1. Read excel files
@@ -278,26 +282,21 @@ RT_1 <- lapply(as.list(behav_ses_1), retrieve.RT)
 RT_2 <- lapply(as.list(behav_ses_2), retrieve.RT)
 RT_3 <- lapply(as.list(behav_ses_3), retrieve.RT)
 
-# # 2.3. Remove outliers (RTs above or below 3sds from the mean)
-# # 2.3.1. Function to remove outliers
-# remove.outliers <- function(vectorx) {
-#   vec.mean <- mean(vectorx)
-#   vec.sd <- sd(vectorx)
-#   for (i in 1:length(vectorx)) {
-#     if (vectorx[i] < vec.mean - 2*vec.sd  | vectorx[i] > 2*vec.sd + vec.mean) {
-#       vectorx[-i]
-#     }
-#   }
-#   return(vectorx)
-# }
-# # 2.3.2 Boxplots to detect outliers
-# testout<- remove.outliers(RT_1[[21]])
-# boxplot(RT_1[[21]], col = 3)
-# 
-# # 2.3.3. Apply function to RT lists
-# RT_1 <- lapply(RT_1, remove.outliers)
-# RT_2 <- lapply(RT_2, remove.outliers)
-# RT_3 <- lapply(RT_3, remove.outliers)
+# 2.3. Remove outliers
+# 2.3.1. Plot boxplots to view outliers
+boxplot(RT_1, col = c(1:length(RT_1)), xlab = "Subject", ylab = "RT",
+        main = "Boxplots for RTs in  session 1")
+boxplot(RT_2, col = c(1:length(RT_2)), xlab = "Subject", ylab = "RT",
+        main = "Boxplots for RTs in  session 2")
+boxplot(RT_3, col = c(1:length(RT_3)), xlab = "Subject", ylab = "RT",
+        main = "Boxplots for RTs in  session 3")
+# 2.3.2. Remove outliers using boxplot function criterion
+RT_1 <- lapply(RT_1, function(vec) {
+  vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]})
+RT_2 <- lapply(RT_2, function(vec) {
+  vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]})
+RT_3 <- lapply(RT_3, function(vec) {
+  vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]})
 
 # 2.4. Compute mean RTs
 # 2.4.1. Square
@@ -419,3 +418,25 @@ threshold.rand_3 <- sapply(intensities.rand_3, function(x) { return( x[length(x)
 threshold_1 <- sapply(intensities_1, function(x) { return( x[length(x)] ) })
 threshold_2 <- sapply(intensities_2, function(x) { return( x[length(x)] ) })
 threshold_3 <- sapply(intensities_3, function(x) { return( x[length(x)] ) })
+
+
+#--------------------------------------tests-----------------------------------------
+# # 2.3.1. Function to remove outliers
+# remove.outliers <- function(vectorx) {
+#   vec.mean <- mean(vectorx)
+#   vec.sd <- sd(vectorx)
+#   for (i in 1:length(vectorx)) {
+#     if (vectorx[i] < vec.mean - 2*vec.sd  | vectorx[i] > 2*vec.sd + vec.mean) {
+#       vectorx[-i]
+#     }
+#   }
+#   return(vectorx)
+# }
+# # 2.3.2 Boxplots to detect outliers
+# testout<- remove.outliers(RT_1[[21]])
+# boxplot(RT_1[[21]], col = 3)
+# 
+# # 2.3.3. Apply function to RT lists
+# RT_1 <- lapply(RT_1, remove.outliers)
+# RT_2 <- lapply(RT_2, remove.outliers)
+# RT_3 <- lapply(RT_3, remove.outliers)

@@ -704,15 +704,47 @@ cohen.d(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2,
 questionnaire.ERPs$group.original.relevel <- 
   relevel(questionnaire.ERPs$group.original, "unaware")
 
-logistic.model.group1 <- glm(group.original.relevel ~ mean.alpha.1, 
-                             data = ,
+# Confidence ratings
+logistic.model.group1 <- glm(group.original.relevel ~ conf.4_1, 
+                             data = questionnaire.ERPs,
+                             family = binomial())
+
+logistic.model.group2 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1, 
+                             data = questionnaire.ERPs,
                             family = binomial())
 
-logistic.model.group2 <- glm(group.original.relevel ~ mean.alpha.1 + RT.mean_1, 
+logistic.model.group3 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1 + 
+                               RT.mean_1, 
+                             data = questionnaire.ERPs,
+                             family = binomial())
+
+logistic.model.group4 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1 + 
+                               RT.mean_1 + right.diff.1, 
+                             data = questionnaire.ERPs,
+                             family = binomial())
+
+summary(logistic.model.group1)
+summary(logistic.model.group2)
+summary(logistic.model.group3)
+summary(logistic.model.group4)
+
+# Frequency ratings
+log.model.freq.group1 <- glm(group.original.relevel ~ freq.4_1, 
+                             data = questionnaire.ERPs,
+                             family = binomial())
+
+log.model.freq.group2 <- glm(group.original.relevel ~ freq.4_1 + mean.alpha.1, 
+                             data = questionnaire.ERPs,
+                             family = binomial())
+
+log.model.freq.group3 <- glm(group.original.relevel ~ freq.4_1 + mean.alpha.1 + 
+                               RT.mean_1, 
                              data = questionnaire.ERPs,
                              family = binomial())
 
 
-summary(logistic.model.group1)
-summary(logistic.model.group2)
+
+summary(log.model.freq.group1)
+summary(log.model.freq.group2)
+summary(log.model.freq.group3)
 

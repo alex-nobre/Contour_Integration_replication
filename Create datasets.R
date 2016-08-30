@@ -288,10 +288,18 @@ questionnaire.ERPs$group.original <- factor(questionnaire.ERPs$group.original)
 
 #---------------------Create long data frame with behavioral data--------------
 # 5.6. reshape by session
-questionnaire.ERPs.long <- questionnaire.ERPs[,which(colnames(questionnaire.ERPs) ==
+questionnaire.ERPs.long <- questionnaire.ERPs[,c(which(colnames(questionnaire.ERPs) ==
                                                        "dprime.sqr_1"):
                                                 which(colnames(questionnaire.ERPs) ==
-                                                        "Pc_3")]
+                                                        "Pc_3"),
+                                                which(colnames(questionnaire.ERPs) ==
+                                                        "conf.4_1"),
+                                                which(colnames(questionnaire.ERPs) ==
+                                                        "freq.4_1"),
+                                                which(colnames(questionnaire.ERPs) ==
+                                                        "conf.4_2"),
+                                                which(colnames(questionnaire.ERPs) ==
+                                                        "freq.4_2"))]
 
 # 5.6.1. remove columsn for third session to reshape
 questionnaire.ERPs.long <- questionnaire.ERPs.long[,
@@ -379,10 +387,17 @@ questionnaire.ERPs$mean.alpha.rand <-
                                          'alpha.rand.2'))])
 
 # 6.3 Log alpha values by condition
+# 6.3.1. By configuration and session
 questionnaire.ERPs$log.alpha.sqr.1 <- log(questionnaire.ERPs$alpha.sqr.1)
 questionnaire.ERPs$log.alpha.sqr.2 <- log(questionnaire.ERPs$alpha.sqr.2)
 questionnaire.ERPs$log.alpha.rand.1 <- log(questionnaire.ERPs$alpha.rand.1)
 questionnaire.ERPs$log.alpha.rand.2 <- log(questionnaire.ERPs$alpha.rand.2)
+# 6.3.2. By Session
+questionnaire.ERPs$log.alpha.1 <- log(questionnaire.ERPs$mean.alpha.1)
+questionnaire.ERPs$log.alpha.2 <- log(questionnaire.ERPs$mean.alpha.2)
+# 6.3.3. By configuration
+questionnaire.ERPs$log.alpha.sqr <- log(questionnaire.ERPs$mean.alpha.sqr)
+questionnaire.ERPs$log.alpha.rand <- log(questionnaire.ERPs$mean.alpha.rand)
 # 6.2. Compute means of log alpha across conditions
 questionnaire.ERPs$mean.log.alpha <- 
   rowMeans(questionnaire.ERPs[,which(colnames(questionnaire.ERPs) == 
@@ -431,7 +446,7 @@ levels(rep_data_alpha3$alpha.group) <- c("high alpha group", "low alpha group")
 
 
 # 9.2. Compute differences
-# Old ERPs
+# 9.2.1. Old ERPs
 # session 1
 questionnaire.ERPs$occ.diff.1 <- questionnaire.ERPs$occ.sqr.nd1_1 -
   questionnaire.ERPs$occ.rand.nd1_1
@@ -446,6 +461,12 @@ questionnaire.ERPs$left.diff.2 <- questionnaire.ERPs$left.sqr.nd2_2 -
   questionnaire.ERPs$left.rand.nd2_2
 questionnaire.ERPs$right.diff.2 <- questionnaire.ERPs$right.sqr.nd2_2 -
   questionnaire.ERPs$right.rand.nd2_2
+
+# Append to long data frame
+rep.data.long2$right.diff <- numeric(nrow(rep.data.long2))
+rep.data.long2[rep.data.long2$session == 1,]$right.diff <- questionnaire.ERPs$right.diff.1
+rep.data.long2[rep.data.long2$session == 2,]$right.diff <- questionnaire.ERPs$right.diff.2
+
 
 # Low alpha
 # session 1
