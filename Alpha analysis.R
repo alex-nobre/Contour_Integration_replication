@@ -158,7 +158,30 @@ par(defaults)
 
 
 # 1.5. Nd2 left
-# 1.5.1. ANOVA
+# 1.5.1. Scatterplot
+layout(rbind(1,2), heights=c(5,1))
+plot(x = rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha,
+     y = rep.data.long2[rep.data.long2$configuration == "rand",]$left.nd2,
+     col = "red", pch = 16, main = "log alpha x left Nd2 amplitude",
+     xlab = "log alpha", ylab = "Mean amplitude")
+points(x = rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha,
+       y = rep.data.long2[rep.data.long2$configuration == "sqr",]$left.nd2,
+       col = " blue", pch = 16)
+# curve(cbind(1,x) %*% coef(lm(left.nd2 ~ log.alpha)), add = TRUE, col = )
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "rand",]$left.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha),
+#        col = "red")
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "sqr",]$left.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha),
+#        col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("rand", "sqr"),
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
+# 1.5.2. ANOVA
 alpha.left.nd2.baseline <- lme(left.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
                                data = rep.data.long2[rep.data.long2$session == 1,], 
@@ -171,13 +194,13 @@ anova(alpha.left.nd2.baseline, alpha.left.nd2.config,
       alpha.left.nd2.alpha.group, 
       alpha.left.nd2.lme)
 
-# 1.5.2. Post-hocs
+# 1.5.3. Post-hocs
 lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.group)
 
 plot(lsmeans(alpha.left.nd2.lme, pairwise ~ configuration | alpha.group)$contrasts, 
      main = "CI nd2 left: configuration x alpha group")
 
-# 1.5.3. Line plot
+# 1.5.4. Line plot
 alpha.nd2.left.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                               aes(x = alpha.group, y = left.nd2, 
                                                   colour = configuration)) + 
@@ -189,7 +212,7 @@ alpha.nd2.left.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,],
        colour = "configuration")
 alpha.nd2.left.line
 
-# 1.5.4. Scatterplot - log mean alpha x left nd2 diff
+# 1.5.5. Differences Scatterplot - log mean alpha x left nd2 diff
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$left.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x left Nd2 amplitude",
@@ -207,8 +230,30 @@ legend("center", legend = c("left diff 1", "left diff 2"),
        pch = 16)
 par(defaults)
 
-# 1.6. Nd2 left
-# 1.6.1. ANOVA
+# 1.6. Nd2 right
+# 1.6.1. Scatterplot
+layout(rbind(1,2), heights=c(5,1))
+plot(x = rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha, 
+     y = rep.data.long2[rep.data.long2$configuration == "rand",]$right.nd2, 
+     col = "red", pch = 16, main = "log alpha x right Nd2 amplitude",
+     xlab = "log alpha", ylab = "Mean amplitude")
+points(x = rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha, 
+       y = rep.data.long2[rep.data.long2$configuration == "sqr",]$right.nd2,
+       col = " black", pch = 16)
+abline(lm(rep.data.long2[rep.data.long2$configuration == "rand",]$right.nd2 ~ 
+            rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha), 
+       col = "red")
+abline(lm(rep.data.long2[rep.data.long2$configuration == "sqr",]$right.nd2 ~ 
+            rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha), 
+       col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("rand", "sqr"), 
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
+# 1.6.2. ANOVA
 alpha.right.nd2.baseline <- lme(right.nd2 ~ 1, 
                                random = ~1|Subject/configuration, 
                                data = rep.data.long2[rep.data.long2$session == 1,], 
@@ -224,13 +269,13 @@ anova(alpha.right.nd2.baseline, alpha.right.nd2.config,
 summary(alpha.right.nd2.lme)
 
 
-# 1.6.2. Post-hocs
+# 1.6.3. Post-hocs
 lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group)
 
 plot(lsmeans(alpha.right.nd2.lme, pairwise ~ configuration | alpha.group)$contrasts, 
      main = "CI nd2 right: configuration x alpha group")
 
-# 1.6.3. Line plot
+# 1.6.4. Line plot
 alpha.right.nd2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
                               aes(x = alpha.group, y = right.nd2, 
                                   colour = configuration)) + 
@@ -242,7 +287,7 @@ alpha.right.nd2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,],
        colour = "configuration")
 alpha.right.nd2.line
 
-# 1.6.4. Correlations scatterplot
+# 1.6.5. Correlations scatterplot
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$mean.log.alpha, y = questionnaire.ERPs$right.diff.1, 
      col = "red", pch = 16, main = "mean alpha 1 x right Nd2 amplitude",

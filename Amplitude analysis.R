@@ -82,12 +82,14 @@ lines(density(rep.data.long2$right.nd2), col = 9, lwd = 3)
 par(mfrow = c(1,1))
 # 5.4. Occ difference
 # 5.5. Left difference
+hist(questionnaire.ERPs$left.diff.1, main = "Difference in left nd2 session 1", 
+     xlab = "amplitude", col = 16, prob = T)
 # 5.6. Right difference
 hist(questionnaire.ERPs$right.diff.1, main = "Difference in right nd2 session 1", 
      xlab = "amplitude", col = 3, prob = T)
 
 
-#----------------------------------Linear model---------------------------------
+#----------------------------------Linear models---------------------------------
 contrasts(rep.data.long2$configuration) <- c(-1, 1) # contrasts for config
 contrasts(rep.data.long2$session) <- c(-1, 1) # contrasts for session
 contrasts(rep.data.long2$group.original) <- c(-1, 1) # contrasts for group.original
@@ -132,13 +134,24 @@ C1.line
 
 # 4.2. P1
 # 4.2.1. Scatterplot
-ROImap_sqr_dat$P1.means <- rowMeans(ROImap_sqr_dat[,c(3,12)])
-ROImap_rand_dat$P1.means <- rowMeans(ROImap_rand_dat[,c(3,12)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P1.means, ylab = "mean nd2 P1 amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "P1 amplitudes", ylim =c(-5.5, 3.0))
-points(ROImap_rand_dat$subject, ROImap_rand_dat$P1.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$P1.means), col = "red")
-abline(h=mean(ROImap_rand_dat$P1.means), col = "blue")
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
+                                      group.original == "unaware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "unaware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "unaware",]$P1, 
+     ylab = "P1 amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "P1 amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "unaware",]$P1), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "unaware",]$P1), 
+       col = "blue")
 
 # 4.2.2. ANOVA
 P1.baseline <- lme(P1 ~ 1, random = ~1|Subject/configuration/session, 
@@ -170,13 +183,24 @@ P1.line
 
 # 4.3. N1
 # 4.3.1. Scatterplot
-ROImap_sqr_dat$N1.means <- rowMeans(ROImap_sqr_dat[,c(4,13)])
-ROImap_rand_dat$N1.means <- rowMeans(ROImap_rand_dat[,c(4,13)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N1.means, ylab = "mean nd2 N1 amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "N1 amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$N1.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$N1.means), col = "red")
-abline(h=mean(ROImap_rand_dat$N1.means), col = "blue")
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 2 & 
+                                      group.original == "unaware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 2 & 
+                      group.original == "unaware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 2 & 
+                      group.original == "unaware",]$N1, 
+     ylab = "N1 amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "N1 amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 2 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "unaware",]$N1), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 2 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "unaware",]$N1), 
+       col = "blue")
 
 # 4.3.2. ANOVA
 N1.baseline <- lme(N1 ~ 1, random = ~1|Subject/configuration/session, 
@@ -208,13 +232,24 @@ N1.line
 
 # 4.4. Nd1
 # 4.4.1. Scatterplot
-ROImap_sqr_dat$P2_right.means <- rowMeans(ROImap_sqr_dat[,c(5,14)])
-ROImap_rand_dat$P2_right.means <- rowMeans(ROImap_rand_dat[,c(5,14)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$P2_right.means, ylab = "mean nd2 P2_right amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "P2_right amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$P2_right.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$P2_right.means), col = "red")
-abline(h=mean(ROImap_rand_dat$P2_right.means), col = "blue")
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 2 & 
+                                      group.original == "aware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 2 & 
+                      group.original == "aware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 2 & 
+                      group.original == "aware",]$occ.nd1, 
+     ylab = "occ nd1 amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "occ nd1 amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 2 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "aware",]$occ.nd1), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 2 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "aware",]$occ.nd1), 
+       col = "blue")
 
 # 4.4.2. ANOVA
 nd1.baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
@@ -236,18 +271,39 @@ summary(nd1.lme)
 
 # 4.4.3. Line plot
 #jpeg(file = "./Plots/Pitts ROIs/nd1line.jpeg")
-nd1.line <- ggplot(rep_data_long2, aes(x = group.original, y = occ.nd1, 
+nd1.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
+                   aes(x = group.original, y = occ.nd1, 
                                        colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "Occ Nd1 mean amplitude", x = "group", y = "Occ Nd1 mean amplitude", 
+  labs(title = "Occ Nd1 mean amplitude by group", x = "group", 
+       y = "Mean amplitude", 
        colour = "configuration")
 nd1.line
 #dev.off()
 
 # 4.5. Nd2 (VAN) left
+# 4.5.1. Scatterplot by configuration
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
+                                      group.original == "unaware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "unaware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "unaware",]$left.nd2, 
+     ylab = "left nd2 amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "left Nd2 amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "unaware",]$left.nd2), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "unaware",]$left.nd2), 
+       col = "blue")
+
 # 4.5.2. ANOVA
 nd2.left.baseline <- lme(left.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                          data = rep.data.long2, method = "ML") #baseline
@@ -269,16 +325,37 @@ anova(nd2.left.baseline, nd2.left.config, nd2.left.session, nd2.left.group.origi
 summary(nd2.left.lme)
 
 # 4.5.3. Line plot
-nd2_left_line_session <- ggplot(rep_data_long2, aes(x = group, y = left, 
-                                                    colour = configuration)) + 
+left.nd2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,],
+                        aes(x = group.original, y = left.nd2, 
+                                       colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~session) +
-  labs(title = "Left average reference", x = "group", y = "Nd2 left amplitude", 
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
+  labs(title = "Left nd2 mean amplitude by group", x = "group", 
+       y = "Mean amplitude", 
        colour = "configuration")
+left.nd2.line
 
 # 4.6. Nd2 right
+# 4.6.1. Scatterplot by configuration
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
+                                      group.original == "aware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "aware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "aware",]$right.nd2, 
+     ylab = "right nd2 amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "right Nd2 amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "aware",]$right.nd2), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "aware",]$right.nd2), 
+       col = "blue")
 # 4.6.2. ANOVA 
 nd2.right.baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                           data = rep.data.long2, method = "ML") #baseline
@@ -308,14 +385,17 @@ hist((resid(nd2.right.lme) - mean(resid(nd2.right.lme))) / sd(resid(nd2.right.lm
 plot.lme(nd2.right.lme)
 
 # 4.6.4. Line plot
-nd2_right_line_session <- ggplot(rep_data_long2, aes(x = group, y = right, 
-                                                     colour = configuration)) + 
+right.nd2.line <- ggplot(rep.data.long2,
+                        aes(x = group.original, y = right.nd2, 
+                            colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
   facet_grid(.~session) +
-  labs(title = "Right average reference", x = "group", y = "Nd2 right amplitude", 
+  labs(title = "right nd2 mean amplitude by group", x = "group", 
+       y = "Mean amplitude", 
        colour = "configuration")
+right.nd2.line
 
  
 # 4.7. Nd2 right-left
@@ -343,48 +423,70 @@ summary(nd2.right.lme)
 
 # 4.8. N2
 # 4.8.1 Scatterplot
-ROImap_sqr_dat$N2_occ.means <- rowMeans(ROImap_sqr_dat[,c(7,16)])
-ROImap_rand_dat$N2_occ.means <- rowMeans(ROImap_rand_dat[,c(7,16)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$N2_occ.means, ylab = "mean nd2 N2_occ amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "N2_occ amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$N2_occ.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$N2_occ.means), col = "red")
-abline(h=mean(ROImap_rand_dat$N2_occ.means), col = "blue")
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
+                                      group.original == "aware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "aware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "aware",]$N2, 
+     ylab = "N2 amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "N2 amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "aware",]$N2), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "aware",]$N2), 
+       col = "blue")
 
 # 4.8.2. ANOVA
-N2_baseline <- lme(N2_occ ~ 1, random = ~1|subject/configuration/session, 
-                           data = ROImap_data_long, method = "ML") #baseline
-N2_config <- update(N2_baseline, .~. + configuration)
-N2_session <- update(N2_config, .~. + session)
-N2_group <- update(N2_session, .~. + group)
-N2_config_session <- update(N2_group, .~. + configuration:session)
-N2_session_group <- update(N2_config_session, .~. + session:group)
-N2_config_group <- update(N2_session_group, .~. + configuration:group)
-N2_lme <- update(N2_config_group, .~. + configuration:session:group)
-anova(N2_baseline, N2_config, N2_session, N2_group, 
-      N2_config_session, N2_session_group, N2_config_group, 
-      N2_lme)
-summary(N2_lme)
+N2.baseline <- lme(N2 ~ 1, random = ~1|Subject/configuration/session, 
+                           data = rep.data.long2, method = "ML") #baseline
+N2.config <- update(N2.baseline, .~. + configuration)
+N2.session <- update(N2.config, .~. + session)
+N2.group <- update(N2.session, .~. + group)
+N2.config_session <- update(N2.group, .~. + configuration:session)
+N2.session_group <- update(N2.config_session, .~. + session:group)
+N2.config_group <- update(N2.session_group, .~. + configuration:group)
+N2.lme <- update(N2.config_group, .~. + configuration:session:group)
+anova(N2.baseline, N2.config, N2.session, N2.group, 
+      N2.config_session, N2.session_group, N2.config_group, 
+      N2.lme)
+summary(N2.lme)
 
 # 4.8.3. Line plot
-nd2_N2_occ_line_session <- ggplot(ROImap_data_long, aes(x = session, y = N2_occ, 
+N2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], aes(x = group.original, y = N2, 
                                                         colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
-  facet_grid(.~group.original) +
-  labs(title = "N2 average reference", x = " session", y = "Nd2 N2 amplitude", 
+  labs(title = "N2 average reference", x = "group", y = "N2 amplitude", 
        colour = "configuration")
+N2.line
 
 # 4.9. LP
 # 4.9.1. Scatterplot
-ROImap_sqr_dat$LP_anterior.means <- rowMeans(ROImap_sqr_dat[,c(9,18)])
-ROImap_rand_dat$LP_anterior.means <- rowMeans(ROImap_rand_dat[,c(9,18)])
-plot(ROImap_sqr_dat$subject, ROImap_sqr_dat$LP_anterior.means, ylab = "mean nd2 LP_anterior amplitude", 
-     xlab = "subjects", pch = 20, col = "red", main = "LP_anterior amplitudes")
-points(ROImap_rand_dat$subject, ROImap_rand_dat$LP_anterior.means, pch = 20, col = "blue")
-abline(h=mean(ROImap_sqr_dat$LP_anterior.means), col = "red")
-abline(h=mean(ROImap_rand_dat$LP_anterior.means), col = "blue")
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
+                                      group.original == "aware",]$configuration == 
+                       "rand", "red", "blue")
+plot(rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "aware",]$Subject, 
+     rep.data.long2[rep.data.long2$session == 1 & 
+                      group.original == "aware",]$LP, 
+     ylab = "LP amplitude", 
+     xlab = "subjects", pch = 20, col = dot.colors, 
+     main = "LP amplitudes by configuration")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "rand" &
+                               group.original == "aware",]$LP), 
+       col = "red")
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
+                               rep.data.long2$configuration == "sqr" &
+                               group.original == "aware",]$LP), 
+       col = "blue")
 
 # 4.9.2. ANOVA
 LP.baseline <- lme(LP ~ 1, random = ~1|Subject/configuration/session, 
@@ -403,7 +505,7 @@ anova(LP.baseline, LP.config, LP.session, LP.group.original,
 
 summary(LP_lme)
 
-# # 4.9.3. Line plot
+# 4.9.3. Line plot
 LP.line <- ggplot(rep.data.long2, aes(x = group.original, y = LP, 
                                       colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
@@ -416,8 +518,82 @@ LP.line
 
 # Location test
 nd2.lme <- lme(alpha ~ configuration * session * group.original * location, 
-                           random = ~1|Subject/configuration/location, 
-                           data = rep_data_long2, 
-                           method = "ML")
+               random = ~1|Subject/configuration/location, 
+               data = rep_data_long2, 
+               method = "ML")
 anova(nd2.lme)
+
+#-----------------------------------Differences----------------------------------------
+# occ diff
+dot.colors <- ifelse(questionnaire.ERPs$group.original 
+                     == "unaware", "purple", "orange")
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$Subject,
+     y = questionnaire.ERPs$occ.diff.1,
+     col = dot.colors, pch = 16, main = "occ Nd1 sqr - rand",
+     xlab = "Subject", ylab = "Mean amplitude")
+# points(x = rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha,
+#        y = rep.data.long2[rep.data.long2$configuration == "sqr",]$occ.nd2,
+#        col = " black", pch = 16)
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "rand",]$occ.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha),
+#        col = "red")
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "sqr",]$occ.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha),
+#        col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("rand", "sqr"),
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
+# left diff
+dot.colors <- ifelse(questionnaire.ERPs$group.original 
+                     == "unaware", "purple", "orange")
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$Subject,
+     y = questionnaire.ERPs$left.diff.2,
+     col = dot.colors, pch = 16, main = "left Nd2 sqr - rand",
+     xlab = "Subject", ylab = "Mean amplitude")
+# points(x = rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha,
+#        y = rep.data.long2[rep.data.long2$configuration == "sqr",]$left.nd2,
+#        col = " black", pch = 16)
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "rand",]$left.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha),
+#        col = "red")
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "sqr",]$left.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha),
+#        col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("rand", "sqr"),
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
+# Right diff
+dot.colors <- ifelse(questionnaire.ERPs$group.original 
+                     == "unaware", "purple", "orange")
+layout(rbind(1,2), heights=c(5,1))
+plot(x = questionnaire.ERPs$Subject,
+     y = questionnaire.ERPs$right.diff.2,
+     col = dot.colors, pch = 16, main = "Right Nd2 sqr - rand",
+     xlab = "Subject", ylab = "Mean amplitude")
+# points(x = rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha,
+#        y = rep.data.long2[rep.data.long2$configuration == "sqr",]$left.nd2,
+#        col = " black", pch = 16)
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "rand",]$left.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "rand",]$log.alpha),
+#        col = "red")
+# abline(lm(rep.data.long2[rep.data.long2$configuration == "sqr",]$left.nd2 ~
+#             rep.data.long2[rep.data.long2$configuration == "sqr",]$log.alpha),
+#        col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("rand", "sqr"),
+       col = c("red", "black"),
+       pch = 16)
+par(defaults)
+
 

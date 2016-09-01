@@ -291,12 +291,18 @@ boxplot(RT_2, col = c(1:length(RT_2)), xlab = "Subject", ylab = "RT",
 boxplot(RT_3, col = c(1:length(RT_3)), xlab = "Subject", ylab = "RT",
         main = "Boxplots for RTs in  session 3")
 # 2.3.2. Remove outliers using boxplot function criterion
-RT_1 <- lapply(RT_1, function(vec) {
-  vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]})
-RT_2 <- lapply(RT_2, function(vec) {
-  vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]})
-RT_3 <- lapply(RT_3, function(vec) {
-  vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]})
+# 2.3.2.1. Function to remove if there are outliers
+remove.outliers <- function(vec) {
+  if (length(boxplot(vec, plot = FALSE)$out) > 0) {
+    vec <- vec[-which(vec %in% boxplot(vec, plot = FALSE)$out)]
+  } else {
+    return(vec)
+  }
+}
+
+RT_1 <- lapply(RT_1, remove.outliers)
+RT_2 <- lapply(RT_2, remove.outliers)
+RT_3 <- lapply(RT_3, remove.outliers)
 
 # 2.4. Compute mean RTs
 # 2.4.1. Square

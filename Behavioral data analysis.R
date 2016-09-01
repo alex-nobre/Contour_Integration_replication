@@ -51,12 +51,12 @@ plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean_1, main = "RT by ses
      xlab = "Subject", ylab = "mean RT +/- SD", pch = 16, col = 5) #session 1
 points(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean_2,
      pch = 17, col = 6) #session 2
-# SDs of RTs for each session
-arrows(questionnaire.ERPs$Subject, RT.mean_1 - RT.sd_1, 
-       questionnaire.ERPs$Subject, RT.mean_1 + RT.sd_1, 
+SDs of RTs for each session
+arrows(questionnaire.ERPs$Subject, RT.mean_1 - RT.sd_1,
+       questionnaire.ERPs$Subject, RT.mean_1 + RT.sd_1,
        length=0.05, angle=90, code=3, col = 5) #session 1
-arrows(questionnaire.ERPs$Subject, RT.mean_2 - RT.sd_2, 
-       questionnaire.ERPs$Subject, RT.mean_2 + RT.sd_2, 
+arrows(questionnaire.ERPs$Subject, RT.mean_2 - RT.sd_2,
+       questionnaire.ERPs$Subject, RT.mean_2 + RT.sd_2,
        length=0.05, angle=90, code=3, col = 6) #session 2
 par(mar=c(0, 0, 0, 0))
 plot.new()

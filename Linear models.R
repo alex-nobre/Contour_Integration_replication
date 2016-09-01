@@ -47,10 +47,53 @@ plot(occ.model1)
 anova(occ.model1)
 
 # 2. Left nd2
+left.nd2.model1 <- lm(left.nd2 ~ configuration + log.alpha, 
+                      data = rep.data.long2[rep.data.long2$session == 1,])
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1,]$configuration == 
+                       "rand", "red", "blue")
+layout(rbind(1,2), heights=c(5,1))
+plot(x = rep.data.long2[rep.data.long2$session == "1",]$log.alpha,
+     y = rep.data.long2[rep.data.long2$session == "1",]$left.nd2,
+     col = dot.colors, pch = 16, main = "log alpha x left Nd2 amplitude",
+     xlab = "log alpha", ylab = "Mean amplitude")
+curve(cbind(1,0,x) %*% coef(left.nd2.model1), add = TRUE, col = "red")
+curve(cbind(1,1,x) %*% coef(left.nd2.model1), add = TRUE, col = "blue")
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = c("rand", "sqr"),
+       col = c("red", "blue"),
+       pch = 16)
+par(defaults)
+
+# layout(rbind(1,2), heights=c(5,1))
+# plot(x = questionnaire.ERPs$log.alpha.sqr.1,
+#      y = questionnaire.ERPs$left.sqr.nd2_1,
+#      col = "blue", pch = 16, main = "log alpha x left Nd2 amplitude",
+#      xlab = "log alpha", ylab = "Mean amplitude")
+# points(x = questionnaire.ERPs$log.alpha.rand.1,
+#        y = questionnaire.ERPs$left.rand.nd2_1,
+#        col = "red", pch = 16)
+# curve(cbind(1,x) %*% coef(lm(left.sqr.nd2_1 ~ log.alpha.sqr.1, 
+#                              data = questionnaire.ERPs)), 
+#       add = TRUE, col = "blue")
+# curve(cbind(1,x) %*% coef(lm(left.rand.nd2_1 ~ log.alpha.rand.1, 
+#                              data = questionnaire.ERPs)),
+#       add = TRUE, col = "red")
+# par(mar=c(0, 0, 0, 0))
+# plot.new()
+# legend("center", legend = c("sqr", "rand"),
+#        col = c("blue", "red"),
+#        pch = 16)
+# par(defaults)
+
 # 2.1. Model 1
-left.nd2.model1 <- lm(left.nd2 ~ configuration + group.original + log.alpha, 
-                 data = rep.data.long2)
-plot(left.nd2.model1)
+left.nd2.model1 <- lm(left.nd2 ~ configuration + log.alpha, 
+                       data = rep.data.long2)
+dot.colors <- ifelse(rep.data.long2$configuration == "rand", "red", "blue")
+plot(rep.data.long2$log.alpha, rep.data.long2$left.nd2, 
+     col = dot.colors, pch = 20)
+curve(cbind(1,1,x) %*% coef(left.nd2.model1), add = TRUE, col = "red")
+curve(cbind(1,2,x) %*% coef(left.nd2.model1), add = TRUE, col = "blue")
 
 anova(left.nd2.model1)
 
@@ -71,11 +114,16 @@ questionnaire.ERPs$transf.right.sqr.nd2_1 <- sqrt(max(questionnaire.ERPs$right.s
 
 
 # 3.1. Model 1
-right.nd2.model1 <- lm(transf.right.nd2 ~ configuration + conf.4 + log.alpha, 
+right.nd2.model1 <- lm(transf.right.nd2 ~ configuration + log.alpha + 
+                         configuration * log.alpha, 
                       data = rep.data.long2)
+dot.colors <- ifelse(rep.data.long2$configuration == "rand", "red", "blue")
+plot(rep.data.long2$log.alpha, rep.data.long2$transf.right.nd2, 
+     col = dot.colors, pch = 20)
+curve(cbind(1,1,x, 1*x) %*% coef(right.nd2.model1), add = TRUE, col = "red")
+curve(cbind(1,2,x, 2*x) %*% coef(right.nd2.model1), add = TRUE, col = "blue")
 
-
-right.nd2.model1 <- lm(transf.right.sqr.nd2_1 ~ conf.4_1 + log.alpha.1, 
+right.nd2.model1 <- lm(transf.right.sqr.nd2_1 ~ freq.4_1, 
                        data = questionnaire.ERPs)
 
 right.diff.model1 <- lm(right.diff ~ mean.log.alpha, 
