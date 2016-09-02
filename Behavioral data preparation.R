@@ -364,63 +364,69 @@ extract.intensities.rand <- function(behav.file) {
   #intensities.rand <- 1 - decrement.rand
 }
 
-# # 3.2. Functions to extract intensity values by block
-# # 3.2.1. Function to extract intensities of a block
-# block.intensities <- function(x) {
-#   return(as.vector(x$Decrement))
-# }
-# 
-# # 3.2.2. Function to extract intensities of whole session, separated per block
-# session.intensities <- function(behav.file) {
-#   subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""), 
-#                           header = TRUE, sep = "\t", skip = 12, row.names = NULL)
-#   colnames(subj.data)[5] <- "target.presence"
-#   target.trials <- subset(subj.data, target.presence == 1)
-#   block0 <- subset(target.trials, Block == 0)
-#   block1 <- subset(target.trials, Block == 1)
-#   block2 <- subset(target.trials, Block == 2)
-#   block3 <- subset(target.trials, Block == 3)
-#   block4 <- subset(target.trials, Block == 4)
-#   block5 <- subset(target.trials, Block == 5)
-#   block6 <- subset(target.trials, Block == 6)
-#   block7 <- subset(target.trials, Block == 7)
-#   block8 <- subset(target.trials, Block == 8)
-#   block9 <- subset(target.trials, Block == 9)
-#   list.blocks <- list(block0, block1, block2, block3, block4, block5, block6,
-#                       block7, block8, block9)
-#   # Call function defined above
-#   decrements <- lapply(list.blocks, block.intensities)
-#   intensities <- mapply('-', 1, decrements)
-# }
-# 
-# # 3.2.3. Extract block intensities for all subjects
-# blockintensities.1 <- lapply(behav_ses_1, session.intensities)
-# blockintensities.2 <- lapply(behav_ses_2, session.intensities)
+# 3.2. Extract intensity values by block
+# 3.2.1. Function to extract intensities of whole session, separated per block
+session.intensities <- function(behav.file) {
+  subj.data <- read.table(paste('./Data/Data_Psychopy/', behav.file, sep = ""),
+                          header = TRUE, sep = "\t", skip = 12, row.names = NULL)
+  colnames(subj.data)[5] <- "target.presence"
+  target.trials <- subset(subj.data, target.presence == 1)
+  list.blocks <- list()
+  for (i in (0:9)) {
+    list.blocks[[i + 1]] <- subset(target.trials, Block == i)
+    # names(list.blocks[[i + 1]]) <- paste("block", i, sep = "")
+    # assign(paste("block", i, sep = ""), subset(target.trials, Block == i))
+    # list.blocks[[i]] <- paste("block", i, sep = "") 
+  }
+  list.blocks
+  # Extract decrement values and convert to intensities in [0,1] range
+  decrements <- lapply(list.blocks, function(x) {return(as.vector(x$Decrement))})
+  block.intensities <- lapply(decrements, function(decs) 
+    {(((decs - 1)* (-1)) + 1) * 0.5})
+}
+
+# 3.2.2. Extract block intensities for all session
+blockintensities.1 <- lapply(behav_ses_1, session.intensities)
+blockintensities.2 <- lapply(behav_ses_2, session.intensities)
+blockintensities.3 <- lapply(behav_ses_3, session.intensities)
+
 
 # 3.3. Extract intensities for each subject by session and configuration
 # 3.3.1. Square
 intensities.sqr_1 <- lapply(behav_ses_1, extract.intensities.sqr)
 intensities.sqr_2 <- lapply(behav_ses_2, extract.intensities.sqr)
 intensities.sqr_3 <- lapply(behav_ses_3, extract.intensities.sqr)
-# 3.3.1. Random
+# 3.3.2. Random
 intensities.rand_1 <- lapply(behav_ses_1, extract.intensities.rand)
 intensities.rand_2 <- lapply(behav_ses_2, extract.intensities.rand)
 intensities.rand_3 <- lapply(behav_ses_3, extract.intensities.rand)
-# 3.3.1. Both configurations
+# 3.3.3. Both configurations
 intensities_1 <- lapply(behav_ses_1, extract.intensities)
 intensities_2 <- lapply(behav_ses_2, extract.intensities)
 intensities_3 <- lapply(behav_ses_3, extract.intensities)
+# 3.3.4. Both configurations red values
+red.values_1 <- lapply(intensities_1, function(x) {(x - 1)* (-1)})
+red.values_2 <- lapply(intensities_2, function(x) {(x - 1)* (-1)})
+red.values_3 <- lapply(intensities_3, function(x) {(x - 1)* (-1)})
+# 3.3.5. Red values in [0,1] range
+red.values_1 <- lapply(red.values_1, function(pycolors) {(pycolors + 1)* 0.5})
+red.values_2 <- lapply(red.values_2, function(pycolors) {(pycolors + 1)* 0.5})
+red.values_3 <- lapply(red.values_3, function(pycolors) {(pycolors + 1)* 0.5})
+# # 3.3.5.1. Function to convert to RGB255
+# convert.RGB <- function(pycolors) {
+#   pycolors <- (pycolors + 1) * 0.5
+# }
 
 # 3.4. Extract  final thresholds for each session
 # 3.4.1. Square
 threshold.sqr_1 <- sapply(intensities.sqr_1, function(x) { return( x[length(x)] ) })
 threshold.sqr_2 <- sapply(intensities.sqr_2, function(x) { return( x[length(x)] ) })
 threshold.sqr_3 <- sapply(intensities.sqr_3, function(x) { return( x[length(x)] ) })
-# 3.4.1. Random
+# 3.4.2. Random
 threshold.rand_1 <- sapply(intensities.rand_1, function(x) { return( x[length(x)] ) })
 threshold.rand_2 <- sapply(intensities.rand_2, function(x) { return( x[length(x)] ) })
 threshold.rand_3 <- sapply(intensities.rand_3, function(x) { return( x[length(x)] ) })
-# 3.4.1. Both configurations
+# 3.4.3. Both configurations
 threshold_1 <- sapply(intensities_1, function(x) { return( x[length(x)] ) })
 threshold_2 <- sapply(intensities_2, function(x) { return( x[length(x)] ) })
 threshold_3 <- sapply(intensities_3, function(x) { return( x[length(x)] ) })

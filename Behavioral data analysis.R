@@ -51,7 +51,7 @@ plot(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean_1, main = "RT by ses
      xlab = "Subject", ylab = "mean RT +/- SD", pch = 16, col = 5) #session 1
 points(questionnaire.ERPs$Subject, questionnaire.ERPs$RT.mean_2,
      pch = 17, col = 6) #session 2
-SDs of RTs for each session
+# SDs of RTs for each session
 arrows(questionnaire.ERPs$Subject, RT.mean_1 - RT.sd_1,
        questionnaire.ERPs$Subject, RT.mean_1 + RT.sd_1,
        length=0.05, angle=90, code=3, col = 5) #session 1
@@ -165,7 +165,7 @@ for (x in which(questionnaire.ERPs$group.original == "unaware")) {
 #dev.off()
 par(new = FALSE)
 
-# 2.4. Separate plots
+# 2.4. Separate plots using decrement value
 par(mfrow = c(3,3))
 for (x in which(questionnaire.ERPs$group.original == "unaware")) {
   plot(seq(1:length(intensities_1[[x]])), intensities_1[[x]],
@@ -176,7 +176,46 @@ par(defaults)
 
 length(questionnaire.ERPs[which(questionnaire.ERPs$group.original == "unaware"),]$Subject)
 
-# 2.5. Plot block end intensities values by awareness group
+# 2.5. Separate plots using red value in [0,1] range
+par(mfrow = c(2,2))
+for (x in which(questionnaire.ERPs$group.original == "aware")) {
+  plot(seq(1:length(red.values_1[[x]])), red.values_1[[x]],
+       xlab = "Trial", ylab = "Color Intensity", main = paste("Subject ", x), type = 'l',
+       col = x)
+}
+par(defaults)
+
+# 2.6. Separate plots using red value in [0,1] range
+# 2.6.1. Aware group
+pdf("./Plots/Behavioral analysis/Intensity values aware group.pdf")
+par(mfrow =  c(2,1))
+for (x in which(questionnaire.ERPs$group.original == "aware")) {
+  plot(seq(1:length(red.values_1[[x]])), unlist(blockintensities.1[[x]]),
+       xlab = "Block", ylab = "Color Intensity", main = paste("Subject ", x), 
+       type = 'l', ylim = c(0,1), col = x, xaxt="n")
+  abline(h = 0.5, lty = 2)
+  blocks.labels <- c(0, cumsum(unlist(lapply(blockintensities.1[[x]], length))))
+  axis(1, at = blocks.labels[-length(blocks.labels)],
+       labels = c(0:9), las = 2)
+}
+par(defaults)
+dev.off()
+# 2.6.2. Unaware group
+pdf("./Plots/Behavioral analysis/Intensity values unaware group.pdf")
+par(mfrow =  c(2,1))
+for (x in which(questionnaire.ERPs$group.original == "unaware")) {
+  plot(seq(1:length(red.values_1[[x]])), unlist(blockintensities.1[[x]]),
+       xlab = "Block", ylab = "Color Intensity", main = paste("Subject ", x), 
+       type = 'l', ylim = c(0,1), col = x, xaxt="n")
+  abline(h = 0.5, lty = 2)
+  blocks.labels <- c(0, cumsum(unlist(lapply(blockintensities.1[[x]], length))))
+  axis(1, at = blocks.labels[-length(blocks.labels)],
+       labels = c(0:9), las = 2)
+}
+par(defaults)
+dev.off()
+
+# 2.7. Plot block end intensities values by awareness group
 layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$threshold_1, 
      col = questionnaire.ERPs$group.original, pch = 16, main = "Main task thresholds",
@@ -203,8 +242,9 @@ threshold.lineplot <- ggplot(rep.data.long2, aes(x = group.original,
   facet_grid(.~session) +
   labs(title = "Quest Threshold", x = "group", y = "Threshold", 
        colour = "configuration")
-# 3.0. Histogram 
 
+
+# 3.0. Histogram 
 # 3. Median split analysis of ERPs
 # 3.1. Compute medians
 low.threshold.group <- questionnaire.ERPs[which(questionnaire.ERPs$threshold.1 < 
