@@ -744,19 +744,23 @@ cohen.d(questionnaire.ERPs$aware.index.1, questionnaire.ERPs$aware.index.2,
 questionnaire.ERPs$group.original.relevel <- 
   relevel(questionnaire.ERPs$group.original, "unaware")
 
+rep.data.long2$group.original.relevel <- 
+  relevel(rep.data.long2$group.original, "unaware")
+
 # Confidence ratings
-logistic.model.group1 <- glm(group.original.relevel ~ conf.4_1, 
+logistic.model.group1 <- glm(group.original.relevel ~ alpha.power, 
                              data = questionnaire.ERPs,
                              family = binomial())
 
-logistic.model.group2 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1, 
-                             data = questionnaire.ERPs,
-                            family = binomial())
+logistic.model.group2 <- glm(group.original.relevel ~ log.alpha, 
+                             data = rep.data.long2,
+                            family = binomial(link = "logit"))
+summary(logistic.model.group2)
 
-logistic.model.group3 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1 + 
-                               RT.mean_1, 
-                             data = questionnaire.ERPs,
-                             family = binomial())
+logistic.model.group3 <- glm(group.original.relevel ~ log.alpha + right.nd2, 
+                             data = rep.data.long2,
+                             family = binomial(link = "logit"))
+summary(logistic.model.group3)
 
 logistic.model.group4 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1 + 
                                RT.mean_1 + right.diff.1, 

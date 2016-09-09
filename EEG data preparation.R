@@ -130,6 +130,28 @@ rep_data <- cbind(Subject, group, group.original, rep_data)
 # Remove subjects with too many artifacts
 row.names(rep_data) <- 1:32
 
+# #---------------------------------With subject 5------------------------------------
+# # Create group vectors
+# group <- c("unaware", "aware", "unaware", "unaware", "unaware", "unaware",
+#            "aware", "unaware", "aware", "aware", "aware", "aware",
+#            "unaware", "aware", "unaware", "unaware", "aware", "aware",
+#            "aware", "aware", "unaware", "aware", "unaware", "unaware",
+#            "unaware", "unaware", "unaware", "unaware",
+#            "unaware", "aware", "aware", "unaware", "unaware")
+# group.original <- c("unaware", "aware", "unaware", "unaware", "unaware", "aware",
+#                     "aware", "unaware", "aware", "aware", "aware", "aware",
+#                     "unaware", "aware", "aware", "unaware", "aware", "aware",
+#                     "aware", "aware", "unaware", "aware", "unaware", "unaware",
+#                     "unaware", "unaware", "unaware",
+#                     "unaware", "aware", "aware", "aware", "aware",
+#                     "unaware")
+# 
+# # Add subject number
+# Subject <- c(1:11, 13:26, 29:30, 32:37)
+# rep_data <- cbind(Subject, group, group.original, rep_data)
+# 
+# # Remove subjects with too many artifacts
+# row.names(rep_data) <- 1:33
 # #--------------------------------Include location as factor--------------------------------
 #
 # # Rename columns to separate electrode location number using sep = "_"

@@ -232,21 +232,21 @@ N1.line
 
 # 4.4. Nd1
 # 4.4.1. Scatterplot
-dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 2 & 
+dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "aware",]$configuration == 
                        "rand", "red", "blue")
-plot(rep.data.long2[rep.data.long2$session == 2 & 
+plot(rep.data.long2[rep.data.long2$session == 1 & 
                       group.original == "aware",]$Subject, 
-     rep.data.long2[rep.data.long2$session == 2 & 
+     rep.data.long2[rep.data.long2$session == 1 & 
                       group.original == "aware",]$occ.nd1, 
      ylab = "occ nd1 amplitude", 
      xlab = "subjects", pch = 20, col = dot.colors, 
      main = "occ nd1 amplitudes by configuration")
-abline(h=mean(rep.data.long2[rep.data.long2$session == 2 & 
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
                                rep.data.long2$configuration == "rand" &
                                group.original == "aware",]$occ.nd1), 
        col = "red")
-abline(h=mean(rep.data.long2[rep.data.long2$session == 2 & 
+abline(h=mean(rep.data.long2[rep.data.long2$session == 1 & 
                                rep.data.long2$configuration == "sqr" &
                                group.original == "aware",]$occ.nd1), 
        col = "blue")

@@ -103,7 +103,7 @@ lines(density(rep_data_alpha3$RL.nd2), col = 10, lwd = 3)
 # 2.1. Set contrasts
 contrasts(rep_data_alpha3$configuration) <- c(-1, 1) # contrasts for config
 contrasts(rep_data_alpha3$alpha.power) <- c(-1, 1) # contrasts for alpha.power
-contrasts(rep_data_alpha3$alpha.group) <- c(-1, 1) # contrasts for alpha.group
+contrasts(rep_data_alpha3$alpha.group) <- c(0,-1, 1) # contrasts for alpha.group
 contrasts(rep_data_alpha3$session) <- c(-1, 1) # contrasts for session
 rep_data_alpha3$Subject <- factor(rep_data_alpha3$Subject)
 
@@ -355,17 +355,21 @@ alpha.right.nd2.line <- ggplot(rep_data_alpha3[rep_data_alpha3$session == 1,],
 alpha.right.nd2.line
 
 # 2.7.4 Scatterplot
+layout(rbind(1,2), heights=c(5,1))
 plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$low.alpha.right.nd2.sqr_1, 
      col = "red", pch = 16, main = "Right nd2 for low alpha trials",
      xlab = "Subject", ylab = "Mean amplitude")
 points(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$low.alpha.right.nd2.rand_1,
        col = " black", pch = 16)
-legend(0, -0.2, legend = levels(rep.data.long2$configuration), 
-       col = c("black", "red"),
-       pch = 16)
 abline(h = mean(questionnaire.ERPs$low.alpha.right.nd2.sqr_1), col = "red")
 abline(h = mean(questionnaire.ERPs$low.alpha.right.nd2.rand_1), 
        col = 'black')
+par(mar=c(0, 0, 0, 0))
+plot.new()
+legend("center", legend = levels(rep.data.long2$configuration), 
+       col = c("black", "red"),
+       pch = 16)
+par(defaults)
 
 # 2.8. RL nd2
 # 2.8.1. ANOVA
