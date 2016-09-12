@@ -748,9 +748,9 @@ rep.data.long2$group.original.relevel <-
   relevel(rep.data.long2$group.original, "unaware")
 
 # Confidence ratings
-logistic.model.group1 <- glm(group.original.relevel ~ alpha.power, 
-                             data = questionnaire.ERPs,
-                             family = binomial())
+logistic.model.group1 <- glm(group.original.relevel ~ right.nd2, 
+                             data = rep.data.long2,
+                             family = binomial(link = "logit"))
 
 logistic.model.group2 <- glm(group.original.relevel ~ log.alpha, 
                              data = rep.data.long2,
@@ -762,15 +762,20 @@ logistic.model.group3 <- glm(group.original.relevel ~ log.alpha + right.nd2,
                              family = binomial(link = "logit"))
 summary(logistic.model.group3)
 
-logistic.model.group4 <- glm(group.original.relevel ~ conf.4_1 + mean.alpha.1 + 
-                               RT.mean_1 + right.diff.1, 
-                             data = questionnaire.ERPs,
-                             family = binomial())
+anova(logistic.model.group1, logistic.model.group2)
+anova(logistic.model.group2, logistic.model.group3)
 
-summary(logistic.model.group1)
-summary(logistic.model.group2)
-summary(logistic.model.group3)
+logistic.model.group4 <- glm(group.original.relevel ~ log.alpha + 
+                               right.nd2 + conf.4, 
+                             data = rep.data.long2,
+                             family = binomial(link = "logit"))
 summary(logistic.model.group4)
+
+logistic.model.group6 <- glm(group.original.relevel ~ conf.4 + log.alpha + 
+                               right.nd2, 
+                             data = rep.data.long2,
+                             family = binomial(link = "logit"))
+summary(logistic.model.group6)
 
 # Frequency ratings
 log.model.freq.group1 <- glm(group.original.relevel ~ freq.4_1, 
@@ -786,7 +791,8 @@ log.model.freq.group3 <- glm(group.original.relevel ~ freq.4_1 + mean.alpha.1 +
                              data = questionnaire.ERPs,
                              family = binomial())
 
-
+cor.test(rep.data.long2$right.nd2, rep.data.long2$log.alpha)
+plot(lm(rep.data.long2$right.nd2 ~ rep.data.long2$log.alpha))
 
 summary(log.model.freq.group1)
 summary(log.model.freq.group2)

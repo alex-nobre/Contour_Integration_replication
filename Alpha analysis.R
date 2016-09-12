@@ -600,6 +600,6 @@ plot(x = questionnaire.ERPs$Subject, y = questionnaire.ERPs$ses1.Ph,
 legend(0, -0.2, legend = levels(questionnaire.ERPs$alpha.group), 
        col = c("black", "red"),
        pch = 16)
-abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$alpha.group == 'high.alpha', ]$ses1.Ph))
-abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$alpha.group == 'low.alpha', ]$ses1.Ph), 
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$alpha.group == 'high.alpha', ]$Ph_1))
+abline(h = mean(questionnaire.ERPs[questionnaire.ERPs$alpha.group == 'low.alpha', ]$Ph_1), 
        col = 'red')
