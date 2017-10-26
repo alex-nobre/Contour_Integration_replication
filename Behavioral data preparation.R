@@ -6,26 +6,7 @@ library(dplyr)
 library(tidyr)
 library(reshape2)
 # Plotting packages
-library(lattice)
 library(ggplot2)
-library(gridExtra)
-library(GGally)
-# Analysis packages
-library(polycor)
-library(nlme)
-library(gmodels)
-library(lme4)
-library(ggm)
-library(pastecs)
-library(car)
-library(effsize)
-library(multcomp)
-# Psychophysics packages
-library(quickpsy)
-library(psyphy)
-# Data report packages
-library(knitr)
-
 
 # 0. Save graphical defaults
 defaults <- par()
@@ -44,7 +25,7 @@ questionnaire.ses2 <- read.xlsx(paste('./Data/Questionnaire_data/',
 questionnaire.ses1 <- questionnaire.ses1[-c(25,26),]
 questionnaire.ses2 <- questionnaire.ses2[-c(25,26),]
 
-# 1.3. Exclude unnecessary columns
+# 1.3. Exclude unnecessary columns (subject, group & annotations)
 questionnaire.ses1[,c(1,16,17)] <- NULL # exclude subject, group & annotations columns
 questionnaire.ses2[,c(1,16,17)] <- NULL # exclude subject, group & annotations columns
 
@@ -300,6 +281,13 @@ remove.outliers <- function(vec) {
   }
 }
 
+# 2.3.3. Identify outliers as values above of below 3sds from the mean
+remove.outliers <- function(vec) {
+  vec <- subset(vec, !(vec < (mean(vec) - 3 * sd(vec))) & 
+                  !(vec > (mean(vec) + 3 * sd(vec))))
+  return(vec)
+}
+
 RT_1 <- lapply(RT_1, remove.outliers)
 RT_2 <- lapply(RT_2, remove.outliers)
 RT_3 <- lapply(RT_3, remove.outliers)
@@ -430,25 +418,3 @@ threshold.rand_3 <- sapply(intensities.rand_3, function(x) { return( x[length(x)
 threshold_1 <- sapply(intensities_1, function(x) { return( x[length(x)] ) })
 threshold_2 <- sapply(intensities_2, function(x) { return( x[length(x)] ) })
 threshold_3 <- sapply(intensities_3, function(x) { return( x[length(x)] ) })
-
-
-#--------------------------------------tests-----------------------------------------
-# # 2.3.1. Function to remove outliers
-# remove.outliers <- function(vectorx) {
-#   vec.mean <- mean(vectorx)
-#   vec.sd <- sd(vectorx)
-#   for (i in 1:length(vectorx)) {
-#     if (vectorx[i] < vec.mean - 2*vec.sd  | vectorx[i] > 2*vec.sd + vec.mean) {
-#       vectorx[-i]
-#     }
-#   }
-#   return(vectorx)
-# }
-# # 2.3.2 Boxplots to detect outliers
-# testout<- remove.outliers(RT_1[[21]])
-# boxplot(RT_1[[21]], col = 3)
-# 
-# # 2.3.3. Apply function to RT lists
-# RT_1 <- lapply(RT_1, remove.outliers)
-# RT_2 <- lapply(RT_2, remove.outliers)
-# RT_3 <- lapply(RT_3, remove.outliers)

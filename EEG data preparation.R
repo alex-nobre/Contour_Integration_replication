@@ -9,23 +9,6 @@ library(reshape2)
 # Plotting packages
 library(lattice)
 library(ggplot2)
-library(gridExtra)
-library(GGally)
-# Analysis packages
-library(nlme)
-library(gmodels)
-library(ggm)
-library(pastecs)
-library(car)
-library(effsize)
-library(multcomp)
-library(lsmeans)
-# Psychophysics packages
-library(quickpsy)
-library(MPDiR)
-library(psyphy)
-# Data report packages
-library(knitr)
 
 # Import file names in working directory
 sqr1_fnames <- list.files('./Data/Data_BVA', pattern = "1_All ROIs Sqr")
@@ -127,51 +110,3 @@ rep_data <- cbind(Subject, group, group.original, rep_data)
 
 # Remove subjects with too many artifacts
 row.names(rep_data) <- 1:32
-
-# #---------------------------------With subject 5------------------------------------
-# # Create group vectors
-# group <- c("unaware", "aware", "unaware", "unaware", "unaware", "unaware",
-#            "aware", "unaware", "aware", "aware", "aware", "aware",
-#            "unaware", "aware", "unaware", "unaware", "aware", "aware",
-#            "aware", "aware", "unaware", "aware", "unaware", "unaware",
-#            "unaware", "unaware", "unaware", "unaware",
-#            "unaware", "aware", "aware", "unaware", "unaware")
-# group.original <- c("unaware", "aware", "unaware", "unaware", "unaware", "aware",
-#                     "aware", "unaware", "aware", "aware", "aware", "aware",
-#                     "unaware", "aware", "aware", "unaware", "aware", "aware",
-#                     "aware", "aware", "unaware", "aware", "unaware", "unaware",
-#                     "unaware", "unaware", "unaware",
-#                     "unaware", "aware", "aware", "aware", "aware",
-#                     "unaware")
-# 
-# # Add subject number
-# Subject <- c(1:11, 13:26, 29:30, 32:37)
-# rep_data <- cbind(Subject, group, group.original, rep_data)
-# 
-# # Remove subjects with too many artifacts
-# row.names(rep_data) <- 1:33
-# #--------------------------------Include location as factor--------------------------------
-#
-# # Rename columns to separate electrode location number using sep = "_"
-# names(rep_data_long2)[names(rep_data_long2) == "left.nd2"] <- "nd2_1"
-# names(rep_data_long2)[names(rep_data_long2) == "right.nd2"] <- "nd2_2"
-# # Extracts configuration number to column
-# rep_data_long2 <- reshape(rep_data_long2, varying = c("nd2_1", "nd2_2"),
-#                           direction = "long", idvar = " Subject", sep = "_")
-# # Rename configuration column name
-# names(rep_data_long2)[names(rep_data_long2) == "time"] <- "location"
-#
-# # Rename configuration levels
-# rep_data_long2$location[rep_data_long2$location == 1] <- "left"
-# rep_data_long2$location[rep_data_long2$location == 2] <- "right"
-#
-# #Remove redundant subject column
-# rep_data_long2[,ncol(rep_data_long2)]<- NULL
-#
-# # # Convert configuration, group and session to factors
-# rep_data_long2$group <- factor(rep_data_long2$group)
-# rep_data_long2$group.original <- factor(rep_data_long2$group.original)
-# rep_data_long2$session <- factor(rep_data_long2$session)
-# rep_data_long2$configuration <- factor(rep_data_long2$configuration)
-# rep_data_long2$location <- factor(rep_data_long2$location)
-# rep_data_long2$alpha.group <- factor(rep_data_long2$alpha.group)

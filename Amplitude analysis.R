@@ -11,6 +11,7 @@ library(ggplot2)
 library(gridExtra)
 library(GGally)
 # Analysis packages
+library(ez)
 library(polycor)
 library(nlme)
 library(gmodels)
@@ -30,27 +31,32 @@ library(knitr)
 #--------------------------------Prepare data-----------------------------------
 # 1. Subsets
 # 1.1. Create variable for means of ROI conditions (wide format)
-rep_data2$occ.means <- rowMeans(rep_data2[,c(2,5,8,11)])
-rep_data2$left.means <- rowMeans(rep_data2[,c(3,6,9,12)])
-rep_data2$right.means <- rowMeans(rep_data2[,c(4,7,10,13)])
-# 1.2. Subset configuration x session
-sqr_config <- subset(rep_data_long2, configuration == "sqr")
-rand_config <- subset(rep_data_long2, configuration == "rand")
-session_1 <- subset(rep_data_long2, session == 1)
-session_2 <- subset(rep_data_long2, session == 2)
+# rep_data2$occ.means <- rowMeans(rep_data2[,c(2,5,8,11)])
+# rep_data2$left.means <- rowMeans(rep_data2[,c(3,6,9,12)])
+# rep_data2$right.means <- rowMeans(rep_data2[,c(4,7,10,13)])
+# # 1.2. Subset configuration x session
+# sqr_config <- subset(rep_data_long2, configuration == "sqr")
+# rand_config <- subset(rep_data_long2, configuration == "rand")
+# session_1 <- subset(rep_data_long2, session == 1)
+# session_2 <- subset(rep_data_long2, session == 2)
 
 # 1.3. Log transform
 # mapply(min, )
 
-#---------------------------Exploratory data analysis---------------------------
+#===============================================================================#
+#===========================Exploratory data analysis===========================#
+#===============================================================================#
+
 defaults <- par() #save graphical parameters defaults
 
-# 2. Compute variances and means
-by(rep_data_long2[,6:8], list(rep_data_long2$configuration, 
-                              rep_data_long2$session, rep_data_long2$group.original), 
+#=======================2. Compute variances and means==========================#
+
+by(rep.data.long2[,6:8], list(rep.data.long2$configuration, 
+                              rep.data.long2$session, rep.data.long2$group.original), 
    stat.desc, basic = FALSE)
 
-# 3. Normality tests
+#=============================3. Normality tests================================#
+
 # 3.1. Function to test normality of data
 normality.test <- function(data, variable, color) {
   print(variable)
@@ -89,13 +95,19 @@ hist(questionnaire.ERPs$right.diff.1, main = "Difference in right nd2 session 1"
      xlab = "amplitude", col = 3, prob = T)
 
 
-#----------------------------------Linear models---------------------------------
+#=============================================================================#
+#============================Linear mixed models==============================#
+#=============================================================================#
+
+#==============================4.0. Set constrasts============================#
+
 contrasts(rep.data.long2$configuration) <- c(-1, 1) # contrasts for config
 contrasts(rep.data.long2$session) <- c(-1, 1) # contrasts for session
 contrasts(rep.data.long2$group.original) <- c(-1, 1) # contrasts for group.original
 contrasts(rep.data.long2$group) <- c(-1, 1) # contrasts for group
 
-# 4.1. C1
+#================================== 4.1. C1===================================#
+
 # 4.1.1. Scatterplot
 plot(1:18, rep_data4[rep_data4$group.original == "aware",]$C1.sqr_1, 
      ylab = "mean C1 amplitude", xlab = "subjects", pch = 20, col = "red", 
@@ -132,7 +144,7 @@ C1.line <- ggplot(rep.data.long2, aes(x = group.original, y = C1,
        y = "C1 mean amplitude", colour = "configuration")
 C1.line
 
-# 4.2. P1
+#==================================4.2. P1===================================#
 # 4.2.1. Scatterplot
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "unaware",]$configuration == 
@@ -181,7 +193,8 @@ P1.line <- ggplot(rep.data.long2, aes(x = group.original, y = P1,
        y = "P1 mean amplitude", colour = "configuration")
 P1.line
 
-# 4.3. N1
+#================================== 4.3. N1===================================#
+
 # 4.3.1. Scatterplot
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 2 & 
                                       group.original == "unaware",]$configuration == 
@@ -230,7 +243,8 @@ N1.line <- ggplot(rep.data.long2, aes(x = group.original, y = N1,
        colour = "configuration")
 N1.line
 
-# 4.4. Nd1
+#================================== 4.4. Nd1===================================#
+
 # 4.4.1. Scatterplot
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "aware",]$configuration == 
@@ -266,24 +280,42 @@ nd1.lme <- update(nd1.config.group.original, .~. +
                     configuration:session:group.original)
 anova(nd1.baseline, nd1.config, nd1.session, nd1.group.original, nd1.config.session,
       nd1.session.group.original, nd1.config.group.original, nd1.lme)
+####################################################################################
+# nd1.baseline <- lme(occ.nd1 ~ 1, random = ~1|Subject/configuration/session, 
+#                     data = rep.data.long2, method = "ML") #baseline
+# nd1.group <- update(nd1.baseline, .~. + group.original)
+# nd1.config <- update(nd1.group, .~. + configuration)
+# nd1.session <- update(nd1.config, .~. + session)
+# nd1.group.config <- update(nd1.session, .~. + group.original:configuration)
+# nd1.group.session <- update(nd1.group.config, .~. + 
+#                                        group:session)
+# nd1.config.session <- update(nd1.group.session, .~. 
+#                                     + configuration:session)
+# nd1.lme <- update(nd1.config.session, .~. + 
+#                     group.original:configuration:session)
+# anova(nd1.baseline, nd1.config, nd1.session, nd1.group.original, nd1.config.session,
+#       nd1.session.group.original, nd1.config.group.original, nd1.lme)
+##############################################################################
 
 summary(nd1.lme)
 
 # 4.4.3. Line plot
 #jpeg(file = "./Plots/Pitts ROIs/nd1line.jpeg")
-nd1.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], 
+nd1.line <- ggplot(rep.data.long2, 
                    aes(x = group.original, y = occ.nd1, 
                                        colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  labs(title = "Occ Nd1 mean amplitude by group", x = "group", 
+  facet_grid(.~session) +
+  labs(title = "Occ Nd1 mean amplitude by session", x = "group", 
        y = "Mean amplitude", 
        colour = "configuration")
 nd1.line
 #dev.off()
 
-# 4.5. Nd2 (VAN) left
+#===============================4.5. Nd2 (VAN) left==============================#
+
 # 4.5.1. Scatterplot by configuration
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "unaware",]$configuration == 
@@ -325,18 +357,20 @@ anova(nd2.left.baseline, nd2.left.config, nd2.left.session, nd2.left.group.origi
 summary(nd2.left.lme)
 
 # 4.5.3. Line plot
-left.nd2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,],
+left.nd2.line <- ggplot(rep.data.long2,
                         aes(x = group.original, y = left.nd2, 
                                        colour = configuration)) + 
   stat_summary(fun.y = mean, geom = "point") + 
   stat_summary(fun.y = mean, geom = "line", aes(group = configuration)) + 
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width = 0.2) +
-  labs(title = "Left nd2 mean amplitude by group", x = "group", 
+  facet_grid(.~session) +
+  labs(title = "Left nd2 mean amplitude by session", x = "group", 
        y = "Mean amplitude", 
        colour = "configuration")
 left.nd2.line
 
-# 4.6. Nd2 right
+#==============================4.6. Nd2 (VAN) right=============================#
+
 # 4.6.1. Scatterplot by configuration
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "aware",]$configuration == 
@@ -356,6 +390,7 @@ abline(h=mean(rep.data.long2[rep.data.long2$session == 1 &
                                rep.data.long2$configuration == "sqr" &
                                group.original == "aware",]$right.nd2), 
        col = "blue")
+
 # 4.6.2. ANOVA 
 nd2.right.baseline <- lme(right.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                           data = rep.data.long2, method = "ML") #baseline
@@ -398,7 +433,8 @@ right.nd2.line <- ggplot(rep.data.long2,
 right.nd2.line
 
  
-# 4.7. Nd2 right-left
+#===========================4.7. Nd2 (VAN) right-left==========================#
+
 # 4.7.2. ANOVA
 RL.nd2.baseline <- lme(RL.nd2 ~ 1, random = ~1|Subject/configuration/session, 
                           data = rep.data.long2, method = "ML") #baseline
@@ -421,7 +457,8 @@ anova(RL.nd2.baseline, RL.nd2.config, RL.nd2.session,
 
 summary(nd2.right.lme)
 
-# 4.8. N2
+#=====================================4.8. N2=====================================#
+
 # 4.8.1 Scatterplot
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "aware",]$configuration == 
@@ -467,7 +504,8 @@ N2.line <- ggplot(rep.data.long2[rep.data.long2$session == 1,], aes(x = group.or
        colour = "configuration")
 N2.line
 
-# 4.9. LP
+#=====================================4.9. LP=====================================#
+
 # 4.9.1. Scatterplot
 dot.colors <- ifelse(rep.data.long2[rep.data.long2$session == 1 & 
                                       group.original == "aware",]$configuration == 
@@ -597,3 +635,23 @@ legend("center", legend = c("rand", "sqr"),
 par(defaults)
 
 
+#==============================================================================#
+#===================================Ez ANOVA===================================#
+#==============================================================================#
+
+library(ez)
+
+contrasts(rep.data.long2$configuration) <- c(-1, 1) # contrasts for config
+contrasts(rep.data.long2$session) <- c(-1, 1) # contrasts for session
+contrasts(rep.data.long2$group.original) <- c(-1, 1) # contrasts for group.original
+contrasts(rep.data.long2$group) <- c(-1, 1) # contrasts for group
+
+ez_Model_nd1 <- ezANOVA(data = rep.data.long2, dv = occ.nd1, wid = Subject, within = .(configuration, session), 
+                    between = group.original, type = 3, detailed = TRUE)
+
+
+ez_Model_nd2_left <- ezANOVA(data = rep.data.long2, dv = left.nd2, wid = Subject, within = .(configuration, session), 
+                    between = group.original, type = 3, detailed = TRUE)
+
+ez_Model_nd2_right <- ezANOVA(data = rep.data.long2, dv = right.nd2, wid = Subject, within = .(configuration, session), 
+                             between = group.original, type = 3, detailed = TRUE)
